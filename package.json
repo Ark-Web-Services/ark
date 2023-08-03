@@ -1,0 +1,39 @@
+{
+  "name": "sassio-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.7.14",
+    "apollo-upload-client": "^17.0.0",
+    "atropos": "^1.0.2",
+    "eslint": "8.34.0",
+    "eslint-config-next": "13.2.1",
+    "graphql": "^16.6.0",
+    "iron-session": "^6.3.1",
+    "isotope-layout": "^3.0.6",
+    "leaflet": "^1.9.3",
+    "next": "13.2.1",
+    "nextjs-progressbar": "^0.0.16",
+    "react": "18.2.0",
+    "react-countup": "^6.4.1",
+    "react-dom": "18.2.0",
+    "react-feather": "^2.0.10",
+    "react-leaflet": "^4.2.1",
+    "react-responsive-masonry": "^2.1.7",
+    "react-scroll-trigger": "^0.6.14",
+    "react-tabs": "^6.0.0",
+    "react-tsparticles": "^2.9.3",
+    "swiper": "^9.0.5",
+    "swr": "^2.1.5",
+    "tsparticles": "^2.9.3"
+  },
+  "resolutions": {
+    "react-countup/countup.js": "2.5.0"
+  }
+}
