@@ -1,4 +1,4 @@
-import Layout from '@/components/layout/Layout';
+import Layout from '@/components/Layout/Layout';
 import BlogStyleNine from '@/components/sections/blog/BlogStyleNine';
 
 export default function BlogList9() {
