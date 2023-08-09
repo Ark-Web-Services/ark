@@ -17,7 +17,7 @@ export default function Pickapro() {
                                 <div className="row justify-center text-center">
                                     <div className="col-xl-6 col-lg-9 col-md-10">
                                         <div>
-                                            <h1 className="page-header__title lh-14">Web App</h1>
+                                            <h1 className="page-header__title lh-14">Online Directory</h1>
                                         </div>
                                     </div>
                                     <div className="w-1/1" />
@@ -48,10 +48,10 @@ export default function Pickapro() {
                                             </div>
                                         </div>
                                         <div className="col-lg-auto col-sm-6">
-                                            <h5 className="text-xl fw-600">Sevices</h5>
+                                            <h5 className="text-xl fw-600">Deliverables</h5>
                                             <div className="y-gap-4 mt-12">
-                                                <p>Branding</p>
-                                                <p>Design</p>
+                                                <p>Web Design</p>
+                                                <p>Web App</p>
                                                 <p> Custom Development</p>
                                                 {/* <p>Video Production</p> */}
                                             </div>
@@ -80,19 +80,19 @@ export default function Pickapro() {
                                     <div className="row y-gap-60 justify-between">
                                         <div className="col-xl-5 col-md-6">
                                             <div className="pr-48">
-                                                <h4 className="text-xl fw-600">01. Digital Design</h4>
+                                                <h4 className="text-xl fw-600">01. Web Design</h4>
                                                 <p className="mt-12">At vero eos et accusam et justo duo dolores et rebum. Stet clita bergren, no sea takimata sanctus.</p>
                                             </div>
                                         </div>
                                         <div className="col-xl-5 col-md-6">
                                             <div className="pr-48">
-                                                <h4 className="text-xl fw-600">02. Development</h4>
+                                                <h4 className="text-xl fw-600">02. Web App</h4>
                                                 <p className="mt-12">At vero eos et accusam et justo duo dolores et rebum. Stet clita bergren, no sea takimata sanctus.</p>
                                             </div>
                                         </div>
                                         <div className="col-xl-5 col-md-6">
                                             <div className="pr-48">
-                                                <h4 className="text-xl fw-600">03. Copywriting</h4>
+                                                <h4 className="text-xl fw-600">03. Custom Development</h4>
                                                 <p className="mt-12">At vero eos et accusam et justo duo dolores et rebum. Stet clita bergren, no sea takimata sanctus.</p>
                                             </div>
                                         </div>
@@ -115,7 +115,7 @@ export default function Pickapro() {
                                 </div>
                                 <div className="col-xl-5 col-lg-6">
                                     <div className="sectionHeading ">
-                                        <h2 className="sectionHeading__title">Put money in your hands</h2>
+                                        <h2 className="sectionHeading__title">Challenge</h2>
                                     </div>
                                     <p className="mt-24">We develop enjoyable consumer experiences, from digital strategy and content to media and analysis. Leading to meaningful results and satisfied clients.</p>
                                 </div>
@@ -127,7 +127,7 @@ export default function Pickapro() {
                             <div className="row y-gap-48 justify-between items-center">
                                 <div className="col-xl-5 col-lg-6 order-lg-1 order-2">
                                     <div className="sectionHeading ">
-                                        <h2 className="sectionHeading__title">Put money in your hands</h2>
+                                        <h2 className="sectionHeading__title">Outcome</h2>
                                     </div>
                                     <p className="mt-24">We develop enjoyable consumer experiences, from digital strategy and content to media and analysis. Leading to meaningful results and satisfied clients.</p>
                                 </div>

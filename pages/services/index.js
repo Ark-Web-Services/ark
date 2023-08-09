@@ -200,10 +200,10 @@ export default function Services1() {
                                 <div className="py-50 px-64">
                                     <div className="row y-gap-32 justify-between items-center">
                                         <div className="col-auto">
-                                            <h3 className="text-30 lh-15 text-white">While our Ark is large,<br /> it does fill up fast!</h3>
+                                            <h3 className="text-30 lh-15 text-white">Here's our invitation to you<br /> to collaborate!</h3>
                                         </div>
                                         <div className="col-auto">
-                                            <button className="button -md -white text-accent">Get In Touch</button>
+                                            <button className="button -md -white text-accent">Embark</button>
                                         </div>
                                     </div>
                                 </div>

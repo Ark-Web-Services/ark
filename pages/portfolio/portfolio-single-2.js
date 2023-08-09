@@ -1,14 +1,11 @@
-import Head from 'next/head';
 import Layout from '@/components/Layout/Layout';
+import PortfolioSliderTwo from '@/components/slider/PortfolioSliderTwo';
 import Link from "next/link";
 import * as Icon from 'react-feather';
 
-export default function Providencecapital() {
+export default function PortfolioSingle2() {
     return (
         <>
-            <Head>
-                <title>Portfolio - Zalii</title>
-            </Head>
             <Layout footerLayout={11}>
                 <div>
                     <section className="page-header -text -">
@@ -58,72 +55,68 @@ export default function Providencecapital() {
                             </div>
                         </div>
                     </section>
-
-                    <section>
-                        <div className="bg-image js-lazy pt-100 pb-100 mh-700 bg-fixed" style={{ backgroundImage: 'url("/img/portfolio/single/1/1.jpg")' }} />
-                    </section>
-                    <section className="layout-pt-lg layout-pb-sm">
-                        <div className="container">
-                            <div className="row justify-center">
-                                <div className="col-xl-9 col-lg-11">
-                                    <div className="row y-gap-60 justify-between">
-                                        <div className="col-xl-5 col-md-6">
-                                            <div className="pr-48">
-                                                <h4 className="text-xl fw-600">01. Web Design</h4>
-                                                <p className="mt-12">At vero eos et accusam et justo duo dolores et rebum. Stet clita bergren, no sea takimata sanctus.</p>
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-5 col-md-6">
-                                            <div className="pr-48">
-                                                <h4 className="text-xl fw-600">02. Web App</h4>
-                                                <p className="mt-12">At vero eos et accusam et justo duo dolores et rebum. Stet clita bergren, no sea takimata sanctus.</p>
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-5 col-md-6">
-                                            <div className="pr-48">
-                                                <h4 className="text-xl fw-600">03. Custom Development</h4>
-                                                <p className="mt-12">At vero eos et accusam et justo duo dolores et rebum. Stet clita bergren, no sea takimata sanctus.</p>
-                                            </div>
-                                        </div>
-                                        {/* <div className="col-xl-5 col-md-6">
-                                            <div className="pr-48">
-                                                <h4 className="text-xl fw-600">04. JQuery Power</h4>
-                                                <p className="mt-12">At vero eos et accusam et justo duo dolores et rebum. Stet clita bergren, no sea takimata sanctus.</p>
-                                            </div>
-                                        </div> */}
-                                    </div>
-                                </div>
-                            </div>
+                    <section className="layout-pt-md layout-pb-sm">
+                        <div className="container-fluid">
+                            <PortfolioSliderTwo />
                         </div>
                     </section>
                     <section className="layout-pt-sm layout-pb-sm">
                         <div className="container">
-                            <div className="row y-gap-48 justify-between items-center">
-                                <div className="col-xl-6 col-lg-6">
-                                    <img src="/img/portfolio/single/1/2.jpg" alt="image" className="initial-img" />
-                                </div>
-                                <div className="col-xl-5 col-lg-6">
-                                    <div className="sectionHeading ">
-                                        <h2 className="sectionHeading__title">Crafting a Vision <br />into Reality</h2>
+                            <div className="row y-gap-64">
+                                <div className="col-12">
+                                    <div className="row y-gap-16 justify-between">
+                                        <div className="col-lg-4">
+                                            <h4 className="text-xl fw-600">01. Digital Design</h4>
+                                        </div>
+                                        <div className="col-lg-8 col-md-10">
+                                            <p>Stet clita bergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, quia. </p>
+                                        </div>
                                     </div>
-                                    <p className="mt-24">When the client approached us, they held in their hands not a brief or a blueprint but a powerful idea, a seed full of potential. They envisioned a platform that would enable the preservation and cherishing of irreplaceable memories, particularly for those grappling with memory-related conditions like Alzheimer's and dementia. </p>
-                                    <p className="mt-24">This was uncharted territory, a mission neither simple nor small, but it was a journey we were eager to embark upon. The challenge lay not just in building a functional website, but in crafting an experience - an easy-to-navigate, streamlined, and intuitive process that could transform digital pictures into tangible memoirs. </p>
-                                    <p className="mt-24">The initial state of the project was akin to an untouched canvas. It was pure, brimming with potential, and had no pre-existing branding, concepts, or imagery. Our task was to paint this canvas with the colors of reminiscence and nostalgia, while ensuring the creation process remained as simple and intuitive as possible.</p>
+                                </div>
+                                <div className="col-12">
+                                    <div className="row y-gap-16 justify-between">
+                                        <div className="col-lg-4">
+                                            <h4 className="text-xl fw-600">02. Development</h4>
+                                        </div>
+                                        <div className="col-lg-8 col-md-10">
+                                            <p>Stet clita bergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, quia. </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-12">
+                                    <div className="row y-gap-16 justify-between">
+                                        <div className="col-lg-4">
+                                            <h4 className="text-xl fw-600">03. Copywriting</h4>
+                                        </div>
+                                        <div className="col-lg-8 col-md-10">
+                                            <p>Stet clita bergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, quia. </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-12">
+                                    <div className="row y-gap-16 justify-between">
+                                        <div className="col-lg-4">
+                                            <h4 className="text-xl fw-600">04. JQuery Power</h4>
+                                        </div>
+                                        <div className="col-lg-8 col-md-10">
+                                            <p>Stet clita bergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, quia. </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </section>
                     <section className="layout-pt-sm layout-pb-lg">
                         <div className="container">
-                            <div className="row y-gap-48 justify-between items-center">
-                                <div className="col-xl-5 col-lg-6 order-lg-1 order-2">
-                                    <div className="sectionHeading ">
-                                        <h2 className="sectionHeading__title">Outcome</h2>
-                                    </div>
-                                    <p className="mt-24">We develop enjoyable consumer experiences, from digital strategy and content to media and analysis. Leading to meaningful results and satisfied clients.</p>
+                            <div className="row y-gap-32">
+                                <div className="col-12">
+                                    <img className="initial-img" src="/img/portfolio/single/2/1.jpg" alt="image" />
                                 </div>
-                                <div className="col-xl-6 col-lg-6 order-lg-2 order-1">
-                                    <img src="/img/portfolio/single/1/3.jpg" alt="image" className="initial-img" />
+                                <div className="col-12">
+                                    <img className="initial-img" src="/img/portfolio/single/2/2.jpg" alt="image" />
+                                </div>
+                                <div className="col-12">
+                                    <img className="initial-img" src="/img/portfolio/single/2/3.jpg" alt="image" />
                                 </div>
                             </div>
                         </div>
@@ -134,13 +127,13 @@ export default function Providencecapital() {
                                 <div className="related-nav py-30">
                                     <div className="row justify-between items-center">
                                         <div className="col-md-auto col-6">
-                                            <Link href="/casestudies/pickapro" className="related-nav__item -prev decoration-none">
+                                            <Link href="/portfolio/portfolio-single-3" className="related-nav__item -prev decoration-none">
                                                 <div className="related-nav__arrow">
                                                     <Icon.ArrowLeft className="icon size-20 pt-4" />
                                                 </div>
                                                 <div className="related-nav__content">
                                                     <div className="text-xl fw-600">Prev</div>
-                                                    <p className="text-dark mt-8">Pick A Pro</p>
+                                                    <p className="text-dark mt-8">Avg Event Cart</p>
                                                 </div>
                                             </Link>
                                         </div>
@@ -176,20 +169,25 @@ export default function Providencecapital() {
                                             </div>
                                         </div>
                                         <div className="col-md-auto col-6 d-flex justify-end">
-                                            <Link href="/casestudies/f3pb" className="related-nav__item -prev text-right decoration-none">
+                                            <a href="portfolio-single-4.html" className="related-nav__item -prev text-right decoration-none">
                                                 <div className="related-nav__content">
                                                     <div className="text-xl fw-600">Next</div>
-                                                    <p className="text-dark mt-8">F3 Platform Biologics</p>
+                                                    <p className="text-dark mt-8">Realy Art</p>
                                                 </div>
                                                 <div className="related-nav__arrow">
                                                     <Icon.ArrowRight className="icon size-20 pt-4" />
                                                 </div>
-                                            </Link>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </section>
+                    </div>
+                    <div className="svg-shape">
+                        <svg width={1920} height={60} viewBox="0 0 1920 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 30C0 13.4315 13.4315 0 30 0H1890C1906.57 0 1920 13.4315 1920 30V60H0V30Z" fill="#1A3454" />
+                        </svg>
                     </div>
                 </div>
 
