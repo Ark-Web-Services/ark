@@ -1,5 +1,5 @@
 import CounterUp from '@/components/elements/CounterUp';
-import Layout from '@/components/layout/Layout';
+import Layout from '@/components/Layout/Layout';
 import ProjectSliderOne from '@/components/slider/ProjectSliderOne';
 import TestimonialSliderOne from '@/components/slider/TestimonialSliderOne';
 import Link from 'next/link';
