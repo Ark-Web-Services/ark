@@ -70,11 +70,11 @@ export default function About1() {
                         <div className="row y-gap-32 justify-between pt-40">
                             <div className="col-xl-5 col-lg-6">
                                 <h4 className="text-xl fw-600">Our Vision</h4>
-                                <p className="text-16 fw-600 mt-16">There are plenty of web design agencies but there's no one like us.</p>
+                                <p className="mt-16">At Ark Web Services, we envision a digital world where technology and human connection coalesce seamlessly. Rooted in Charlotte, NC, our ethos is built on two decades of forging relationships, understanding unique challenges, and crafting vivid, impactful solutions. </p>
                             </div>
                             <div className="col-lg-6">
                                 <h4 className="text-xl fw-600">Our Values</h4>
-                                <p className="mt-16">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris malesuada nisi sit amet augue accumsan tincidunt. Maecenas tincidunt, velit ac porttitor pulvinar, tortor eros facilisis libero, vitae commodo nunc quam et ligula. Ut nec ipsum sapien. Interdum et malesuada fames ac ante ipsum primis in faucibus. Integer id nisi nec nulla luctus.</p>
+                                <p className="mt-16">Our values are deeply rooted in understanding and connecting with our clients, not just as a business, but on a personal level. We believe in authenticity, commitment, and the power of collaboration. Every project is a testament to our dedication and passion, reflecting our unwavering commitment to excellence.</p>
                             </div>
                         </div>
                     </div>
@@ -93,21 +93,18 @@ export default function About1() {
                                 <div className="wow animate__animated animate__fadeIn">
                                     <div className="sectionHeading ">
                                         <div className="sectionHeading__subtitle">
-                                            <span>What we</span>
+                                            <span>Why Ark</span>
                                         </div>
-                                        <h2 className="sectionHeading__title">We help startups launch,<br /> grow and succeed very fast</h2>
+                                        <h2 className="sectionHeading__title">Beyond technology, into heartfelt connections</h2>
                                     </div>
                                 </div>
                                 <div className="row y-gap-40 pt-32">
-                                    <div className="col-sm-6">
-                                        <h4 className="text-xl fw-600">Company Benefits</h4>
-                                        <p className="mt-20">Since 2017, we have led innovation and new product delivery in business startup services delivered online.</p>
-                                    </div>
-                                    <div className="col-sm-6">
-                                        <h4 className="text-xl fw-600">Competitive Salary</h4>
-                                        <p className="mt-20">Since 2017, we have led innovation and new product delivery in business startup services delivered online.</p>
+                                    <div className="col-sm-12">
+                                        <h4 className="text-xl fw-600">Where Innovation Meets Empathy</h4>
+                                        <p className="mt-20">Ark Web Services is more than just a web agency; it's a beacon of transformative digital experiences. While many navigate the vast digital seas, we stand apart by intertwining innovative strategies with genuine empathy. Our Charlotte, NC heritage equips us with unparalleled local insights, ensuring that every solution is not only technologically advanced but also resonates with the community's heartbeat. Beyond the codes and pixels, we prioritize genuine partnerships, ensuring that every endeavor is a shared journey of discovery and achievement. Dive into a collaboration with Ark, and experience the difference of a partnership that values both cutting-edge solutions and the human spirit.</p>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

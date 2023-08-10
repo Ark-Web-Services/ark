@@ -25,11 +25,11 @@ export default function Menu({ navColor }) {
                                 Services
                             </Link>
                         </li>
-                        <li className={`${navColor}`}>
+                        {/* <li className={`${navColor}`}>
                             <Link href="/casestudies">
                                 Case Studies
                             </Link>
-                        </li>
+                        </li> */}
                         <li className={`${navColor}`}>
                             <Link href="/portfolio">
                                 Portfolio

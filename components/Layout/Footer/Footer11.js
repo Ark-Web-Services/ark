@@ -57,7 +57,7 @@ export default function Footer11() {
                                                 Services
                                             </Link>
                                         </div>
-                                        <div className="footer__content__item text-white">
+                                        {/* <div className="footer__content__item text-white">
                                             <Link
                                                 className="decoration-none"
 
@@ -65,7 +65,7 @@ export default function Footer11() {
                                             >
                                                 Case Studies
                                             </Link>
-                                        </div>
+                                        </div> */}
                                         <div className="footer__content__item text-white">
                                             <Link
                                                 className="decoration-none"
