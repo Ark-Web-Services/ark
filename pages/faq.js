@@ -1,4 +1,4 @@
-import Layout from '@/components/layout/Layout';
+import Layout from '@/components/Layout/Layout';
 import { useState } from 'react';
 import * as Icon from 'react-feather';
 export default function Faqs() {
