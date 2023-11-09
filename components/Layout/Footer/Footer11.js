@@ -10,7 +10,7 @@ export default function Footer11() {
                             <div className="col-lg-4 col-sm-6">
                                 <div className="footer__item">
                                     <div className="footer__logo  text-white">
-                                        <img src="/img/general/footer_logo1.png" alt="logo" style={{ width: '150px' }} />
+                                        <img src="/img/general/Footer_logo1.png" alt="logo" style={{ width: '150px' }} />
                                     </div>
                                     <div className="y-gap-32 pt-30">
                                         <div className="">
