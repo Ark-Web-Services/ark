@@ -58,7 +58,7 @@ export default function PortfolioFilterOne() {
                 <div className="masonry__item -no-ratio  web_design branding">
                     <div className="h:zoom">
                         <div className="relative hover-group overflow-hidden rounded-8">
-                            <div className="ratio ratio-37:40 bg-image h:zoom__item rounded-8 js-lazy" style={{ backgroundImage: 'url("../img/portfolio/cards/arkwebservices.png")' }} />
+                            <div className="ratio ratio-37:40 bg-image h:zoom__item rounded-8 js-lazy" style={{ backgroundImage: 'url("../img/portfolio/cards/Arkwebservices.png")' }} />
                             <div className="text-white absolute-full-center z-2 | opac-0 hg:opacity-100 t-base">
                                 <div className="bg-dark-2 opac-60 rounded-8 absolute-full-center z-1" />
                                 <div className="d-flex justify-center items-center text-xl fw-600 absolute-full-center z-2">
