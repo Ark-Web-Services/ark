@@ -143,7 +143,7 @@ export default function Footer11() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <h3 className="footer__title text-xl lh-1 fw-600 text-white">
                                             Subscribe
                                         </h3>
@@ -177,7 +177,7 @@ export default function Footer11() {
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
