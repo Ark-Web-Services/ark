@@ -27,7 +27,7 @@ export default function HeroFive() {
                                 </div>
                                 <div className="masthead__buttons row y-gap-20 x-gap-24 md:justify-center items-center pt-40 sm:pt-24">
                                     <div className="col-auto">
-                                        <Link href="/contact/contact-1" className="button -md -accent rounded-8 text-white">Get In Touch</Link>
+                                        <Link href="/contact/" className="button -md -accent rounded-8 text-white">Get In Touch</Link>
                                     </div>
                                     {/* <div className="col-auto">
                                         <a href="https://www.youtube.com/watch?v=ANYfx4-jyqY" className="decoration-none js-gallery" data-gallery="gallery1">
