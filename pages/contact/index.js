@@ -28,13 +28,13 @@ export default function Contact1() {
                                 </div>
                                 <div className="col-xl-4 col-lg-9 col-md-10">
                                     <div className="px-20">
-                                        <p className="page-header__text">With we want to optimize the customization process so your team can save time when building websites.</p>
+                                        <p className="page-header__text">We respond quickly, fill out the form below and we'll get a call scheduled!</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </section>
-                    <section className="layout-pt-lg layout-pb-sm">
+                    {/* <section className="layout-pt-lg layout-pb-sm">
                         <div className="container">
                             <div className="row g-0 y-gap-48 row-dividers-dark">
                                 <div className="col-lg-4 col-sm-6">
@@ -66,15 +66,15 @@ export default function Contact1() {
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    </section> */}
                     <section className="layout-pt-sm layout-pb-lg">
                         <div className="container">
                             <div className="row justify-center text-center">
                                 <div className="col-auto">
                                     <div className="sectionHeading ">
-                                        <div className="sectionHeading__subtitle">
+                                        {/* <div className="sectionHeading__subtitle">
                                             <span>message</span>
-                                        </div>
+                                        </div> */}
                                         <h2 className="sectionHeading__title">Tell us about yourself</h2>
                                     </div>
                                 </div>
@@ -132,10 +132,10 @@ export default function Contact1() {
                             </div>
                         </div>
                     </section>
-                    <section className="container-wide">
+                    {/* <section className="container-wide">
                         <LeafletMap center={[51.505, -0.09]} zoom={13} />
-                    </section>
-                    <section className="layout-pt-lg layout-pb-lg">
+                    </section> */}
+                    {/* <section className="layout-pt-lg layout-pb-lg">
                         <div className="container">
                             <div className="row g-0 y-gap-40 row-dividers-dark">
                                 <div className="col-sm-6">
@@ -158,7 +158,7 @@ export default function Contact1() {
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    </section> */}
                 </div>
 
             </Layout>
