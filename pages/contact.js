@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Layout from '@/components/Layout/Layout';
 import dynamic from 'next/dynamic';
 import * as Icon from 'react-feather';
+import ContactForm from '@/components/contact/ContactForm';
 
 const LeafletMap = dynamic(() => import('@/components/elements/LeafletMap'), {
     ssr: false,
@@ -81,53 +82,7 @@ export default function Contact1() {
                             </div>
                             <div className="row justify-center pt-60 sm:pt-40">
                                 <div className="col-lg-10">
-                                    <form action="post" className="contact-form row y-gap-40">
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <input type="text" name="name" placeholder="Full Name" />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <input type="email" name="email" placeholder="Your Email Address" />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <input type="text" name="subject" placeholder="Your Subject" />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <input type="text" name="phone" placeholder="Phone Number" />
-                                            </div>
-                                        </div>
-                                        <div className="col-12">
-                                            <div className="form-group">
-                                                <textarea name="message" rows={4} placeholder="Message" defaultValue={""} />
-                                            </div>
-                                        </div>
-                                        <div className="col-12">
-                                            <div className="form-group">
-                                                <div className="form-checkbox">
-                                                    <div className="checkbox">
-                                                        <input type="checkbox" />
-                                                        <div className="checkbox__mark">
-                                                            <Icon.Check className="checkbox__icon" />
-                                                        </div>
-                                                    </div>
-                                                    <label htmlFor="items">
-                                                        I am bound by the terms of the Service I accept Privacy Policy.
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-12">
-                                            <div className="form-group">
-                                                <button className="button -md -accent -uppercase text-white">Send Your Message</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                <ContactForm />
                                 </div>
                             </div>
                         </div>
