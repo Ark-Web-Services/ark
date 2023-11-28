@@ -4,29 +4,29 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { username, email, subject, message } = req.body;
 
-    // const transporter = nodemailer.createTransport({
-    //     service: 'gmail',
-    //     auth: {
-    //       user: process.env.GMAIL_USER,
-    //       pass: process.env.GMAIL_PASS
-    //     }
-    //   });
-
     const transporter = nodemailer.createTransport({
-      host: "smtpout.secureserver.net",
-      secure: true,
-      secureConnection: false, // TLS requires secureConnection to be false
-      tls: {
-        ciphers: "SSLv3",
-      },
-      requireTLS: true,
-      port: 465,
-      debug: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+        service: 'gmail',
+        auth: {
+          user: process.env.GMAIL_USER,
+          pass: process.env.GMAIL_PASS
+        }
+      });
+
+    // const transporter = nodemailer.createTransport({
+    //   host: "smtpout.secureserver.net",
+    //   secure: true,
+    //   secureConnection: false, // TLS requires secureConnection to be false
+    //   tls: {
+    //     ciphers: "SSLv3",
+    //   },
+    //   requireTLS: true,
+    //   port: 465,
+    //   debug: true,
+    //   auth: {
+    //     user: process.env.EMAIL_USER,
+    //     pass: process.env.EMAIL_PASS,
+    //   },
+    // });
 
     const mailOptions = {
       from: process.env.EMAIL_SUBMIT,
