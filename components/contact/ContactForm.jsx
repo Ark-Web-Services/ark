@@ -19,7 +19,7 @@ const ContactForm = () => {
   };
 
   const handleCaptchaChange = (value) => {
-    console.log("reCAPTCHA Token:", value); // Log reCAPTCHA token for debugging
+    console.log("Received reCAPTCHA value:", value); // Add this log
     setFormData({ ...formData, recaptchaResponse: value });
   };
 
