@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import axios from 'axios';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -25,27 +24,34 @@ const ContactForm = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log("Form Data on Submit:", formData); // Log formData for debugging
-
-    if (!formData.recaptchaResponse) {
-      console.error('reCAPTCHA verification failed');
-      return;
-    }
-
-    try {
-      const response = await axios.post('/api/sendmail', formData);
-      setConfirmation(response.data);
-      // Reset the form and reCAPTCHA after successful submission
-      setFormData({
-        username: '',
-        email: '',
-        subject: '',
-        message: '',
-        phone: '',
-        recaptchaResponse: '',
+  
+    if (window.grecaptcha) {
+      window.grecaptcha.ready(async () => {
+        try {
+          const recaptchaResponse = await window.grecaptcha.execute('YOUR_SITE_KEY', { action: 'submit' });
+          // Add the reCAPTCHA response to formData
+          const dataToSend = { ...formData, recaptchaResponse };
+  
+          // Post the data including the reCAPTCHA response to your backend
+          const response = await axios.post('/api/sendmail', dataToSend);
+          setConfirmation(response.data);
+  
+          // Reset the form after successful submission
+          setFormData({
+            username: '',
+            email: '',
+            subject: '',
+            message: '',
+            phone: '',
+            recaptchaResponse: '',
+          });
+        } catch (err) {
+          console.error('Error during reCAPTCHA execution or form submission:', err);
+          setConfirmation('Error sending message');
+        }
       });
-    } catch (err) {
-      setConfirmation('Error sending message');
+    } else {
+      console.error('reCAPTCHA not loaded');
     }
   };
 

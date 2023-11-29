@@ -13,6 +13,7 @@ export default function Contact1() {
         <>
             <Head>
                 <title>Contact Us</title>
+                <script src="https://www.google.com/recaptcha/api.js?render=6Lem8CApAAAAAG__QpiKaanzep4uw7BrJ_0lwZFV"></script>
             </Head>
             <Layout footerLayout={11}>
                 <div>
