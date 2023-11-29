@@ -113,7 +113,7 @@ const ContactForm = () => {
       {/* reCAPTCHA widget */}
       <div className="form-group col-lg-12 col-md-12 col-sm-12">
         <ReCAPTCHA
-          sitekey="6LcSBR8pAAAAAMg3B-D4JtJZfsWFznXTYTuU4Uqd" // Replace with your actual site key
+          sitekey="6Lem8CApAAAAAG__QpiKaanzep4uw7BrJ_0lwZFV" // Replace with your actual site key
           onChange={handleCaptchaChange}
         />
       </div>
