@@ -19,14 +19,14 @@ const ContactForm = () => {
   };
 
   const handleCaptchaChange = (value) => {
-    // Update state when reCAPTCHA is completed
+    console.log("reCAPTCHA Token:", value); // Log reCAPTCHA token for debugging
     setFormData({ ...formData, recaptchaResponse: value });
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
+    console.log("Form Data on Submit:", formData); // Log formData for debugging
 
-    // Ensure reCAPTCHA is completed
     if (!formData.recaptchaResponse) {
       console.error('reCAPTCHA verification failed');
       return;
