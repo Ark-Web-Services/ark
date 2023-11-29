@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import axios from 'axios';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
+    phone: '',
+    recaptchaResponse: '', // Field for reCAPTCHA response
   });
 
   const [confirmation, setConfirmation] = useState('');
@@ -15,12 +18,32 @@ const ContactForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleCaptchaChange = (value) => {
+    // Update state when reCAPTCHA is completed
+    setFormData({ ...formData, recaptchaResponse: value });
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
+
+    // Ensure reCAPTCHA is completed
+    if (!formData.recaptchaResponse) {
+      console.error('reCAPTCHA verification failed');
+      return;
+    }
 
     try {
       const response = await axios.post('/api/sendmail', formData);
       setConfirmation(response.data);
+      // Reset the form and reCAPTCHA after successful submission
+      setFormData({
+        username: '',
+        email: '',
+        subject: '',
+        message: '',
+        phone: '',
+        recaptchaResponse: '',
+      });
     } catch (err) {
       setConfirmation('Error sending message');
     }
@@ -28,78 +51,87 @@ const ContactForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="contact-form row y-gap-40 pt-60 sm:pt-40">
-  <div className="form-group col-md-6">
-    <label>Full Name</label>
-    <input
-      type="text"
-      name="username"
-      value={formData.username}
-      onChange={handleChange}
-      // placeholder="Your Name*"
-      required
-    />
-  </div>
+      {/* Full Name Input */}
+      <div className="form-group col-md-6">
+        <label>Full Name</label>
+        <input
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
+      </div>
 
-  <div className="form-group col-md-6">
-    <label>Your Email Address</label>
-    <input
-      type="email"
-      name="email"
-      value={formData.email}
-      onChange={handleChange}
-      // placeholder="Your Email*"
-      required
-    />
-  </div>
+      {/* Email Address Input */}
+      <div className="form-group col-md-6">
+        <label>Your Email Address</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+      </div>
 
-  <div className="form-group col-md-6">
-    <label>Your Subject</label>
-    <input
-      type="text"
-      name="subject"
-      value={formData.subject}
-      onChange={handleChange}
-      // placeholder="Subject *"
-      required
-    />
-  </div>
+      {/* Subject Input */}
+      <div className="form-group col-md-6">
+        <label>Your Subject</label>
+        <input
+          type="text"
+          name="subject"
+          value={formData.subject}
+          onChange={handleChange}
+          required
+        />
+      </div>
 
-  <div className="form-group col-md-6">
-    <label>Phone Number</label>
-    <input
-      type="text"
-      name="phone"
-      value={formData.phone}
-      onChange={handleChange}
-      // placeholder="Phone Number"
-      required
-    />
-  </div>
+      {/* Phone Number Input */}
+      <div className="form-group col-md-6">
+        <label>Phone Number</label>
+        <input
+          type="text"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          required
+        />
+      </div>
 
-  <div className="form-group col-lg-12 col-md-12 col-sm-12">
-    <label>Message</label>
-    <textarea
-      name="message"
-      value={formData.message}
-      onChange={handleChange}
-      // placeholder="Write your message..."
-      required
-    ></textarea>
-  </div>
+      {/* Message Textarea */}
+      <div className="form-group col-lg-12 col-md-12 col-sm-12">
+        <label>Message</label>
+        <textarea
+          name="message"
+          value={formData.message}
+          onChange={handleChange}
+          required
+        ></textarea>
+      </div>
 
-  <div className="form-group col-lg-12 col-md-12 col-sm-12">
-    <button className="button -md -accent -uppercase text-white" type="submit">
-      Send Message
-    </button>
-  </div>
+      {/* reCAPTCHA widget */}
+      <div className="form-group col-lg-12 col-md-12 col-sm-12">
+        <ReCAPTCHA
+          sitekey="6LcSBR&pAAAAAMg3B-D4JtJZfsWFznXTYTuU4Uqd" // Replace with your actual site key
+          onChange={handleCaptchaChange}
+        />
+      </div>
 
-  {confirmation && (
-    <div className="form-group col-lg-12 col-md-12 col-sm-12">
-      <p>{confirmation}</p>
-    </div>
-  )}
-</form>
+      {/* Submit button */}
+      <div className="form-group col-lg-12 col-md-12 col-sm-12">
+        <button className="button -md -accent -uppercase text-white" type="submit">
+          Send Message
+        </button>
+      </div>
 
+      {/* Confirmation message */}
+      {confirmation && (
+        <div className="form-group col-lg-12 col-md-12 col-sm-12">
+          <p>{confirmation}</p>
+        </div>
+      )}
+    </form>
   );
 };
 
