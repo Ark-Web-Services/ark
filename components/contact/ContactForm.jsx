@@ -39,8 +39,13 @@ const ContactForm = () => {
           // Make the POST request to your backend with the form data
           const response = await axios.post('/api/sendmail', dataToSend);
   
-          // Update state based on the response
-          setConfirmation(response.data);
+          // Check if the response contains a message and set it
+          if (response.data && typeof response.data.message === 'string') {
+            setConfirmation(response.data.message);
+          } else {
+            // Handle cases where the message is not in the expected format
+            setConfirmation('Thank you! Your message has been sent.');
+          }
   
           // Reset the form state after successful submission
           setFormData({
@@ -54,7 +59,14 @@ const ContactForm = () => {
         } catch (err) {
           // Handle any errors here
           console.error('Error during form submission:', err);
-          setConfirmation('Error sending message');
+  
+          // Check if the error response contains a message and set it
+          if (err.response && err.response.data && typeof err.response.data.message === 'string') {
+            setConfirmation(err.response.data.message);
+          } else {
+            // Handle cases where the error message is not in the expected format
+            setConfirmation('Error sending message');
+          }
         }
       });
     } else {
@@ -62,6 +74,7 @@ const ContactForm = () => {
       console.error('reCAPTCHA not loaded');
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit} className="contact-form row y-gap-40 pt-60 sm:pt-40">
