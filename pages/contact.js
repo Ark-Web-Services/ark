@@ -3,7 +3,6 @@ import Layout from '@/components/Layout/Layout';
 import dynamic from 'next/dynamic';
 import * as Icon from 'react-feather';
 import ContactForm from '@/components/contact/ContactForm';
-import Script from 'next/script';
 
 const LeafletMap = dynamic(() => import('@/components/elements/LeafletMap'), {
     ssr: false,
@@ -15,10 +14,7 @@ export default function Contact1() {
             <Head>
                 <title>Contact Us</title>
             </Head>
-            <Script
-                src="https://www.google.com/recaptcha/api.js?render=6Lem8CApAAAAAG__QpiKaanzep4uw7BrJ_0lwZFV"
-                strategy="beforeInteractive"
-            />
+
             <Layout footerLayout={11}>
                 <div>
                     <section className="page-header -base -">
