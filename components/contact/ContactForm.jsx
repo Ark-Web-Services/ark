@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const ContactForm = () => {
+  const recaptchaRef = useRef();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -24,21 +26,20 @@ const ContactForm = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-  
+
     // Check if reCAPTCHA is loaded
     if (window.grecaptcha) {
       // Ready to execute reCAPTCHA
       window.grecaptcha.ready(async () => {
         try {
           // Execute reCAPTCHA and get the token
-          const recaptchaResponse = await window.grecaptcha.execute('6Lem8CApAAAAAG__QpiKaanzep4uw7BrJ_0lwZFV', { action: 'submit' });
-  
+          const recaptchaResponse = recaptchaRef.current.getValue();
           // Construct the data to send, including the reCAPTCHA response
           const dataToSend = { ...formData, recaptchaResponse };
-  
+
           // Make the POST request to your backend with the form data
           const response = await axios.post('/api/sendmail', dataToSend);
-  
+
           // Check if the response contains a message and set it
           if (response.data && typeof response.data.message === 'string') {
             setConfirmation(response.data.message);
@@ -46,7 +47,7 @@ const ContactForm = () => {
             // Handle cases where the message is not in the expected format
             setConfirmation('Thank you! Your message has been sent.');
           }
-  
+
           // Reset the form state after successful submission
           setFormData({
             username: '',
@@ -59,7 +60,7 @@ const ContactForm = () => {
         } catch (err) {
           // Handle any errors here
           console.error('Error during form submission:', err);
-  
+
           // Check if the error response contains a message and set it
           if (err.response && err.response.data && typeof err.response.data.message === 'string') {
             setConfirmation(err.response.data.message);
@@ -74,7 +75,7 @@ const ContactForm = () => {
       console.error('reCAPTCHA not loaded');
     }
   };
-  
+
 
   return (
     <form onSubmit={handleSubmit} className="contact-form row y-gap-40 pt-60 sm:pt-40">
@@ -137,6 +138,11 @@ const ContactForm = () => {
         ></textarea>
       </div>
 
+      <ReCAPTCHA
+        ref={recaptchaRef}
+        sitekey='6LcHRCEpAAAAAKPjoqj41BOLpGHjkK7QgNa_LYXf'
+      />
+
       {/* Submit button */}
       <div className="form-group col-lg-12 col-md-12 col-sm-12">
         <button className="button -md -accent -uppercase text-white" type="submit">
@@ -150,6 +156,7 @@ const ContactForm = () => {
           <p>{confirmation}</p>
         </div>
       )}
+
     </form>
   );
 };
