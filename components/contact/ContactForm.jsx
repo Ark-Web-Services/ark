@@ -28,7 +28,7 @@ const ContactForm = () => {
     if (window.grecaptcha) {
       window.grecaptcha.ready(async () => {
         try {
-          const recaptchaResponse = await window.grecaptcha.execute('YOUR_SITE_KEY', { action: 'submit' });
+          const recaptchaResponse = await window.grecaptcha.execute('6Lem8CApAAAAAG__QpiKaanzep4uw7BrJ_0lwZFV', { action: 'submit' });
           // Add the reCAPTCHA response to formData
           const dataToSend = { ...formData, recaptchaResponse };
   
