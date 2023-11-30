@@ -1,10 +1,10 @@
 import Head from 'next/head';
-import Layout from '@/components/Layout/Layout';
+import Layout from '../components/Layout/Layout';
 import dynamic from 'next/dynamic';
 import * as Icon from 'react-feather';
 import ContactForm from '../components/contact/ContactForm';
 
-const LeafletMap = dynamic(() => import('@/components/elements/LeafletMap'), {
+const LeafletMap = dynamic(() => import('../components/elements/LeafletMap'), {
     ssr: false,
 })
 
