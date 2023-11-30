@@ -25,18 +25,24 @@ const ContactForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
   
+    // Check if reCAPTCHA is loaded
     if (window.grecaptcha) {
+      // Ready to execute reCAPTCHA
       window.grecaptcha.ready(async () => {
         try {
+          // Execute reCAPTCHA and get the token
           const recaptchaResponse = await window.grecaptcha.execute('6Lem8CApAAAAAG__QpiKaanzep4uw7BrJ_0lwZFV', { action: 'submit' });
-          // Add the reCAPTCHA response to formData
+  
+          // Construct the data to send, including the reCAPTCHA response
           const dataToSend = { ...formData, recaptchaResponse };
   
-          // Post the data including the reCAPTCHA response to your backend
+          // Make the POST request to your backend with the form data
           const response = await axios.post('/api/sendmail', dataToSend);
+  
+          // Update state based on the response
           setConfirmation(response.data);
   
-          // Reset the form after successful submission
+          // Reset the form state after successful submission
           setFormData({
             username: '',
             email: '',
@@ -46,11 +52,13 @@ const ContactForm = () => {
             recaptchaResponse: '',
           });
         } catch (err) {
-          console.error('Error during reCAPTCHA execution or form submission:', err);
+          // Handle any errors here
+          console.error('Error during form submission:', err);
           setConfirmation('Error sending message');
         }
       });
     } else {
+      // Handle case where reCAPTCHA is not loaded
       console.error('reCAPTCHA not loaded');
     }
   };
@@ -114,14 +122,6 @@ const ContactForm = () => {
           onChange={handleChange}
           required
         ></textarea>
-      </div>
-
-      {/* reCAPTCHA widget */}
-      <div className="form-group col-lg-12 col-md-12 col-sm-12">
-        <ReCAPTCHA
-          sitekey="6Lem8CApAAAAAG__QpiKaanzep4uw7BrJ_0lwZFV" // Replace with your actual site key
-          onChange={handleCaptchaChange}
-        />
       </div>
 
       {/* Submit button */}
