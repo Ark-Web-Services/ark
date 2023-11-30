@@ -28,6 +28,7 @@
     "react-dom": "18.2.0",
     "react-feather": "^2.0.10",
     "react-google-recaptcha": "^3.1.0",
+    "react-google-recaptcha-v3": "^1.10.1",
     "react-leaflet": "^4.2.1",
     "react-responsive-masonry": "^2.1.7",
     "react-scroll-trigger": "^0.6.14",
