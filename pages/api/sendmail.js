@@ -5,6 +5,9 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { username, email, subject, message, recaptchaResponse } = req.body;
 
+    // Log the received data for debugging
+    console.log("Received form data:", { username, email, subject, message, recaptchaResponse });
+
     // Verify the reCAPTCHA token
     const secretKey = process.env.RECAPTCHA_SECRET_KEY;
     const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
@@ -18,9 +21,12 @@ export default async function handler(req, res) {
       });
       const verificationData = await verificationResponse.json();
 
+      // Log the verification response for debugging
+      console.log("Verification Response from Google:", verificationData);
+
       if (!verificationData.success) {
         // reCAPTCHA verification failed
-        return res.status(400).json({ message: 'Invalid reCAPTCHA. Please try again.' });
+        return res.status(400).json({ message: 'Invalid reCAPTCHA. Please try again.', details: verificationData });
       }
 
       // Set up nodemailer transporter
@@ -39,7 +45,15 @@ export default async function handler(req, res) {
         subject: subject,
         text: `
             Dear ${username},
-            ...
+
+            Thank you for reaching out to us. We have received your message and appreciate your interest.
+
+            Here's a copy of your message for your reference:
+            Subject: ${subject}
+            Message: ${message}
+
+            We will review your message and get back to you as soon as possible.
+
             Best Regards,
             Ark Web Services
           `,
@@ -50,8 +64,8 @@ export default async function handler(req, res) {
       res.status(200).json({ message: "Thank you! We've received your message and will respond within 24 hours." });
 
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error sending message' });
+      console.error("Error occurred:", error);
+      res.status(500).json({ message: 'Error sending message', error: error.message });
     }
   } else {
     res.status(405).send('Method not allowed');
