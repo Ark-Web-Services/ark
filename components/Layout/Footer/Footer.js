@@ -113,7 +113,7 @@ export default function Footer() {
                                     <div className="footer__socials">
                                         <h3 className="text-xl lh-1 fw-600 text-white">Follow Us</h3>
                                         <div className="socials mt-40">
-                                            <div>
+                                            {/* <div>
                                                 <Link href="/#" className="text-white">
                                                     <i className="fa fa-facebook" aria-hidden="true" />
                                                 </Link>
@@ -127,7 +127,7 @@ export default function Footer() {
                                                 <Link href="/#" className="text-white">
                                                     <i className="fa fa-instagram" aria-hidden="true" />
                                                 </Link>
-                                            </div>
+                                            </div> */}
                                             <div>
                                                 <Link href="https://www.linkedin.com/company/arkwebservices" className="text-white">
                                                     <i className="fa fa-linkedin" aria-hidden="true" />
