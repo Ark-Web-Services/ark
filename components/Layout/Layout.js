@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import Footer from './Footer/Footer'
-import Header1 from './Header/Header'
+import Header from './Header/Header'
 
 export default function Layout({ headerLayout = 1, footerLayout, children, bgColor, navColor, logo, verticalLine }) {
     const [scroll, setScroll] = useState(0)
@@ -19,7 +19,7 @@ export default function Layout({ headerLayout = 1, footerLayout, children, bgCol
         <>
             <div className="barba-container">
                 <main className='main-content'>
-                    < Header1 navColor={navColor} scroll={scroll} logo={logo} navToggled={navToggled} navHandle={navHandle} />
+                    < Header navColor={navColor} scroll={scroll} logo={logo} navToggled={navToggled} navHandle={navHandle} />
 
 
                     {verticalLine &&
