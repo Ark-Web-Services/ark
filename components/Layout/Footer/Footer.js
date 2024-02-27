@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 
-export default function Footer8() {
+export default function Footer() {
     return (
         <>
             <footer className="footer -type-1">
