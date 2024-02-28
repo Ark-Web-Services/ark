@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Layout from '@/components/Layout/Layout';
 import Link from 'next/link';
 
-export default function Services1() {
+export default function Services() {
     return (
         <>
             <Head>
@@ -135,10 +135,10 @@ export default function Services1() {
                     </section>
                     <section className="layout-pt-lg layout-pb-sm">
                         <div className="container">
-                        <div className="row justify-center text-center">
+                            <div className="row justify-center text-center">
                                 <div className="col-xl-6 col-lg-7">
                                     <div className="sectionHeading ">
-                                    <div className="sectionHeading__subtitle">
+                                        <div className="sectionHeading__subtitle">
                                             <span>Our Process</span>
                                         </div>
                                         <h2 className="sectionHeading__title">How It Works</h2>
@@ -184,7 +184,7 @@ export default function Services1() {
                                         </div>
                                         <h4 className="text-xl fw-600 mt-20">Development</h4>
                                         <p className="mt-10">
-                                        Turning ideas into reality. Post-creation, we test and review, ensuring perfection.</p>
+                                            Turning ideas into reality. Post-creation, we test and review, ensuring perfection.</p>
                                         {/* <Link href="/services/services-3" className="button -simple text-accent fw-600 underline mt-12">Discover Now</Link> */}
                                     </div>
                                 </div>
@@ -203,7 +203,10 @@ export default function Services1() {
                                             <h3 className="text-30 lh-15 text-white">Here's our invitation to you<br /> to collaborate!</h3>
                                         </div>
                                         <div className="col-auto">
-                                            <button className="button -md -white text-accent">Embark</button>
+                                            <Link className="decoration-none" href="/contact">
+                                                <button className="button -md -white text-accent" href="/contact">Embark</button>
+                                            </Link>
+
                                         </div>
                                     </div>
                                 </div>
