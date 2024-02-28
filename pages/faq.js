@@ -1,24 +1,26 @@
 import Layout from '@/components/Layout/Layout';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as Icon from 'react-feather';
 export default function Faqs() {
-    const [active, setActive] = useState({
-        status: false,
-        key: 1,
-    });
-
+    const [activeKey, setActiveKey] = useState(null);
+    const contentRefs = useRef([]);
     const handleToggle = (key) => {
-        if (active.key === key) {
-            setActive({
-                status: false,
-            });
-        } else {
-            setActive({
-                status: true,
-                key,
-            });
-        }
+        setActiveKey(prevActiveKey => prevActiveKey === key ? null : key);
     };
+    // useEffect(() => {
+    //     if (contentRef.current) {
+    //         const contentHeight = contentRef.current.scrollHeight;
+    //         const newMaxHeight = active.status ? `${contentHeight}px` : '0';
+    //         contentRef.current.style.maxHeight = newMaxHeight;
+    //     }
+    // }, [active.status]);
+    useEffect(() => {
+        Object.entries(contentRefs.current).forEach(([key, content]) => {
+            const isKeyActive = parseInt(key) === activeKey;
+            content.style.maxHeight = isKeyActive ? `${content.scrollHeight}px` : '0px';
+        });
+    }, [activeKey]);
+
     return (
         <>
             <Layout
@@ -36,82 +38,16 @@ export default function Faqs() {
                                         <h1 className="page-header__title lh-14">Frequently Asked Questions</h1>
                                     </div>
                                 </div>
-                                <div className="col-xl-4 col-lg-9 col-md-10">
-                                    <div className="px-20">
-                                        <p className="page-header__text">With we want to optimize the customization process so your team can save time when building websites.</p>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </section>
                     <section className="layout-pt-lg layout-pb-lg">
                         <div className="container">
                             <div className="row y-gap-60 justify-center">
+
                                 <div className="col-xl-8 col-lg-9 col-md-11">
-                                    <h3 className="text-22 fw-600">Payments</h3>
-                                    <div className="accordion -simple pt-32 js-accordion">
-                                        <div className={active.key == 1 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(1)}>
-                                            <div className="accordion__button text-black">
-                                                <div className="accordion__icon">
-                                                    <Icon.Plus className="icon" />
-                                                    <Icon.Minus className="icon" />
-                                                </div>
-                                                <button className="text-lg md:text-base fw-600 text-black"> What does the package include?</button>
-                                            </div>
-                                            <div className="accordion__content" style={active.key == 1 ? { maxHeight: 72 } : { maxHeight: 0 }}>
-                                                <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={active.key == 2 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(2)}>
-                                            <div className="accordion__button text-black">
-                                                <div className="accordion__icon">
-                                                    <Icon.Plus className="icon" />
-                                                    <Icon.Minus className="icon" />
-                                                </div>
-                                                <button className="text-lg md:text-base fw-600 text-black">How does the 14-day trial work?</button>
-                                            </div>
-                                            <div className="accordion__content" style={active.key == 2 ? { maxHeight: 72 } : { maxHeight: 0 }}>
-                                                <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={active.key == 3 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(3)}>
-                                            <div className="accordion__button text-black">
-                                                <div className="accordion__icon">
-                                                    <Icon.Plus className="icon" />
-                                                    <Icon.Minus className="icon" />
-                                                </div>
-                                                <button className="text-lg md:text-base fw-600 text-black">How do I pay for your service?</button>
-                                            </div>
-                                            <div className="accordion__content" style={active.key == 3 ? { maxHeight: 72 } : { maxHeight: 0 }}>
-                                                <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={active.key == 4 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(4)}>
-                                            <div className="accordion__button text-black">
-                                                <div className="accordion__icon">
-                                                    <Icon.Plus className="icon" />
-                                                    <Icon.Minus className="icon" />
-                                                </div>
-                                                <button className="text-lg md:text-base fw-600 text-black">Can I suggest a new feature?</button>
-                                            </div>
-                                            <div className="accordion__content" style={active.key == 4 ? { maxHeight: 72 } : { maxHeight: 0 }}>
-                                                <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-xl-8 col-lg-9 col-md-11">
-                                    <h3 className="text-22 fw-600">Suggestions</h3>
                                     <div className="accordion -bordered pt-32 js-accordion">
-                                        <div className={active.key == 5 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(5)}>
+                                        <div className={activeKey == 5 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(5)}>
                                             <div className="accordion__button text-black">
                                                 <div className="accordion__icon">
                                                     <Icon.Plus className="icon" />
@@ -119,27 +55,32 @@ export default function Faqs() {
                                                 </div>
                                                 <button className="text-lg md:text-base fw-600 text-black"> What does the package include?</button>
                                             </div>
-                                            <div className="accordion__content" style={active.key == 5 ? { maxHeight: 124 } : { maxHeight: 0 }}>
+                                            <div className="accordion__content" ref={el => el && (contentRefs.current[5] = el)}>
                                                 <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
+                                                    <p>
+                                                        Each of our packages is tailored to meet the diverse needs of our clients, leveraging the full power of Next.js and the T3 stack. Generally, our packages include custom web application development, responsive design, SEO optimization, and basic maintenance for a set period post-launch. Additionally, we offer optional add-ons such as e-commerce integration, advanced SEO strategies, and extended maintenance and support plans.
+
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={active.key == 6 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(6)}>
+                                        <div className={activeKey == 6 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(6)}>
                                             <div className="accordion__button text-black">
                                                 <div className="accordion__icon">
                                                     <Icon.Plus className="icon" />
                                                     <Icon.Minus className="icon" />
                                                 </div>
-                                                <button className="text-lg md:text-base fw-600 text-black">How does the 14-day trial work?</button>
+                                                <button className="text-lg md:text-base fw-600 text-black">What are the customization options for my web application?</button>
                                             </div>
-                                            <div className="accordion__content" style={active.key == 6 ? { maxHeight: 124 } : { maxHeight: 0 }}>
+                                            <div className="accordion__content" ref={el => el && (contentRefs.current[6] = el)}>
                                                 <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
+                                                    <p>
+                                                        Every web application we develop is fully customized to meet our clients' unique requirements and business goals. Our customization options range from aesthetic elements like themes and layouts to functional features such as user authentication, database integration, and dynamic content. We also offer advanced customizations, including API integrations, e-commerce functionalities, and bespoke user interaction models. Throughout the development process, we work closely with you to ensure that every aspect of the application aligns with your vision and objectives, providing a truly personalized web solution.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={active.key == 7 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(7)}>
+                                        <div className={activeKey == 7 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(7)}>
                                             <div className="accordion__button text-black">
                                                 <div className="accordion__icon">
                                                     <Icon.Plus className="icon" />
@@ -147,13 +88,16 @@ export default function Faqs() {
                                                 </div>
                                                 <button className="text-lg md:text-base fw-600 text-black">How do I pay for your service?</button>
                                             </div>
-                                            <div className="accordion__content" style={active.key == 7 ? { maxHeight: 124 } : { maxHeight: 0 }}>
+                                            <div className="accordion__content" ref={el => el && (contentRefs.current[7] = el)}>
                                                 <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
+                                                    <p>
+                                                        We offer flexible payment options to suit your project's needs and budget. Payments can be made through bank transfers, credit cards, or PayPal. We typically begin with a deposit at the start of the project, followed by milestone-based payments to ensure transparency and satisfaction at every phase of development.
+
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={active.key == 8 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(8)}>
+                                        <div className={activeKey == 8 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(8)}>
                                             <div className="accordion__button text-black">
                                                 <div className="accordion__icon">
                                                     <Icon.Plus className="icon" />
@@ -161,23 +105,45 @@ export default function Faqs() {
                                                 </div>
                                                 <button className="text-lg md:text-base fw-600 text-black">Can I suggest a new feature?</button>
                                             </div>
-                                            <div className="accordion__content" style={active.key == 8 ? { maxHeight: 124 } : { maxHeight: 0 }}>
+                                            <div className="accordion__content" ref={el => el && (contentRefs.current[8] = el)}>
                                                 <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
+                                                    <p>
+
+                                                        Absolutely! We encourage our clients to share their ideas and suggestions for new features. Our development process is collaborative and iterative, and client feedback is crucial to us. If you have a feature in mind, let's discuss it! Our team will evaluate the feasibility and work with you to integrate it into your project, ensuring that the final product truly aligns with your vision.
+
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={active.key == 9 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(9)}>
+                                        <div className={activeKey == 9 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(9)}>
                                             <div className="accordion__button text-black">
                                                 <div className="accordion__icon">
                                                     <Icon.Plus className="icon" />
                                                     <Icon.Minus className="icon" />
                                                 </div>
-                                                <button className="text-lg md:text-base fw-600 text-black">How to restore your chat history?</button>
+                                                <button className="text-lg md:text-base fw-600 text-black">Do you integrate generative AI in  web applications?</button>
                                             </div>
-                                            <div className="accordion__content" style={active.key == 9 ? { maxHeight: 124 } : { maxHeight: 0 }}>
+                                            <div className="accordion__content" ref={el => el && (contentRefs.current[9] = el)}>
                                                 <div className="accordion__content__inner">
-                                                    <p>When you buy Sassio, you get all you see in the demo but the images. We include SASS files for styling, complete JS files with comments, all HTML variations. Besides we include all mobile PSD mockups.</p>
+                                                    <p>
+                                                        Our approach at Ark Web Services integrates advanced AI technologies, including OpenAI services, into our web applications to elevate the digital experience. Our expertise spans from implementing natural language processing and chatbots for enhanced user engagement to utilizing generative AI for creating bespoke sound and visual content. This innovative use of AI not only automates processes but also introduces a new level of personalization and interactivity to web applications. By leveraging AI, we aim to unlock new potentials for our clients, ensuring their web presence is not just functional but truly transformative.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className={activeKey == 10 ? "accordion__item is-active" : "accordion__item"} onClick={() => handleToggle(10)}>
+                                            <div className="accordion__button text-black">
+                                                <div className="accordion__icon">
+                                                    <Icon.Plus className="icon" />
+                                                    <Icon.Minus className="icon" />
+                                                </div>
+                                                <button className="text-lg md:text-base fw-600 text-black">What kind of post-launch support and maintenance services do you offer?</button>
+                                            </div>
+                                            <div className="accordion__content" ref={el => el && (contentRefs.current[10] = el)}>
+                                                <div className="accordion__content__inner">
+                                                    <p>
+                                                        We understand the importance of not just launching a project but nurturing it for long-term success. Our commitment extends beyond the initial go-live, offering ongoing support and maintenance services tailored to each client's needs. Whether it's updating content, fine-tuning features, or ensuring your web application scales smoothly with your growing business, we're here to provide the expertise and assistance you need. This approach ensures that your digital assets remain cutting-edge, secure, and aligned with evolving market trends, helping you maintain a competitive edge.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
