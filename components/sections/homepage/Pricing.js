@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import * as Icon from 'react-feather';
 
-export default function PricingFive() {
+export default function Pricing() {
     return (
         <>
             <section className="layout-pt-lg layout-pb-sm">
@@ -9,7 +9,7 @@ export default function PricingFive() {
                     <div className="row justify-center text-center">
                         <div className="col-xl-7 col-lg-8 col-md-10">
                             <div className="sectionHeading ">
-                                <h2 className="sectionHeading__title">Quick Pricing</h2>
+                                <h2 className="sectionHeading__title">Pricing</h2>
                                 <p className="sectionHeading__text mt-20">We often field queries about our pricing. Here are quick packages for those in a rush. Each website is unique with a distinct goal. If time allows, we recommend a call to discuss pricing!</p>
                             </div>
                         </div>
@@ -53,7 +53,7 @@ export default function PricingFive() {
                                     </ul>
                                     <div className="d-flex justify-center mt-40">
                                         <Link href="faq" className="button -md -dark-4 -uppercase col-12 text-white">
-                                            Join This Plan
+                                            Contact
                                         </Link>
                                     </div>
                                 </div>
@@ -94,7 +94,7 @@ export default function PricingFive() {
                                     </ul>
                                     <div className="d-flex justify-center mt-40">
                                         <Link href="faq" className="button -md -red-2 -uppercase col-12 text-white">
-                                            Join This Plan
+                                            contact
                                         </Link>
                                     </div>
                                 </div>
@@ -138,7 +138,7 @@ export default function PricingFive() {
                                     </ul>
                                     <div className="d-flex justify-center mt-40">
                                         <Link href="faq" className="button -md -dark-4 -uppercase col-12 text-white">
-                                            Join This Plan
+                                            contact
                                         </Link>
                                     </div>
                                 </div>
