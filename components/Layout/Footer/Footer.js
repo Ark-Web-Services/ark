@@ -176,7 +176,7 @@ export default function Footer() {
                         <div className="row justify-center py-30 border-top-light mt-120 md:mt-60">
                             <div className="col-auto">
                                 <div className="footer__bottom_text text-white">
-                                    © Copyright 2023. Ark Web Services
+                                    © Copyright 2024. Ark Web Services
                                 </div>
                             </div>
                         </div>
