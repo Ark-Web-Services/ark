@@ -7,7 +7,7 @@ import '../public/css/vendors.css';
 
 import "swiper/css";
 import "swiper/css/navigation";
-import { B2BPixel } from '../b2bpixel';
+import B2BPixel from '../b2bpixel';
 export default function App({ Component, pageProps }) {
   return (
     <>
