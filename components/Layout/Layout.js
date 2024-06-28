@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import Footer from './Footer/Footer'
-import Header1 from './Header/Header'
+import B2BPixel from './b2bpixel';
+import Footer from './Footer/Footer';
+import Header1 from './Header/Header';
 
 export default function Layout({ children, navColor, logo, verticalLine }) {
     const [scroll, setScroll] = useState(0)
@@ -17,6 +18,8 @@ export default function Layout({ children, navColor, logo, verticalLine }) {
     })
     return (
         <>
+                    <B2BPixel />
+
             <div className="barba-container">
                 <main className='main-content'>
                     < Header1 navColor={navColor} scroll={scroll} logo={logo} navToggled={navToggled} navHandle={navHandle} />
