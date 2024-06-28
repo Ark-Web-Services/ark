@@ -3157,11 +3157,11 @@ h6 {
 @media (min-width: 992px) {
   .menu {
     position: relative;
-    width: unset;
+    width: unset !important;
   }
   .menu .nav {
     display: flex;
-    width: 100%;
+    /* width: 100%; */
   }
   .menu .nav > li > a {
     position: relative;
@@ -3208,7 +3208,7 @@ h6 {
     opacity: 0;
   }
   .menu .nav__submenu_item > a {
-    width: 100%;
+    /* width: 100%; */
     display: flex;
     align-items: center;
     font-size: 0.875rem;
@@ -3264,7 +3264,7 @@ h6 {
     top: 0;
     bottom: 0;
     left: 0;
-    width: 100vw;
+    /* width: 100vw; */
     display: flex;
     flex-direction: column;
     pointer-events: none;
@@ -3290,7 +3290,7 @@ h6 {
   .menu ul {
     pointer-events: none;
     position: relative;
-    width: 100%;
+    /* width: 100%; */
   }
   .menu ul.is-active {
     pointer-events: auto;
