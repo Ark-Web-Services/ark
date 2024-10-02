@@ -1,87 +1,90 @@
 'use client'
 
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { Events, Link as ScrollLink, scrollSpy } from 'react-scroll';
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
 
-const navigationItems = [
-    { name: 'Home', target: 'home' },
-    { name: 'Skills', target: 'skills' },
-    { name: 'Projects', target: 'projects' },
-    { name: 'Contact', target: 'contact' },
-];
+gsap.registerPlugin(ScrollTrigger)
 
-const Header = () => {
-    const [activeSection, setActiveSection] = useState<string>(navigationItems[0]?.target ?? '');
+export default function Header() {
+    const headerRef = useRef(null)
+    const [isScrolled, setIsScrolled] = useState(false)
 
     useEffect(() => {
-        Events.scrollEvent.register('begin', function (...args) {
-            console.log('begin', args);
-        });
+        const header = headerRef.current
+        const logo = header.querySelector('.logo')
+        const navItems = header.querySelectorAll('.nav-item')
+        const contactButton = header.querySelector('.contact-button')
+        const navContainer = header.querySelector('.nav-container')
 
-        Events.scrollEvent.register('end', function (...args) {
-            console.log('end', args);
-        });
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top-=100',
+                onEnter: () => setIsScrolled(true),
+                onLeaveBack: () => setIsScrolled(false),
+            }
+        })
 
-        scrollSpy.update();
+        tl.to(header, {
+            backgroundColor: '#000',
+            padding: '0.5rem 1rem',
+            borderRadius: '9999px',
+            width: 'auto',
+            left: '50%',
+            xPercent: -50,
+            duration: 0.3,
+        })
+            .to(logo, {
+                color: '#fff',
+                scale: 0.9,
+                duration: 0.3,
+            }, '<')
+            .to(navItems, {
+                color: '#fff',
+                fontSize: '0.875rem',
+                padding: '0 0.5rem',
+                duration: 0.3,
+            }, '<')
+            .to(contactButton, {
+                backgroundColor: '#3b82f6',
+                color: '#fff',
+                fontSize: '0.875rem',
+                padding: '0.375rem 0.75rem',
+                duration: 0.3,
+            }, '<')
+            .to(navContainer, {
+                gap: '0.5rem',
+                duration: 0.3,
+            }, '<')
 
         return () => {
-            Events.scrollEvent.remove('begin');
-            Events.scrollEvent.remove('end');
-        };
-    }, []);
-
-    const handleSetActive = (to: string) => {
-        setActiveSection(to);
-        window.history.pushState(null, '', `#${to}`);
-    };
+            if (tl.scrollTrigger) {
+                tl.scrollTrigger.kill()
+            }
+        }
+    }, [])
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white bg-opacity-90 shadow-md">
-            <nav className="container mx-auto px-6 py-3 relative" id="nav">
-                <ul className="flex justify-center space-x-8 relative">
-                    {navigationItems.map((item) => (
-                        <li key={item.target} className="relative w-24 text-center">
-                            <ScrollLink
-                                to={item.target}
-                                smooth={true}
-                                duration={500}
-                                spy={true}
-                                offset={-70} // Adjust this value based on your header height
-                                onSetActive={handleSetActive}
-                                className="cursor-pointer transition-colors duration-300"
-                            >
-                                {item.target === activeSection && <Highlight highlightStyle={{ width: '100%', left: 0 }} />}
-                                <span className={`transition-colors duration-300 ${item.target === activeSection ? 'text-white' : 'text-gray-700'}`}>
-                                    {item.name}
-                                </span>
-                            </ScrollLink>
-                        </li>
-                    ))}
-                </ul>
+        <header ref={headerRef} className="fixed top-4 left-4 right-4 py-4 px-6 bg-white transition-all duration-300 z-50">
+            <nav className="flex justify-between items-center max-w-6xl mx-auto">
+                <Link href="/" className="logo text-2xl font-bold text-black">
+                    quarter.digital
+                </Link>
+                <div className="nav-container flex items-center space-x-4">
+                    <Link href="/projects" className="nav-item text-black hover:text-gray-600">Projects</Link>
+                    <Link href="/services" className="nav-item text-black hover:text-gray-600">Services</Link>
+                    <Link href="/our-story" className="nav-item text-black hover:text-gray-600">Our Story</Link>
+                    <Link href="/blog" className="nav-item text-black hover:text-gray-600">Blog</Link>
+                    <Link
+                        href="/contact"
+                        className="contact-button px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                    >
+                        Contact
+                    </Link>
+                </div>
             </nav>
-            <div className="absolute inset-y-0 left-0 w-[50px] bg-gradient-to-r from-black to-transparent opacity-10"></div>
-            <div className="absolute inset-y-0 right-0 w-[50px] bg-gradient-to-l from-black to-transparent opacity-10"></div>
         </header>
-    );
-};
-
-export default Header;
-
-interface HighlightProps {
-    highlightStyle: {
-        width: string;
-        left: number;
-    };
+    )
 }
-
-const Highlight: React.FC<HighlightProps> = ({ highlightStyle }) => (
-    <motion.div
-        className="absolute inset-y-0 bg-blue-900 rounded-lg z-[-1]"
-        animate={{
-            width: highlightStyle.width,
-            left: highlightStyle.left,
-        }}
-        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-    />
-);

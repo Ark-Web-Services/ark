@@ -1,9 +1,11 @@
-import ClientLogos from './_compoonents/client-logos'
-import Features from './_compoonents/features'
-import Footer from './_compoonents/footer'
-import Header from './_compoonents/header'
-import Hero from './_compoonents/hero'
-import Testimonials from './_compoonents/testimonials'
+import ClientLogos from './_components/ClientLogos'
+import Features from './_components/Features'
+import Footer from './_components/Footer'
+// import Header from './_components/Header'
+import Header from '../_components/Header'
+import Hero from './_components/Hero'
+import Testimonials from './_components/testimonials'
+
 
 export default function Home() {
     return (

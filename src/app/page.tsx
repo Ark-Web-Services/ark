@@ -1,6 +1,5 @@
 import HeroSection from './_components/HeroSection';
 
-import BigGuy from './_components/BigGuy';
 import ContactSection from './_components/ContactSection';
 import Footer from './_components/Footer';
 import Header from './_components/Header';
@@ -16,7 +15,6 @@ export default function Portfolio() {
       <Header />
 
       <main>
-        <BigGuy />
 
         <NoiseSection />
         <HeroSection />
