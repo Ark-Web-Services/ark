@@ -21,7 +21,9 @@ function GridPlane({ isAnimating, color }: { isAnimating: boolean; color: string
     useFrame(({ clock }) => {
         if (isAnimating) {
             const time = clock.getElapsedTime();
-            const positions = geometry.attributes.position ? (geometry.attributes.position.array as Float32Array) : null;
+            const positions = geometry.attributes.position
+                ? (geometry.attributes.position.array as Float32Array)
+                : null;
 
             if (positions) {
                 for (let i = 0; i < positions.length; i += 3) {
@@ -44,12 +46,7 @@ function GridPlane({ isAnimating, color }: { isAnimating: boolean; color: string
 
     return (
         <mesh ref={meshRef} geometry={geometry}>
-            <meshStandardMaterial
-                color={color}
-                wireframe
-                opacity={0.5}
-                transparent
-            />
+            <meshStandardMaterial color={color} wireframe opacity={0.5} transparent />
         </mesh>
     );
 }
@@ -80,27 +77,56 @@ const Pyramid: React.FC<PyramidProps> = ({ isAnimating, color }) => {
     });
 
     return (
-        <mesh ref={meshRef} geometry={geometry} position={[0, 6, 0]} rotation={[0, 0, 0]}>
+        <mesh
+            ref={meshRef}
+            geometry={geometry}
+            position={[0, 6, 0]}
+            rotation={[0, 0, 0]}
+        >
             <meshStandardMaterial color={color} />
         </mesh>
     );
 };
 
-// AnimatedCamera Component
+// AnimatedCamera Component with separate logic for side buttons
 type AnimatedCameraProps = {
     isAnimating: boolean;
     isZooming: boolean;
     targetPosition: { x: number; y: number; z: number };
     orbitAngle: number;
+    // New props for side button animations
+    isAnimatingToSide: boolean;
+    sideOrbitAngle?: number;
+    setIsAnimatingToSide: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming, targetPosition, orbitAngle }) => {
+const AnimatedCamera: React.FC<AnimatedCameraProps> = ({
+    isAnimating,
+    isZooming,
+    targetPosition,
+    orbitAngle,
+    isAnimatingToSide,
+    sideOrbitAngle,
+    setIsAnimatingToSide,
+}) => {
     const { camera, clock } = useThree();
     const [startTime, setStartTime] = useState<number | null>(null);
     const [initialPosition, setInitialPosition] = useState<THREE.Vector3 | null>(null);
     const [initialRotation, setInitialRotation] = useState<number | null>(null);
 
+    // Refs for side button animations
+    const sideAnimation = useRef({
+        startTime: null as number | null,
+        initialPosition: null as THREE.Vector3 | null,
+        initialRadius: null as number | null,
+        initialTheta: null as number | null,
+        initialPhi: null as number | null,
+        targetRadius: null as number | null,
+        targetTheta: null as number | null,
+    });
+
     useFrame(() => {
+        // Logic for "Get in Touch" button animation
         if (isAnimating && isZooming) {
             if (startTime === null) {
                 setStartTime(clock.getElapsedTime());
@@ -108,16 +134,82 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming,
                 setInitialRotation(camera.rotation.y);
             }
             const elapsedTime = clock.getElapsedTime() - (startTime ?? 0);
-            const t = Math.min(elapsedTime / 3, 1);
-            const easeInOutQuad = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            const t = Math.min(elapsedTime / 3, 1); // Duration of 3 seconds
+            const easeInOutQuad = (t: number) =>
+                t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
             const easedT = easeInOutQuad(t);
             if (initialPosition && initialRotation !== null) {
                 camera.position.lerpVectors(initialPosition, targetPosition, easedT);
-                camera.rotation.y = THREE.MathUtils.lerp(initialRotation, orbitAngle, easedT);
+                camera.rotation.y = THREE.MathUtils.lerp(
+                    initialRotation,
+                    orbitAngle,
+                    easedT
+                );
             }
         } else if (targetPosition) {
             camera.position.lerp(targetPosition, 0.1);
+        }
+
+        // Logic for side button animations
+        if (isAnimatingToSide) {
+            if (sideAnimation.current.startTime === null) {
+                sideAnimation.current.startTime = clock.getElapsedTime();
+                sideAnimation.current.initialPosition = camera.position.clone();
+                const offset = camera.position.clone().sub(new THREE.Vector3(0, 6, 0));
+                sideAnimation.current.initialRadius = offset.length();
+                sideAnimation.current.initialTheta = Math.atan2(offset.z, offset.x);
+                sideAnimation.current.initialPhi = Math.acos(
+                    offset.y / sideAnimation.current.initialRadius!
+                );
+                sideAnimation.current.targetRadius =
+                    sideAnimation.current.initialRadius! + 5; // Zoom out by 5 units
+                sideAnimation.current.targetTheta = sideOrbitAngle; // Orbit angle passed from Coordinates component
+            }
+            const elapsedTime =
+                clock.getElapsedTime() - (sideAnimation.current.startTime ?? 0);
+            const t = Math.min(elapsedTime / 1, 1); // duration 1 second
+            const easeInOutQuad = (t: number) =>
+                t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            const easedT = easeInOutQuad(t);
+
+            if (
+                sideAnimation.current.initialRadius !== null &&
+                sideAnimation.current.initialTheta !== null &&
+                sideAnimation.current.initialPhi !== null &&
+                sideAnimation.current.targetTheta !== undefined &&
+                sideAnimation.current.targetRadius !== undefined
+            ) {
+                const radius = THREE.MathUtils.lerp(
+                    sideAnimation.current.initialRadius!,
+                    sideAnimation.current.targetRadius!,
+                    easedT
+                );
+                const theta = THREE.MathUtils.lerp(
+                    sideAnimation.current.initialTheta!,
+                    sideAnimation.current.targetTheta!,
+                    easedT
+                );
+                const phi = sideAnimation.current.initialPhi!; // No change in phi
+
+                const x = radius * Math.sin(phi) * Math.cos(theta);
+                const y = radius * Math.cos(phi);
+                const z = radius * Math.sin(phi) * Math.sin(theta);
+
+                camera.position.set(x + 0, y + 6, z + 0);
+                camera.lookAt(0, 6, 0);
+            }
+            if (t >= 1) {
+                // Animation complete
+                setIsAnimatingToSide(false); // Stop the animation
+                sideAnimation.current.startTime = null;
+                sideAnimation.current.initialPosition = null;
+                sideAnimation.current.initialRadius = null;
+                sideAnimation.current.initialTheta = null;
+                sideAnimation.current.initialPhi = null;
+                sideAnimation.current.targetRadius = null;
+                sideAnimation.current.targetTheta = null;
+            }
         }
 
         // Ensure the camera only rotates around the Y-axis
@@ -139,59 +231,13 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming,
     return null;
 };
 
-// AnimatedText Component with onComplete Callback
-const AnimatedText = ({
-    text,
-    onComplete,
-    subTextRef,
-}: {
-    text: string;
-    onComplete: () => void;
-    subTextRef: React.RefObject<HTMLParagraphElement>;
-}) => {
-    const textRef = useRef<HTMLSpanElement>(null);
-
-    useEffect(() => {
-        if (textRef.current) {
-            gsap.fromTo(
-                textRef.current.children,
-                { y: 50, opacity: 0 },
-                {
-                    y: 0,
-                    opacity: 1,
-                    duration: 0.5,
-                    stagger: 0.05,
-                    onComplete: () => {
-                        onComplete();
-                        if (subTextRef.current) {
-                            gsap.fromTo(
-                                subTextRef.current,
-                                { y: 20, opacity: 0 },
-                                { y: 0, opacity: 1, duration: 0.5 }
-                            );
-                        }
-                    },
-                }
-            );
-        }
-    }, [onComplete, subTextRef]);
-
-    return (
-        <span ref={textRef} className="inline-block">
-            {text.split('').map((char, index) => (
-                <span key={index} className="inline-block">
-                    {char === ' ' ? <>&nbsp;</> : char}
-                </span>
-            ))}
-        </span>
-    );
-};
-
+// Coordinates Component with separate state and logic for side buttons
 const Coordinates = () => {
     const [isAnimating, setIsAnimating] = useState(true);
     const [isZooming, setIsZooming] = useState(false);
     const [showButtons, setShowButtons] = useState(false);
     const [targetPosition, setTargetPosition] = useState<THREE.Vector3 | null>(null);
+    const [orbitAngle, setOrbitAngle] = useState(0);
     const [color, setColor] = useState("#DA70D6");
     const [showText, setShowText] = useState(true);
     const [showSubText, setShowSubText] = useState(false);
@@ -201,7 +247,10 @@ const Coordinates = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [rotationX, setRotationX] = useState(0);
     const [rotationY, setRotationY] = useState(0);
-    const [orbitAngle, setOrbitAngle] = useState(0);
+
+    // State variables for side button animations
+    const [isAnimatingToSide, setIsAnimatingToSide] = useState(false);
+    const [sideOrbitAngle, setSideOrbitAngle] = useState<number | null>(null);
 
     useEffect(() => {
         if (textRef.current) {
@@ -223,7 +272,13 @@ const Coordinates = () => {
 
     useEffect(() => {
         if (showSubText && subTextRef.current) {
-            gsap.set(subTextRef.current, { opacity: 0, position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)' }); // Center subtext below the welcome text
+            gsap.set(subTextRef.current, {
+                opacity: 0,
+                position: 'absolute',
+                top: '100%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+            }); // Center subtext below the welcome text
             gsap.fromTo(
                 subTextRef.current,
                 { y: 20, opacity: 0 },
@@ -268,7 +323,7 @@ const Coordinates = () => {
             ease: "power2.inOut",
             onComplete: () => {
                 if (buttonRef.current) {
-                    buttonRef.current.style.display = 'hidden';
+                    buttonRef.current.style.display = 'none';
                 }
                 setTimeout(() => setShowButtons(true), 2000);
             },
@@ -276,39 +331,34 @@ const Coordinates = () => {
     };
 
     const handleSideButtonClick = (side: number) => {
+        if (isAnimatingToSide) return; // Prevent starting a new animation if one is in progress
+
         let newColor: string;
         let orbitAngle: number = 0;
-        let targetPosition: THREE.Vector3;
         switch (side) {
             case 1:
                 newColor = "#F7AA64";
                 orbitAngle = Math.PI / 4; // Rotate 45 degrees to the right
-                targetPosition = new THREE.Vector3(8, 6, 8); // Final position for button 1
                 break;
             case 2:
                 newColor = "#06ABDB";
                 orbitAngle = -Math.PI / 4; // Rotate 45 degrees to the left
-                targetPosition = new THREE.Vector3(-8, 6, 8); // Final position for button 2
                 break;
             case 3:
                 newColor = "#e961A5";
-                orbitAngle = -Math.PI / 4; // Inverse of button 1
-                targetPosition = new THREE.Vector3(-8, 6, -8); // Inverse position for button 3
+                orbitAngle = -Math.PI * 0.75; // Rotate 135 degrees to the left
                 break;
             case 4:
                 newColor = "#FADF45";
-                orbitAngle = Math.PI / 4; // Inverse of button 2
-                targetPosition = new THREE.Vector3(8, 6, -8); // Inverse position for button 4
+                orbitAngle = Math.PI * 0.75; // Rotate 135 degrees to the right
                 break;
             default:
                 newColor = "#DA70D6";
                 orbitAngle = 0;
-                targetPosition = new THREE.Vector3(0, 6, 8); // Default position
         }
         setColor(newColor);
-        setIsZooming(true);
-        setOrbitAngle(orbitAngle); // Set the orbit angle state
-        setTargetPosition(targetPosition); // Set the target position state
+        setIsAnimatingToSide(true);
+        setSideOrbitAngle(orbitAngle); // Set the orbit angle for side buttons
     };
 
     useEffect(() => {
@@ -361,7 +411,10 @@ const Coordinates = () => {
                         isAnimating={isAnimating}
                         isZooming={isZooming}
                         targetPosition={targetPosition ?? { x: 0, y: 20, z: 50 }}
-                        orbitAngle={orbitAngle} // Pass the orbit angle to the AnimatedCamera component
+                        orbitAngle={orbitAngle}
+                        isAnimatingToSide={isAnimatingToSide}
+                        sideOrbitAngle={sideOrbitAngle ?? 0}
+                        setIsAnimatingToSide={setIsAnimatingToSide}
                     />
                 </Canvas>
             </div>
@@ -376,7 +429,10 @@ const Coordinates = () => {
                             ))}
                         </h1>
                         {showSubText && (
-                            <p ref={subTextRef} className="text-xl md:text-2xl text-gray-300 mb-8">
+                            <p
+                                ref={subTextRef}
+                                className="text-xl md:text-2xl text-gray-300 mb-8"
+                            >
                                 Experience the dynamic visuals and animations
                             </p>
                         )}
@@ -397,6 +453,7 @@ const Coordinates = () => {
                             key={side}
                             onClick={() => handleSideButtonClick(side)}
                             className="bg-white p-2 rounded side-button"
+                            style={{ opacity: 0 }} // Ensure buttons are initially invisible
                         >
                             {side}
                         </button>
