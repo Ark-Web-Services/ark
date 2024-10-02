@@ -1,4 +1,3 @@
-import HeroSection from './_components/HeroSection';
 
 import ContactSection from './_components/ContactSection';
 import Footer from './_components/Footer';
@@ -17,7 +16,7 @@ export default function Portfolio() {
       <main>
 
         <NoiseSection />
-        <HeroSection />
+        {/* <HeroSection /> */}
 
         <SkillSection />
 
