@@ -96,19 +96,25 @@ type AnimatedCameraProps = {
 const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming, targetPosition }) => {
     const { camera, clock } = useThree();
     const [startTime, setStartTime] = useState<number | null>(null);
+    const [initialPosition, setInitialPosition] = useState<THREE.Vector3 | null>(null);
 
     useFrame(() => {
         if (isAnimating && isZooming) {
             if (startTime === null) {
                 setStartTime(clock.getElapsedTime());
+                setInitialPosition(camera.position.clone()); // Save the initial position
             }
             const elapsedTime = clock.getElapsedTime() - (startTime ?? 0);
-            camera.position.z = Math.max(5, 50 - elapsedTime * 5);
-            camera.position.y = Math.max(8, 20 - elapsedTime * 2);
-            camera.lookAt(0, 6, 0);
-        }
+            const t = Math.min(elapsedTime / 3, 1); // Faster normalization for quicker movement
+            const easeOutExpo = (t: number) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 
-        if (targetPosition) {
+            const easedT = easeOutExpo(t);
+            if (initialPosition) {
+                camera.position.lerpVectors(initialPosition, new THREE.Vector3(0, 5, 8), easedT); // Pull back a bit more
+                camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, -0.1, easedT); // Slight tilt up
+            }
+            camera.lookAt(0, 6, 0);
+        } else if (targetPosition) {
             camera.position.lerp(targetPosition, 0.1);
             camera.lookAt(0, 6, 0);
         }
@@ -117,6 +123,7 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming,
     useEffect(() => {
         if (!isZooming) {
             setStartTime(null);
+            setInitialPosition(null);
         }
     }, [isZooming]);
 
@@ -230,7 +237,7 @@ const Coordinates = () => {
 
     const handleButtonClick = () => {
         setIsZooming(true);
-        setTargetPosition(new THREE.Vector3(0, 20, 50)); // Reset camera position
+        setTargetPosition(new THREE.Vector3(0, 20, 60)); // Pull back a bit more
 
         gsap.to(textRef.current, {
             duration: 1,
@@ -315,7 +322,7 @@ const Coordinates = () => {
         >
             <div className="absolute inset-0 z-0">
                 <Canvas
-                    camera={{ position: [0, 20, 50], fov: 60 }}
+                    camera={{ position: [0, 20, 50] }}
                     style={{ background: 'black' }}
                 >
                     <ambientLight intensity={0.5} />
