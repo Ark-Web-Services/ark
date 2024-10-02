@@ -91,39 +91,48 @@ type AnimatedCameraProps = {
     isAnimating: boolean;
     isZooming: boolean;
     targetPosition: { x: number; y: number; z: number };
+    orbitAngle: number;
 };
 
-const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming, targetPosition }) => {
+const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming, targetPosition, orbitAngle }) => {
     const { camera, clock } = useThree();
     const [startTime, setStartTime] = useState<number | null>(null);
     const [initialPosition, setInitialPosition] = useState<THREE.Vector3 | null>(null);
+    const [initialRotation, setInitialRotation] = useState<number | null>(null);
 
     useFrame(() => {
         if (isAnimating && isZooming) {
             if (startTime === null) {
                 setStartTime(clock.getElapsedTime());
-                setInitialPosition(camera.position.clone()); // Save the initial position
+                setInitialPosition(camera.position.clone());
+                setInitialRotation(camera.rotation.y);
             }
             const elapsedTime = clock.getElapsedTime() - (startTime ?? 0);
-            const t = Math.min(elapsedTime / 3, 1); // Faster normalization for quicker movement
-            const easeOutExpo = (t: number) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+            const t = Math.min(elapsedTime / 3, 1);
+            const easeInOutQuad = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
-            const easedT = easeOutExpo(t);
-            if (initialPosition) {
-                camera.position.lerpVectors(initialPosition, new THREE.Vector3(0, 5, 8), easedT); // Pull back a bit more
-                camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, -0.1, easedT); // Slight tilt up
+            const easedT = easeInOutQuad(t);
+            if (initialPosition && initialRotation !== null) {
+                camera.position.lerpVectors(initialPosition, targetPosition, easedT);
+                camera.rotation.y = THREE.MathUtils.lerp(initialRotation, orbitAngle, easedT);
             }
-            camera.lookAt(0, 6, 0);
         } else if (targetPosition) {
             camera.position.lerp(targetPosition, 0.1);
-            camera.lookAt(0, 6, 0);
         }
+
+        // Ensure the camera only rotates around the Y-axis
+        camera.rotation.x = 0;
+        camera.rotation.z = 0;
+
+        // Always look at the pyramid's position
+        camera.lookAt(0, 6, 0);
     });
 
     useEffect(() => {
         if (!isZooming) {
             setStartTime(null);
             setInitialPosition(null);
+            setInitialRotation(null);
         }
     }, [isZooming]);
 
@@ -192,6 +201,7 @@ const Coordinates = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [rotationX, setRotationX] = useState(0);
     const [rotationY, setRotationY] = useState(0);
+    const [orbitAngle, setOrbitAngle] = useState(0);
 
     useEffect(() => {
         if (textRef.current) {
@@ -237,7 +247,7 @@ const Coordinates = () => {
 
     const handleButtonClick = () => {
         setIsZooming(true);
-        setTargetPosition(new THREE.Vector3(0, 20, 60)); // Pull back a bit more
+        setTargetPosition(new THREE.Vector3(0, 5, 8)); // Final destination
 
         gsap.to(textRef.current, {
             duration: 1,
@@ -266,32 +276,50 @@ const Coordinates = () => {
     };
 
     const handleSideButtonClick = (side: number) => {
-        let newPosition: THREE.Vector3;
         let newColor: string;
+        let orbitAngle: number = 0;
+        let targetPosition: THREE.Vector3;
         switch (side) {
             case 1:
-                newPosition = new THREE.Vector3(11, 6, 5);
                 newColor = "#F7AA64";
+                orbitAngle = Math.PI / 4; // Rotate 45 degrees to the right
+                targetPosition = new THREE.Vector3(8, 6, 8); // Final position for button 1
                 break;
             case 2:
-                newPosition = new THREE.Vector3(-5, 6, 0);
                 newColor = "#06ABDB";
+                orbitAngle = -Math.PI / 4; // Rotate 45 degrees to the left
+                targetPosition = new THREE.Vector3(-8, 6, 8); // Final position for button 2
                 break;
             case 3:
-                newPosition = new THREE.Vector3(3, 6, 3);
                 newColor = "#e961A5";
+                orbitAngle = -Math.PI / 4; // Inverse of button 1
+                targetPosition = new THREE.Vector3(-8, 6, -8); // Inverse position for button 3
                 break;
             case 4:
-                newPosition = new THREE.Vector3(-3, 6, -3);
                 newColor = "#FADF45";
+                orbitAngle = Math.PI / 4; // Inverse of button 2
+                targetPosition = new THREE.Vector3(8, 6, -8); // Inverse position for button 4
                 break;
             default:
-                newPosition = new THREE.Vector3(-8, 10, 15);
                 newColor = "#DA70D6";
+                orbitAngle = 0;
+                targetPosition = new THREE.Vector3(0, 6, 8); // Default position
         }
-        setTargetPosition(newPosition);
         setColor(newColor);
+        setIsZooming(true);
+        setOrbitAngle(orbitAngle); // Set the orbit angle state
+        setTargetPosition(targetPosition); // Set the target position state
     };
+
+    useEffect(() => {
+        if (showButtons) {
+            gsap.fromTo(
+                ".side-button",
+                { opacity: 0 },
+                { opacity: 1, duration: 0.5, stagger: 0.1 }
+            );
+        }
+    }, [showButtons]);
 
     const handlePointerDown = () => {
         setIsDragging(true);
@@ -333,6 +361,7 @@ const Coordinates = () => {
                         isAnimating={isAnimating}
                         isZooming={isZooming}
                         targetPosition={targetPosition ?? { x: 0, y: 20, z: 50 }}
+                        orbitAngle={orbitAngle} // Pass the orbit angle to the AnimatedCamera component
                     />
                 </Canvas>
             </div>
@@ -367,7 +396,7 @@ const Coordinates = () => {
                         <button
                             key={side}
                             onClick={() => handleSideButtonClick(side)}
-                            className="bg-white p-2 rounded"
+                            className="bg-white p-2 rounded side-button"
                         >
                             {side}
                         </button>
