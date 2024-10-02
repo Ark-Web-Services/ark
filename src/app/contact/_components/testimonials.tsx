@@ -49,27 +49,27 @@ export default function Testimonials() {
                             return (
                                 <div key={index} className="flex flex-col">
                                     <div className="flex mb-4">
-                                        {[...Array(testimonial.stars)].map((_, i) => (
+                                        {[...Array<number>(testimonial?.stars ?? 0)].map((_, i) => (
                                             <Star key={i} className="w-5 h-5 text-blue-600 fill-current" />
                                         ))}
                                     </div>
-                                    <p className="text-[20px] font-normal mb-6 leading-tight">{testimonial.quote}</p>
+                                    <p className="text-[20px] font-normal mb-6 leading-tight">{testimonial?.quote}</p>
                                     <div className="mt-auto flex items-center">
                                         <Image
-                                            src={testimonial.avatar}
-                                            alt={testimonial.name}
-                                            width={testimonial.name.includes('and') ? 96 : 48}
+                                            src={testimonial?.avatar ?? '/default-avatar.png'}
+                                            alt={testimonial?.name ?? 'Anonymous'}
+                                            width={testimonial?.name?.includes('and') ? 96 : 48}
                                             height={48}
                                             className="rounded-full mr-4"
                                         />
                                         <div className="flex-grow">
-                                            <p className="text-[18px] font-medium">{testimonial.name}</p>
-                                            <p className="text-[14px] text-gray-600">{testimonial.role}</p>
+                                            <p className="text-[18px] font-medium">{testimonial?.name}</p>
+                                            <p className="text-[14px] text-gray-600">{testimonial?.role}</p>
                                         </div>
                                         <Image
-                                            src={testimonial.companyLogo}
-                                            alt={testimonial.role.split(',')[1].trim()}
-                                            width={testimonial.name.includes('and') ? 60 : 100}
+                                            src={testimonial?.companyLogo ?? '/default-logo.png'}
+                                            alt={testimonial?.role.split(',')[1]?.trim() ?? 'Default Role'}
+                                            width={testimonial?.name.includes('and') ? 60 : 100}
                                             height={24}
                                             className="ml-auto"
                                         />

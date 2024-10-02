@@ -1,12 +1,20 @@
-
 'use client'
 
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 
+interface Testimonial {
+    stars: number
+    quote: string
+    name: string
+    role: string
+    avatar: string
+    companyLogo: string
+}
+
 export default function Testimonials() {
-    const testimonials = [
+    const testimonials: Testimonial[] = [
         {
             stars: 5,
             quote: "They created a super good-looking website with great page speed metrics and very quick but detailed execution. We were able to clearly communicate what we liked and disliked, and they independently implemented the changes.",
@@ -47,10 +55,11 @@ export default function Testimonials() {
                         {[0, 1].map((offset) => {
                             const index = (currentIndex + offset) % testimonials.length
                             const testimonial = testimonials[index]
+                            if (!testimonial) return null
                             return (
                                 <div key={index} className="flex flex-col">
                                     <div className="flex mb-4">
-                                        {[...Array(testimonial.stars)].map((_, i) => (
+                                        {Array.from({ length: testimonial.stars }, (_, i) => (
                                             <Star key={i} className="w-5 h-5 text-blue-600 fill-current" />
                                         ))}
                                     </div>
@@ -65,11 +74,27 @@ export default function Testimonials() {
                                         />
                                         <div className="flex-grow">
                                             <p className="text-[18px] font-medium">{testimonial.name}</p>
-                                            <p className="text-[14px] text-gray-600">{testimonial.role}</p>
+                                            <p className="text-[14px] text-gray-600">
+                                                {(() => {
+                                                    const roleParts = testimonial.role.split(',')
+                                                    if (roleParts.length > 1 && roleParts[1]) {
+                                                        return roleParts[1].trim()
+                                                    }
+                                                    return testimonial.role
+                                                })()}
+                                            </p>
                                         </div>
                                         <Image
                                             src={testimonial.companyLogo}
-                                            alt={testimonial.role.split(',')[1].trim()}
+                                            alt={
+                                                (() => {
+                                                    const roleParts = testimonial.role.split(',')
+                                                    if (roleParts.length > 1 && roleParts[1]) {
+                                                        return roleParts[1].trim()
+                                                    }
+                                                    return testimonial.role
+                                                })()
+                                            }
                                             width={testimonial.name.includes('and') ? 60 : 100}
                                             height={24}
                                             className="ml-auto"

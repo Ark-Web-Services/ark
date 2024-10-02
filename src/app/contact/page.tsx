@@ -1,10 +1,9 @@
+import Header from '../_components/Header'
 import ClientLogos from './_components/ClientLogos'
 import Features from './_components/Features'
 import Footer from './_components/Footer'
-// import Header from './_components/Header'
-import Header from '../_components/Header'
 import Hero from './_components/Hero'
-import Testimonials from './_components/testimonials'
+import Testimonials from './_components/Testimonials'
 
 
 export default function Home() {
@@ -20,4 +19,4 @@ export default function Home() {
             <Footer />
         </div>
     )
-}
+}   

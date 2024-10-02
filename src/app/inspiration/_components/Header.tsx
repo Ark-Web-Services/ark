@@ -5,7 +5,7 @@ export default function Header() {
     return (
         <header className="py-4 px-6 bg-white">
             <nav className="flex justify-between items-center">
-                <Link href="/" className="text-2xl font-bold">quarter.digital</Link>
+                <Link href="/" className="text-2xl font-bold">ark web studio</Link>
                 <div className="space-x-4">
                     <Link href="/projects">Projects</Link>
                     <Link href="/services">Services</Link>

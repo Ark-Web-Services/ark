@@ -7,7 +7,7 @@ export default function Footer() {
             <div className="max-w-6xl mx-auto">
                 <div className="grid grid-cols-4 gap-8">
                     <div>
-                        <h3 className="font-bold mb-4">quarter.digital</h3>
+                        <h3 className="font-bold mb-4">ark web studio</h3>
                         <p className="text-sm text-gray-600">Quarter Digital is your partnership-driven Webflow agency dedicated to crafting unique and high-converting digital experiences.</p>
                     </div>
                     <div>
@@ -28,7 +28,7 @@ export default function Footer() {
                     </div>
                     <div>
                         <h4 className="font-bold mb-4">Contact</h4>
-                        <p className="text-sm text-gray-600">hello@quarter.digital</p>
+                        <p className="text-sm text-gray-600">hello@ark web studio</p>
                         <p className="text-sm text-gray-600">+44(0) 7497797465</p>
                     </div>
                 </div>

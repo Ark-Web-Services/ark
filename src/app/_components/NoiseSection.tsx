@@ -8,7 +8,7 @@ import { createNoise2D } from 'simplex-noise'; // Import the simplex noise funct
 import * as THREE from 'three'; // Import the three.js library
 
 // GridPlane Component
-function GridPlane({ isAnimating, color }) {
+function GridPlane({ isAnimating, color }: { isAnimating: boolean; color: string }) {
     const meshRef = useRef<THREE.Mesh>(null); // Create a reference for the mesh
 
     // Create a noise function using useMemo to optimize performance
@@ -25,21 +25,31 @@ function GridPlane({ isAnimating, color }) {
     useFrame(({ clock }) => {
         if (isAnimating) { // Only update if animating
             const time = clock.getElapsedTime(); // Get the elapsed time
-            const positions = geometry.attributes.position.array as Float32Array; // Get the position array
 
-            // Loop through each vertex position
-            for (let i = 0; i < positions.length; i += 3) {
-                const x = positions[i]; // Get the x-coordinate
-                const z = positions[i + 2]; // Get the z-coordinate
+            // Check if geometry.attributes.position is defined
+            const positions = geometry.attributes.position ? (geometry.attributes.position.array as Float32Array) : null; // Get the position array
 
-                // Calculate distance from center
-                const distance = Math.sqrt(x * x + z * z);
-                // Apply wave pattern based on distance and time
-                positions[i + 1] = Math.sin(distance - time) * 0.55; // Update y based on wave pattern
+            // Check if positions is not null
+            if (positions) {
+                // Loop through each vertex position
+                for (let i = 0; i < positions.length; i += 3) {
+                    const x = positions[i]; // Get the x-coordinate
+                    const z = positions[i + 2]; // Get the z-coordinate
+
+                    // Ensure x is defined
+                    if (x !== undefined && z !== undefined) {
+                        // Calculate distance from center
+                        const distance = Math.sqrt(x * x + z * z);
+                        // Apply wave pattern based on distance and time
+                        positions[i + 1] = Math.sin(distance - time) * 0.55; // Update y based on wave pattern
+                    }
+                }
             }
 
-            geometry.attributes.position.needsUpdate = true; // Mark the geometry as needing an update
-            geometry.computeVertexNormals(); // Recompute normals for lighting
+            if (geometry.attributes.position) { // Check if position is defined
+                geometry.attributes.position.needsUpdate = true; // Mark the geometry as needing an update
+                geometry.computeVertexNormals(); // Recompute normals for lighting
+            }
         }
     });
 
@@ -56,7 +66,12 @@ function GridPlane({ isAnimating, color }) {
 }
 
 // Pyramid Component
-const Pyramid = ({ isAnimating, color }) => {
+interface PyramidProps {
+    isAnimating: boolean;
+    color: string;
+}
+
+const Pyramid: React.FC<PyramidProps> = ({ isAnimating, color }) => {
     const meshRef = useRef<THREE.Mesh>(null); // Create a reference for the mesh
     const amplitude = 0.5; // Amplitude of the oscillation
     const speed = 2; // Speed of the oscillation
@@ -84,7 +99,13 @@ const Pyramid = ({ isAnimating, color }) => {
 };
 
 // AnimatedCamera Component
-const AnimatedCamera = ({ isAnimating, isZooming, targetPosition }) => {
+type AnimatedCameraProps = {
+    isAnimating: boolean;
+    isZooming: boolean;
+    targetPosition: { x: number; y: number; z: number }; // Adjust as needed
+};
+
+const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming, targetPosition }) => {
     const { camera } = useThree(); // Access the camera from the Three.js context
 
     useFrame(({ clock }) => {
@@ -150,7 +171,6 @@ const NoiseSection = () => {
     const [showSubText, setShowSubText] = useState(false); // State to control subtext visibility
     const textRef = useRef(null); // Reference for the text container
     const [isLoading, setIsLoading] = useState(true); // State to control loading screen
-    const [coordinates, setCoordinates] = useState<{ x: number; y: number }>({ x: 0, y: 0 }); // State for coordinates
 
     const handleButtonClick = () => {
         setIsZooming(true); // Start camera zoom on button click
@@ -230,7 +250,11 @@ const NoiseSection = () => {
                             <directionalLight position={[0, 10, 0]} intensity={1} /> {/* Directional light */}
                             <GridPlane isAnimating={isAnimating} color={color} /> {/* Pass animation state and color to GridPlane */}
                             <Pyramid isAnimating={isAnimating} color={color} /> {/* Pass animation state and color to Pyramid */}
-                            <AnimatedCamera isAnimating={isAnimating} isZooming={isZooming} targetPosition={targetPosition} /> {/* Use the AnimatedCamera component */}
+                            <AnimatedCamera
+                                isAnimating={isAnimating}
+                                isZooming={isZooming}
+                                targetPosition={targetPosition ?? { x: 0, y: 0, z: 0 }} // Provide a default value
+                            /> {/* Use the AnimatedCamera component */}
                         </Canvas>
                     </div>
                     <div className="container mx-auto px-6 relative z-10 flex flex-col items-center mt-20"> {/* flex-col and mt-20 to move text below Earth */}

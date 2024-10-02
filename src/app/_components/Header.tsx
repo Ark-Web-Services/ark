@@ -4,30 +4,40 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { TextPlugin } from 'gsap/TextPlugin'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin)
 
 export default function Header() {
-    const headerRef = useRef(null)
-    const logoRef = useRef(null)
-    const logoTextRef = useRef(null)
-    const [isScrolled, setIsScrolled] = useState(false)
+    // Define explicit types for refs
+    const headerRef = useRef<HTMLElement>(null)
+    const logoRef = useRef<HTMLAnchorElement>(null)
+    const logoTextRef = useRef<HTMLSpanElement>(null)
 
     useEffect(() => {
         const header = headerRef.current
         const logo = logoRef.current
         const logoText = logoTextRef.current
-        const navItems = header.querySelectorAll('.nav-item')
-        const contactButton = header.querySelector('.contact-button')
-        const navContainer = header.querySelector('.nav-container')
+
+        // Null checks to ensure elements are present
+        if (!header || !logo || !logoText) {
+            console.warn('Header elements are not available.')
+            return
+        }
+
+        const navItems = header.querySelectorAll<HTMLElement>('.nav-item')
+        const contactButton = header.querySelector<HTMLAnchorElement>('.contact-button')
+        const navContainer = header.querySelector<HTMLElement>('.nav-container')
+
+        if (!contactButton || !navContainer) {
+            console.warn('Navigation elements are not available.')
+            return
+        }
 
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: 'body',
                 start: 'top top-=100',
-                onEnter: () => setIsScrolled(true),
-                onLeaveBack: () => setIsScrolled(false),
             }
         })
 
