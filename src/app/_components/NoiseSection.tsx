@@ -94,15 +94,17 @@ type AnimatedCameraProps = {
 };
 
 const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming, targetPosition }) => {
-    const { camera } = useThree();
+    const { camera, clock } = useThree();
+    const [startTime, setStartTime] = useState<number | null>(null);
 
-    useFrame(({ clock }) => {
-        if (isAnimating) {
-            const elapsedTime = clock.getElapsedTime();
-            if (isZooming) {
-                camera.position.z = Math.max(5, 50 - elapsedTime * 5);
-                camera.position.y = Math.max(8, 20 - elapsedTime * 2);
+    useFrame(() => {
+        if (isAnimating && isZooming) {
+            if (startTime === null) {
+                setStartTime(clock.getElapsedTime());
             }
+            const elapsedTime = clock.getElapsedTime() - (startTime ?? 0);
+            camera.position.z = Math.max(5, 50 - elapsedTime * 5);
+            camera.position.y = Math.max(8, 20 - elapsedTime * 2);
             camera.lookAt(0, 6, 0);
         }
 
@@ -111,6 +113,12 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({ isAnimating, isZooming,
             camera.lookAt(0, 6, 0);
         }
     });
+
+    useEffect(() => {
+        if (!isZooming) {
+            setStartTime(null);
+        }
+    }, [isZooming]);
 
     return null;
 };
@@ -222,17 +230,30 @@ const Coordinates = () => {
 
     const handleButtonClick = () => {
         setIsZooming(true);
-        setTimeout(() => setShowButtons(true), 2000);
+        setTargetPosition(new THREE.Vector3(0, 20, 50)); // Reset camera position
 
         gsap.to(textRef.current, {
             duration: 1,
             opacity: 0,
             scale: 2,
-            ease: "power2.out",
+            ease: "power2.inOut",
             onComplete: () => {
                 if (textRef.current) {
                     textRef.current.style.display = 'none';
                 }
+            },
+        });
+
+        gsap.to(buttonRef.current, {
+            duration: 0.2, // Faster duration for the button
+            opacity: 0,
+            y: 50, // Move the button down
+            ease: "power2.inOut",
+            onComplete: () => {
+                if (buttonRef.current) {
+                    buttonRef.current.style.display = 'hidden';
+                }
+                setTimeout(() => setShowButtons(true), 2000);
             },
         });
     };
@@ -325,15 +346,13 @@ const Coordinates = () => {
                         )}
                     </div>
                 )}
-                {!isZooming && (
-                    <button
-                        ref={buttonRef}
-                        onClick={handleButtonClick}
-                        className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition duration-300 z-10 bg-white p-2 rounded mt-4 opacity-0 mt-14"
-                    >
-                        Get in Touch
-                    </button>
-                )}
+                <button
+                    ref={buttonRef}
+                    onClick={handleButtonClick}
+                    className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition duration-300 z-10 bg-white p-2 rounded mt-4 opacity-0 mt-14"
+                >
+                    Get in Touch
+                </button>
             </div>
             {showButtons && (
                 <div className="absolute z-10 flex space-x-4 bottom-4 left-1/2 transform -translate-x-1/2">
