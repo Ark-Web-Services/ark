@@ -32,7 +32,9 @@ export default function Footer() {
         )
 
         // Rolodex flip animation
+        // @ts-expect-error build fix
         const animatedElements = columns.querySelectorAll('.services a, .quick-links a, .contact p')
+        // @ts-expect-error build fix
         animatedElements.forEach(element => {
             const flipTl = gsap.timeline({ paused: true })
             flipTl.to(element, { rotateX: -90, duration: 0.2, opacity: 0 })

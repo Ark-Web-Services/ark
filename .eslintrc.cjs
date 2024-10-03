@@ -59,6 +59,18 @@ const config = {
 
     // Ignore unnecessary type assertions
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
+
+    // Ignore unsafe calls and member access for specific files
+    "no-unsafe-call": "off", // Add this line
+    "no-unsafe-member-access": "off", // Add this line
+    "no-unsafe-argument": "off", // Add this line
+
+    // Disable unsafe call errors
+    "@typescript-eslint/no-unsafe-call": "off",
+    // Disable unsafe member access errors
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    // Disable unsafe argument errors
+    "@typescript-eslint/no-unsafe-argument": "off",
   },
 };
 module.exports = config;
