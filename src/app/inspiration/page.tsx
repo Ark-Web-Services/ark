@@ -1,6 +1,5 @@
 import Header from '../_components/Header'
 import Approach from './_components/Approach'
-import CallToAction from './_components/CallToAction'
 import Footer from './_components/Footer'
 import Hero from './_components/Hero'
 import Portfolio from './_components/Portfolio'
@@ -20,7 +19,7 @@ export default function Home() {
                 <Approach />
                 <Testimonials />
                 {/* <Story /> */}
-                <CallToAction />
+                {/* <CallToAction /> */}
             </main>
             <Footer />
         </div>

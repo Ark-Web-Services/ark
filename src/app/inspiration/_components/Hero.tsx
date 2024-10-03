@@ -3,6 +3,7 @@
 import { gsap } from 'gsap'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'; // Add this import
 import { useEffect, useRef } from 'react'
 
 export default function Hero() {
@@ -57,10 +58,12 @@ export default function Hero() {
                         <p ref={paragraphRef} className="text-xl md:text-2xl mb-8">
                             We're a design agency creating interactive experiences for brands to leave a lasting impression — delivering engaging websites that launch in weeks, not months.
                         </p>
-                        <button className="w-full md:w-auto bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-medium inline-flex items-center justify-center hover:bg-blue-700 transition-colors">
-                            Book your free discovery call
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                        </button>
+                        <Link href="/contact"> {/* Wrap the button in Link */}
+                            <button className="w-full md:w-auto bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-medium inline-flex items-center justify-center hover:bg-blue-700 transition-colors">
+                                Book your free discovery call
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                            </button>
+                        </Link> {/* End of Link */}
                     </div>
                 </div>
             </div>
