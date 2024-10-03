@@ -2,58 +2,64 @@
 
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const projects = [
     {
-        name: 'Inspired Business Media',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Web Design', 'Webflow Development']
+        name: 'Lusion V3',
+        image: '/img/inspire/inspiring-website-design-examples.png',
+        tags: ['Web Design', 'NextJS Development'],
+        url: 'https://www.awwwards.com/sites/lusion-v3'
     },
     {
-        name: 'Karve International',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Web Design', 'Webflow Development']
+        name: 'Pioneer',
+        image: '/img/inspire/creative-website-inspiration-gallery.png',
+        tags: ['Web Design', 'Custom Development'],
+        url: 'https://www.awwwards.com/sites/pioneer-corn-revolutionized'
     },
     {
-        name: 'Sedna',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Webflow Development']
+        name: 'Pangram Pangram',
+        image: '/img/inspire/best-website-design-inspiration.png',
+        tags: ['Webflow Development'],
+        url: 'https://www.awwwards.com/sites/pangram-pangram-foundry'
     },
     {
-        name: 'Earn It',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Web Design', 'Webflow Development']
+        name: 'Huge',
+        image: '/img/inspire/unique-website-portfolio-examples.png',
+        tags: ['Web Design', 'Webflow Development'],
+        url: 'https://www.awwwards.com/sites/huge-inc'
     },
     {
-        name: 'ReSys AG',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Branding', 'Webflow Development']
+        name: 'OTSea',
+        image: '/img/inspire/top-inspirational-websites-gallery.png',
+        tags: ['Branding', '3JS Development'],
+        url: 'https://www.awwwards.com/sites/otsea'
     },
     {
-        name: 'Pririy',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Web Design', 'Webflow Development', 'Branding']
+        name: 'Bruno Simon',
+        image: '/img/inspire/trending-website-design-inspiration.png',
+        tags: ['Web Design', '3JS Development', 'Branding'],
+        url: 'https://www.awwwards.com/sites/bruno-simon-portfolio'
     },
-    {
-        name: 'The Athletes',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Web Design', 'Webflow Development', 'Branding']
-    },
-    {
-        name: 'OptimalControls',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Web Design', 'Webflow Development', 'Branding', 'SEO']
-    },
-    {
-        name: 'Twist',
-        image: '/placeholder.svg?height=400&width=600',
-        tags: ['Webflow Development', 'Web Design', 'SEO']
-    }
+    // {
+    //     name: 'The Athletes',
+    //     image: '/placeholder.svg?height=400&width=600',
+    //     tags: ['Web Design', 'Webflow Development', 'Branding']
+    // },
+    // {
+    //     name: 'OptimalControls',
+    //     image: '/placeholder.svg?height=400&width=600',
+    //     tags: ['Web Design', 'Webflow Development', 'Branding', 'SEO']
+    // },
+    // {
+    //     name: 'Twist',
+    //     image: '/placeholder.svg?height=400&width=600',
+    //     tags: ['Webflow Development', 'Web Design', 'SEO']
+    // }
 ]
 
 export default function Portfolio() {
@@ -130,13 +136,27 @@ export default function Portfolio() {
                             {project.name}
                         </h3>
                         <div className="relative rounded-lg overflow-hidden shadow-lg mb-3">
-                            <Image
-                                src={project.image}
-                                alt={project.name}
-                                width={600}
-                                height={400}
-                                className="w-full h-auto object-cover"
-                            />
+                            {project.url ? (
+                                <a href={project.url} target="_blank" rel="noopener noreferrer"> {/* Use anchor for external links */}
+                                    <Image
+                                        src={project.image}
+                                        alt={project.name}
+                                        width={600}
+                                        height={400}
+                                        className="w-full h-auto object-cover"
+                                    />
+                                </a>
+                            ) : (
+                                <Link href={`/projects/${project.url}`}> {/* Wrap Image in Link for internal links */}
+                                    <Image
+                                        src={project.image}
+                                        alt={project.name}
+                                        width={600}
+                                        height={400}
+                                        className="w-full h-auto object-cover"
+                                    />
+                                </Link>
+                            )}
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {project.tags.map((tag, tagIndex) => (
@@ -148,12 +168,12 @@ export default function Portfolio() {
                     </div>
                 ))}
             </div>
-            <div className="mt-12 text-center">
+            {/* <div className="mt-12 text-center">
                 <button className="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-medium inline-flex items-center hover:bg-blue-700 transition-colors">
                     View all
                     <ArrowRight className="ml-2 h-5 w-4" />
                 </button>
-            </div>
+            </div> */}
         </section>
     )
 }
