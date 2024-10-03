@@ -51,7 +51,7 @@ const projects = [
 
 export default function Portfolio() {
     return (
-        <section className="py-20 px-6 max-w-7xl mx-auto">
+        <section className="py-20 px-[70px] w-full">
             <div className="flex flex-col md:flex-row justify-between mb-24 gap-16">
                 <div className="md:w-[55%] mb-8 md:mb-0">
                     <div className="mb-4">

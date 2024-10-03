@@ -1,13 +1,10 @@
 import Header from '../_components/Header'
 import Approach from './_components/Approach'
 import CallToAction from './_components/CallToAction'
-import ClientLogos from './_components/ClientLogos'
-import ClientShowcase from './_components/ClientShowcase'
 import Footer from './_components/Footer'
 import Hero from './_components/Hero'
 import Portfolio from './_components/Portfolio'
 import Services from './_components/Services'
-import Story from './_components/Story'
 import Testimonials from './_components/Testimonials'
 
 export default function Home() {
@@ -16,13 +13,13 @@ export default function Home() {
             <Header />
             <main>
                 <Hero />
-                <ClientShowcase />
-                <ClientLogos />
+                {/* <ClientShowcase /> */}
+                {/* <ClientLogos /> */}
                 <Portfolio />
                 <Services />
                 <Approach />
                 <Testimonials />
-                <Story />
+                {/* <Story /> */}
                 <CallToAction />
             </main>
             <Footer />

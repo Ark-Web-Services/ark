@@ -1,24 +1,41 @@
-import Image from 'next/image'
+'use client'
+import { gsap } from 'gsap'
 import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 
 export default function Hero() {
+    const headingRef = useRef(null)
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            const [firstLine, secondLine] = headingRef.current.children;
+
+            gsap.set([firstLine, secondLine], { opacity: 0, x: 100 });
+
+            gsap.to([firstLine, secondLine], {
+                opacity: 1,
+                x: 0,
+                duration: 1.5, // Increased from 1 to 1.5 seconds
+                ease: "power3.out",
+                stagger: 0.2
+            });
+        }, headingRef);
+
+        return () => ctx.revert()
+    }, [])
+
     return (
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-            <div className="max-w-7xl mx-auto">
+        <section className="w-full bg-white px-[70px] py-16">
+            <div className="w-full pt-[120px]">
                 <div className="mb-12">
-                    <Link href="/contact" className="inline-flex items-center text-sm text-blue-600 mb-4">
-                        <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
-                        Contact us
-                    </Link>
-                    <h1 className="text-[80px] font-normal leading-tight mb-4">
-                        Starting a business or<br />
-                        have a project in mind?<br />
-                        <span className="text-gray-400">Let's chat.</span>
+                    <h1 ref={headingRef} className="text-[80px] font-normal leading-tight mb-8">
+                        <span className="block">Starting a business or have a</span>
+                        <span className="block">project in mind? <span className="text-gray-400">Let's chat.</span></span>
                     </h1>
-                    <div className="w-full h-px bg-gray-200 mt-8"></div>
+                    <div className="w-full h-px bg-gray-200 mt-8 mb-8"></div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 pt-[120px]">
                     <div>
                         <h2 className="text-5xl font-normal mb-6 leading-tight">
                             From tiny to huge. If we love your project, we'll take it.
@@ -33,18 +50,18 @@ export default function Hero() {
                                 <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
-                                <span className="text-lg text-gray-600">hello@ark web studio</span>
+                                <span className="text-lg text-gray-600">support@arkwebservices.com</span>
                             </div>
                             <div className="flex items-center">
                                 <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
-                                <span className="text-lg text-gray-600">+44(0) 7467787495</span>
+                                <span className="text-lg text-gray-600">+1 (704) 256-0860</span>
                             </div>
                         </div>
-                        <div className="mt-12">
+                        {/* <div className="mt-12">
                             <Image src="/placeholder.svg?height=100&width=100" alt="Diamond illustration" width={100} height={100} />
-                        </div>
+                        </div> */}
                     </div>
 
                     <div>
@@ -71,19 +88,38 @@ export default function Hero() {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">What services are interested in?</label>
-                                <div className="space-y-2">
-                                    {['Web Design', 'Branding', 'Webflow Development', 'SEO', 'Other'].map((service) => (
-                                        <div key={service} className="flex items-center">
-                                            <input type="checkbox" id={service.toLowerCase()} name="services" value={service} className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-                                            <label htmlFor={service.toLowerCase()} className="ml-2 block text-sm text-gray-700">{service}</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center">
+                                            <input type="checkbox" id="web-design" name="services" value="Web Design" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                                            <label htmlFor="web-design" className="ml-2 block text-sm text-gray-700">Web Design</label>
                                         </div>
-                                    ))}
+                                        <div className="flex items-center">
+                                            <input type="checkbox" id="branding" name="services" value="Branding" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                                            <label htmlFor="branding" className="ml-2 block text-sm text-gray-700">Branding</label>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <input type="checkbox" id="other" name="services" value="Other" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                                            <label htmlFor="other" className="ml-2 block text-sm text-gray-700">Other</label>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center">
+                                            <input type="checkbox" id="webflow-development" name="services" value="Webflow Development" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                                            <label htmlFor="webflow-development" className="ml-2 block text-sm text-gray-700">Webflow Development</label>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <input type="checkbox" id="seo" name="services" value="SEO" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                                            <label htmlFor="seo" className="ml-2 block text-sm text-gray-700">SEO</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div>
                                 <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-1">Do you have a budget in mind?</label>
                                 <select id="budget" name="budget" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                     <option>Select one...</option>
+                                    <option>$500 - $1,000</option>
                                     <option>$1,000 - $5,000</option>
                                     <option>$5,000 - $10,000</option>
                                     <option>$10,000+</option>
