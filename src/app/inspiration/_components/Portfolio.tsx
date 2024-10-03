@@ -66,10 +66,11 @@ export default function Portfolio() {
     const headingRef = useRef(null)
     const paragraphRef = useRef(null)
     const badgeRef = useRef(null)
-    const projectNamesRef = useRef([])
+    const projectNamesRef = useRef<(HTMLHeadingElement | null)[]>([]); // Specify the type here
 
     useEffect(() => {
         const ctx = gsap.context(() => {
+            // @ts-expect-error
             const [firstLine, secondLine, thirdLine] = headingRef.current.children;
 
             gsap.set([badgeRef.current, firstLine, secondLine, thirdLine, paragraphRef.current], { opacity: 0, x: 100 });
@@ -84,8 +85,11 @@ export default function Portfolio() {
 
             // Animate project names word by word
             projectNamesRef.current.forEach((projectName, index) => {
+                // @ts-expect-error
                 const words = projectName.textContent.split(' ');
+                // @ts-expect-error
                 projectName.innerHTML = words.map(word => `<span class="inline-block">${word}</span>`).join(' ');
+                // @ts-expect-error
                 const wordSpans = projectName.children;
 
                 gsap.set(wordSpans, { opacity: 0, x: 50 });
@@ -130,7 +134,9 @@ export default function Portfolio() {
                 {projects.map((project, index) => (
                     <div key={index} className="flex flex-col">
                         <h3
-                            ref={el => projectNamesRef.current[index] = el}
+                            ref={el => {
+                                projectNamesRef.current[index] = el;
+                            }}
                             className="text-2xl font-semibold mb-3"
                         >
                             {project.name}

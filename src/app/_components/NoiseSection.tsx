@@ -194,6 +194,7 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({
                 targetRadius !== null // Ensure targetRadius is not null
             ) {
                 const radius = THREE.MathUtils.lerp(initialRadius, targetRadius, easedT);
+                // @ts-expect-error
                 const theta = THREE.MathUtils.lerp(initialTheta, targetTheta, easedT);
                 const phi = initialPhi; // No change in phi
 

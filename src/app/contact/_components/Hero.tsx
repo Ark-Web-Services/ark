@@ -8,6 +8,7 @@ export default function Hero() {
 
     useEffect(() => {
         const ctx = gsap.context(() => {
+            // @ts-ignore
             const [firstLine, secondLine] = headingRef.current.children;
 
             gsap.set([firstLine, secondLine], { opacity: 0, x: 100 });

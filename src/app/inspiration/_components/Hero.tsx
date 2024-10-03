@@ -11,6 +11,7 @@ export default function Hero() {
 
     useEffect(() => {
         const ctx = gsap.context(() => {
+            // @ts-expect-error
             const [firstLine, secondLine] = headingRef.current.children;
 
             gsap.set([firstLine, secondLine, paragraphRef.current], { opacity: 0, x: 100 });

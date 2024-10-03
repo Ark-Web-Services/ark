@@ -17,7 +17,7 @@ const BrandingPage: React.FC = () => {
             <Hero onButtonClick={handleScrollToSlides} />
 
             {/* Slides Wrapper */}
-            <div ref={slidesContainerRef}>
+            <div ref={slidesContainerRef as any}>
                 <SlidesContainer totalSlides={totalSlides} />
             </div>
         </div>

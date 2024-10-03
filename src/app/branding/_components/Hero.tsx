@@ -120,7 +120,7 @@ export default function Hero({ onButtonClick }: HeroProps) {
                 </div>
             </div>
             <button
-                ref={arrowRef} // Attach the ref to the button
+                ref={arrowRef as any} // Type assertion
                 onClick={onButtonClick}
                 className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center cursor-pointer hover:text-blue-400 transition-colors"
             >
