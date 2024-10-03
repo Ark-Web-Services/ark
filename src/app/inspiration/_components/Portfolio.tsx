@@ -50,21 +50,30 @@ const projects = [
 export default function Portfolio() {
     const headingRef = useRef<HTMLHeadingElement>(null)
     const paragraphRef = useRef<HTMLParagraphElement>(null)
+    const badgeRef = useRef<HTMLSpanElement>(null)
     const projectNamesRef = useRef<(HTMLHeadingElement | null)[]>([])
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            if (headingRef.current && paragraphRef.current) {
+            if (headingRef.current && paragraphRef.current && badgeRef.current) {
                 const [firstLine, secondLine, thirdLine] = headingRef.current.children;
 
-                gsap.set([firstLine, secondLine, thirdLine, paragraphRef.current], { opacity: 0, x: 100 });
+                gsap.set([badgeRef.current, firstLine, secondLine, thirdLine, paragraphRef.current], { opacity: 0, x: 100 });
 
-                gsap.to([firstLine, secondLine, thirdLine, paragraphRef.current], {
+                gsap.to([badgeRef.current, firstLine, secondLine, thirdLine], {
                     opacity: 1,
                     x: 0,
                     duration: 1.5,
                     ease: "power3.out",
                     stagger: 0.2
+                });
+
+                gsap.to([paragraphRef.current, badgeRef.current], {
+                    opacity: 1,
+                    x: 0,
+                    duration: 1.5,
+                    ease: "power3.out",
+                    delay: 0.8
                 });
             }
 
@@ -98,17 +107,26 @@ export default function Portfolio() {
 
     return (
         <section className="py-20 px-[70px] w-full">
-            <div className="flex flex-col md:flex-row justify-between mb-24 gap-16">
-                <div className="md:w-[55%]">
+            <div className="flex justify-between mb-24 gap-16">
+                <div className="w-[55%]">
+                    <div className="mb-4">
+                        <span
+                            ref={badgeRef}
+                            className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-800"
+                        >
+                            <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-blue-800"></span>
+                            Inspiration
+                        </span>
+                    </div>
                     <h2 ref={headingRef} className="text-[56px] font-normal leading-[1.1]">
-                        <span className="block">See projects that impress</span>
-                        <span className="block text-gray-400">stakeholders and customers</span>
-                        <span className="block">alike</span>
+                        <span className="block">See creative projects that</span>
+                        <span className="block text-gray-400"> inspire our design</span>
+                        <span className="block">process</span>
                     </h2>
                 </div>
-                <div className="md:w-[40%] flex items-start">
+                <div className="w-[40%] pt-10">
                     <p ref={paragraphRef} className="text-[18px] text-gray-600 leading-relaxed">
-                        If you're anything like our previous clients, you're probably making waves in your world. So why settle for something ordinary when you're building something extraordinary?
+                        For those who push limits and redefine what's possible, ordinary simply isn't an option. So why blend in when you were born to stand out? You're creating something iconic—let’s make sure it’s nothing less than extraordinary.
                     </p>
                 </div>
             </div>
