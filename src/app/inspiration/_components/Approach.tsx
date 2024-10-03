@@ -8,31 +8,31 @@ export default function Approach() {
                 </span>
             </div>
             <h2 className="text-[56px] font-normal mb-16 leading-tight">
-                One website, <span className="text-gray-400">endless possibilities</span>
+                One website, <span className="text-gray-400">Infinite Opportunities</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
                 <div className="p-6">
-                    <h3 className="text-2xl font-semibold mb-4">Experience turnaround & communication on your terms</h3>
+                    <h3 className="text-2xl font-semibold mb-4">Timely Delivery & Open Communication</h3>
                     <p className="text-base text-gray-600">
-                        Your project will launch when you need – whether that's in 2 months or 2 weeks. And no long silences from our end. You can expect to hear back from us within a few hours, in regular intervals, 7 days a week.
+                        Launch your project exactly when you need it—be it in two months or two weeks. Expect prompt responses from us within hours, consistently, seven days a week. No more prolonged silences.
                     </p>
                 </div>
                 <div className="p-6">
-                    <h3 className="text-2xl font-semibold mb-4">Attract groundbreaking interest and investment</h3>
+                    <h3 className="text-2xl font-semibold mb-4">Attract Significant Interest and Investment</h3>
                     <p className="text-base text-gray-600">
-                        Your website is created with a design-first approach. But it's built for business-first outcomes. Many of our past clients have secured significant deals and partnerships after going live.
+                        Our design-first approach ensures your website doesn't just look exceptional but drives business results. Many clients have landed major deals and partnerships shortly after going live.
                     </p>
                 </div>
                 <div className="p-6">
-                    <h3 className="text-2xl font-semibold mb-4">Save time & money with your very own marketing machine</h3>
+                    <h3 className="text-2xl font-semibold mb-4">Save Time and Money with Your Own Marketing Engine</h3>
                     <p className="text-base text-gray-600">
-                        While some agencies disappear into the unknown, we'll be by your side as an extension of your in-house marketing team. We'll create new landing pages, assets, and systems on the fly – so you can deliver results quicker and easier.
+                        While some agencies fade away post-launch, we stay by your side as an extension of your marketing team. We'll swiftly create landing pages, assets, and systems, helping you achieve results faster and more effortlessly.
                     </p>
                 </div>
                 <div className="p-6">
-                    <h3 className="text-2xl font-semibold mb-4">Walk away with confidence in your future</h3>
+                    <h3 className="text-2xl font-semibold mb-4">Move Forward with Confidence</h3>
                     <p className="text-base text-gray-600">
-                        A new website design should leave you feeling excited for what's to come. Enjoy using a website that never delays your work, effortlessly highlights your company's value, and consistently generates new prospects.
+                        A new website should fill you with excitement for what's ahead. Enjoy a platform that never hinders your progress, effortlessly showcases your company's value, and consistently attracts new prospects.
                     </p>
                 </div>
             </div>

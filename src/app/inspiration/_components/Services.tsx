@@ -129,8 +129,8 @@ export default function Services() {
                 <div className="flex flex-col lg:flex-row justify-between mb-16 gap-16">
                     <div className="lg:w-1/2">
                         <h2 ref={headingRef} className="text-[56px] font-normal leading-[1.1] mb-8">
-                            <span className="block">Design. Webflow development.</span>
-                            <span className="block text-gray-400">Code & no-code solutions.</span>
+                            <span className="block">Cutting-edge Web Experiences.</span>
+                            <span className="block text-gray-400">For those making waves.</span>
                         </h2>
                     </div>
                     <div className="lg:w-1/2">
@@ -150,21 +150,21 @@ export default function Services() {
                                 <path d="M16 18C16 19.1046 15.1046 20 14 20C12.8954 20 12 19.1046 12 18C12 16.8954 12.8954 16 14 16C15.1046 16 16 16.8954 16 18Z" fill="currentColor" />
                                 <path d="M11 18C11 19.1046 10.1046 20 9 20C7.89543 20 7 19.1046 7 18C7 16.8954 7.89543 16 9 16C10.1046 16 11 16.8954 11 18Z" fill="currentColor" />
                             </svg>
-                            <h3 className="text-2xl font-semibold">Engaging web design</h3>
+                            <h3 className="text-2xl font-semibold">Interactive web design</h3>
                         </div>
                         <div className="pl-12">
                             <ul className="space-y-2 mb-6">
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2 text-3xl leading-none">•</span>
-                                    <span>Award-winning visual experiences</span>
+                                    <span>Acclaimed for visually stunning designs</span>
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2 text-3xl leading-none">•</span>
-                                    <span>User-centered design that converts visitors into customers</span>
+                                    <span>Designs that reflect the essence of your brand and its impact</span>
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2 text-3xl leading-none">•</span>
-                                    <span>Layout & color schemes that showcase value and professionalism</span>
+                                    <span>Thoughtfully crafted layouts and colors that embody value and prestige</span>
                                 </li>
                             </ul>
                             <a href="#" className="inline-flex items-center text-gray-900 hover:underline">
@@ -176,21 +176,21 @@ export default function Services() {
                     <div ref={webflowDevRef} className="bg-gray-100 rounded-2xl p-8">
                         <div className="flex items-start mb-6">
                             <span className="text-4xl mr-4 text-gray-600 font-bold w-8 flex-shrink-0 mt-1">W</span>
-                            <h3 className="text-2xl font-semibold">Seamless Webflow development</h3>
+                            <h3 className="text-2xl font-semibold">Effortless Custom Development</h3>
                         </div>
                         <div className="pl-12">
                             <ul className="space-y-2 mb-6">
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2 text-3xl leading-none">•</span>
-                                    <span>Responsive and SEO-friendly</span>
+                                    <span>Elegantly responsive and SEO-optimized</span>
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2 text-3xl leading-none">•</span>
-                                    <span>Optimised for boundless performance and speed</span>
+                                    <span>Engineered for unparalleled performance and speed</span>
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2 text-3xl leading-none">•</span>
-                                    <span>Dynamic experiences that don't break when you make a change</span>
+                                    <span>Dynamic experiences that remain flawless with every update.</span>
                                 </li>
                             </ul>
                             <a href="#" className="inline-flex items-center text-gray-900 hover:underline">

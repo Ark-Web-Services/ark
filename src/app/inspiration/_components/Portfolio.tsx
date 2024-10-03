@@ -107,18 +107,17 @@ export default function Portfolio() {
             <div className="flex flex-col md:flex-row justify-between mb-24 gap-16">
                 <div className="md:w-[55%]">
                     <div className="mb-4">
-                        <span ref={badgeRef} className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Webflow projects</span>
+                        <span ref={badgeRef} className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Inspirations</span>
                     </div>
                     <h2 ref={headingRef} className="text-[56px] font-normal leading-[1.1]">
-                        <span className="block">See projects that impress</span>
-                        <span className="block text-gray-400">stakeholders and customers</span>
-                        <span className="block">alike</span>
+                        <span className="block">See creative projects that </span>
+                        <span className="block text-gray-400">inspire our design</span>
+                        <span className="block">process</span>
                     </h2>
                 </div>
                 <div className="md:w-[40%] flex items-start">
                     <p ref={paragraphRef} className="text-[18px] text-gray-600 leading-relaxed">
-                        If you're anything like our previous clients, you're probably making waves in your world. So why settle for something ordinary when you're building something extraordinary?
-                    </p>
+                        For those who push limits and redefine what's possible, ordinary simply isn't an option. So why blend in when you were born to stand out? You're creating something iconic—let’s make sure it’s nothing less than extraordinary.                    </p>
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
