@@ -15,14 +15,14 @@ export default function Testimonials() {
             quote: "Ark Web Services is the best web design services I’ve ever used. Not only was my website delivered on time it was better than I was expecting. The staff at Ark web services was very polite and helpful in this journey. Also they have years of experience in the web services field and was able to enhance my vision on my website and bring my dream to a reality. I can’t thank them enough for their amazing service.",
             name: "Cedric P",
             role: "CEO, Presidential Consulting",
-            avatar: "/public/img/clients/cedric-p.jpeg?height=48&width=48",
+            avatar: "/img/clients/cedric-p.webp",
         },
         {
             stars: 5,
             quote: "The team has exceeded our expectations, from their attention to detail to their competitive analysis. Their communication is excellent, with flexible scheduling and timely meetings. They've made our website development process user-friendly and efficient. Their reliability and quality of work make them highly recommendable. We look forward to continuing our partnership on future projects!",
             name: "Dominic S",
             role: "CMO, Pick A Pro",
-            avatar: "/public/img/clients/dominic-s.jpeg?height=48&width=96",
+            avatar: "/img/clients/dominic-s.webp",
         },
         // Add more testimonials here if needed
     ]
