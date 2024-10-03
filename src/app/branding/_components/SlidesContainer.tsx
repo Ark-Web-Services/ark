@@ -9,6 +9,11 @@ interface SlidesContainerProps {
 const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true); // Set to true when component mounts on client
+    }, []);
 
     const slides = Array.from({ length: totalSlides }, (_, index) => {
         const slideNumber = index; // Start numbering from 0
@@ -63,9 +68,6 @@ const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
         });
     };
 
-    // Determine if the screen is mobile-sized
-    const isMobile = window.innerWidth <= 768;
-
     return (
         <div className="relative">
             {/* {currentSlide > 0 && ( // Render Navigation only if not on the first slide
@@ -83,13 +85,15 @@ const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
                 {slides}
             </div>
 
-            {/* Conditionally render Pagination Indicators based on screen size */}
-            {!isMobile && (
-                <PaginationIndicators
-                    currentSlide={currentSlide}
-                    totalSlides={totalSlides}
-                    onIndicatorClick={handleIndicatorClick}
-                />
+            {/* Use Tailwind's responsive classes to hide on mobile */}
+            {isClient && (
+                <div className="hidden md:block">
+                    <PaginationIndicators
+                        currentSlide={currentSlide}
+                        totalSlides={totalSlides}
+                        onIndicatorClick={handleIndicatorClick}
+                    />
+                </div>
             )}
 
             {/* Hide Scrollbar Styles */}

@@ -38,28 +38,7 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide }) =>
 
 
     ];
-    const handleItemClick = (index: number) => {
-        gsap.to(`.nav-items`, {
-            y: -index * 60, // Adjust based on item height and margin
-            duration: 0.5,
-            ease: 'power2.inOut',
-            onComplete: () => {
-                // Bounce-lock effect
-                gsap.to(`.nav-items`, {
-                    y: -index * 60 + 10, // Slight bounce effect
-                    duration: 0.2,
-                    ease: 'bounce.out',
-                    onComplete: () => {
-                        gsap.to(`.nav-items`, {
-                            y: -index * 60, // Return to final position
-                            duration: 0.2,
-                            ease: 'power2.inOut',
-                        });
-                    },
-                });
-            },
-        });
-    };
+
 
     return (
         <div className="fixed top-1/2 left-0 transform -translate-y-1/2 bg-black bg-opacity-70 rounded-r-lg flex flex-col justify-center items-center z-10 text-white" style={{ width: 'max-content' }}>

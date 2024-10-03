@@ -15,7 +15,7 @@ export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false)
 
     useEffect(() => {
-        let mm = gsap.matchMedia()
+        const mm = gsap.matchMedia()
         mm.add("(min-width: 640px)", () => {
             // Animations for screens wider than 640px
             const header = headerRef.current
