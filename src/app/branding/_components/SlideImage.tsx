@@ -12,7 +12,7 @@ const SlideImage: React.FC<SlideImageProps> = ({ slideNumber }) => {
             alt={`Slide ${slideNumber} background`}
             layout="fill"
             objectFit="contain"
-            className="absolute inset-0 m-12"
+            className="absolute inset-0 p-12"
         />
     );
 };
