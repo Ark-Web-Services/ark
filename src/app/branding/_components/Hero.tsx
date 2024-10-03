@@ -107,14 +107,20 @@ export default function Hero({ onButtonClick }: HeroProps) {
                             Our comprehensive brand guide books are the cornerstone of impactful brand identities. We meticulously craft every element to ensure your brand communicates consistently and powerfully across all platforms.
                         </p>
                         <div className="flex justify-end">
-                            <button
-                                ref={buttonRef}
+                            <a
+                                href="/assets/branding/Ark-Brand-Guidelines-Template.pdf"
+                                download
                                 className="text-white inline-flex items-center hover:text-blue-400 transition-colors"
-                                onClick={() => {/* Add PDF download logic */ }}
                             >
-                                <Download className="mr-2 h-5 w-5" />
-                                Download Brand Guide Sample
-                            </button>
+                                <button
+                                    ref={buttonRef}
+                                    className="text-white inline-flex items-center hover:text-blue-400 transition-colors"
+                                    onClick={() => {/* Add PDF download logic */ }}
+                                >
+                                    <Download className="mr-2 h-5 w-5" />
+                                    Download Brand Guide Sample
+                                </button>
+                            </a>
                         </div>
                     </div>
                 </div>
