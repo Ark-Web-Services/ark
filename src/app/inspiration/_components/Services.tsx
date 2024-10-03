@@ -138,7 +138,7 @@ export default function Services() {
                     </div>
                     <div className="lg:w-1/2">
                         <p ref={paragraphRef} className="text-[18px] text-gray-600 leading-relaxed">
-                            When you're in a crucial stage of business, a bare-bones website won't lead you to victory. But you know what will? A website that's not just a website – but a marketing machine that makes your teams more effective. One that doesn't just embody your brand but elevates it, too. That's what Ark Web Studios is here to do.
+                            When you're in a crucial stage of business, a bare-bones website won't lead you to victory. But you know what will? A website that's not just a website – but a marketing machine that makes your teams more effective. One that doesn't just embody your brand but elevates it, too. That's what ark web studio is here to do.
                         </p>
                     </div>
                 </div>
