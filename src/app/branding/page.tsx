@@ -1,97 +1,24 @@
 'use client'
-import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Hero from './_components/Hero'; // Importing the Hero component
+import SlidesContainer from './_components/SlidesContainer'; // Importing the SlidesContainer component
 
 const BrandingPage: React.FC = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [currentSlide, setCurrentSlide] = useState(0);
+    const slidesContainerRef = useRef<HTMLElement>(null);
+    const totalSlides = 27;
 
-    const scrollToNext = () => {
-        if (!containerRef.current) return;
-
-        const container = containerRef.current;
-        const slideWidth = container.clientWidth;
-
-        container.scrollBy({
-            left: slideWidth,
-            behavior: 'smooth',
-        });
+    const handleScrollToSlides = () => {
+        slidesContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const slides = Array.from({ length: 27 }, (_, index) => {
-        const slideNumber = index + 1;
-        return (
-            <section
-                key={slideNumber}
-                id={`slide-${slideNumber}`}
-                className="flex-shrink-0 w-full h-screen flex flex-col items-center justify-center relative snap-start"
-                style={{
-                    scrollSnapAlign: 'start',
-                }}
-            >
-                <div className="relative w-full h-full">
-                    <Image
-                        src={`/assets/branding/slide-${slideNumber}.webp`}
-                        alt={`Slide ${slideNumber} background`}
-                        layout="fill" // Reverted to original layout
-                        objectFit="contain"
-                        className="absolute inset-0 m-12"
-                    />
-                </div>
-                {/* You can add additional content here if needed */}
-            </section>
-        );
-    });
-
-    // Handle pagination indicators
-    useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const handleScroll = () => {
-            const slideWidth = container.clientWidth;
-            const newSlide = Math.round(container.scrollLeft / slideWidth);
-            setCurrentSlide(newSlide);
-        };
-
-        container.addEventListener('scroll', handleScroll);
-        return () => {
-            container.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col bg-white min-h-screen">
             {/* Hero Section */}
-            <Hero onButtonClick={scrollToNext} />
+            <Hero onButtonClick={handleScrollToSlides} />
 
-            {/* Parallax Slides */}
-            <div
-                className="flex overflow-x-scroll snap-x snap-mandatory scroll-smooth h-screen"
-                ref={containerRef}
-                style={{
-                    scrollBehavior: 'smooth',
-                }}
-            >
-                {slides}
-            </div>
-
-            {/* Pagination Indicators */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {slides.map((_, index) => (
-                    <button
-                        key={index}
-                        className={`w-3 h-3 rounded-full ${index === currentSlide ? 'bg-gray-800' : 'bg-gray-400'
-                            }`}
-                        onClick={() => {
-                            containerRef.current?.scrollTo({
-                                left: containerRef.current.clientWidth * index,
-                                behavior: 'smooth',
-                            });
-                        }}
-                    />
-                ))}
+            {/* Slides Wrapper */}
+            <div ref={slidesContainerRef}>
+                <SlidesContainer totalSlides={totalSlides} />
             </div>
         </div>
     );
