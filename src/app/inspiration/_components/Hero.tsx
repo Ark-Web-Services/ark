@@ -1,10 +1,9 @@
 'use client'
 
-import { gsap } from 'gsap'
-import { ArrowRight } from 'lucide-react'
-import Image from 'next/image'
+import { gsap } from 'gsap';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link'; // Add this import
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react';
 
 export default function Hero() {
     const headingRef = useRef(null)
@@ -45,7 +44,7 @@ export default function Hero() {
                     <span className="block text-gray-400">brands that make an impact</span>
                 </h1>
                 <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
-                    <div className="w-full md:w-1/3">
+                    {/* <div className="w-full md:w-1/3">
                         <Image
                             src="/placeholder.svg?height=200&width=200"
                             alt="3D Graphic"
@@ -53,7 +52,7 @@ export default function Hero() {
                             height={200}
                             className="object-contain mx-auto md:mx-0"
                         />
-                    </div>
+                    </div> */}
                     <div className="w-full md:w-1/2">
                         <p ref={paragraphRef} className="text-xl md:text-2xl mb-8">
                             We're a design agency creating interactive experiences for brands to leave a lasting impression — delivering engaging websites that launch in weeks, not months.

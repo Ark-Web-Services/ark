@@ -3,7 +3,6 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowDown, Download } from 'lucide-react'
-import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 
 interface HeroProps {
@@ -85,23 +84,14 @@ export default function Hero({ onButtonClick }: HeroProps) {
     return (
         <section
             ref={sectionRef}
-            className="w-screen h-screen flex items-center justify-center bg-black relative overflow-hidden"
+            className="w-full h-screen flex items-center justify-center bg-black relative overflow-hidden"
         >
-            <div className="px-[70px]">
+            <div className="px-4 md:px-[70px] w-full"> {/* Add w-full */}
                 <h1 ref={headingRef} className="text-5xl md:text-6xl lg:text-[80px] font-normal leading-[1.1] mb-16 text-white">
                     <span className="block">Crafting Brand Identities</span>
                     <span className="block text-gray-400">That Leave a Lasting Impression</span>
                 </h1>
-                <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-10">
-                    <div className="w-full md:w-1/3">
-                        <Image
-                            src="/assets/branding/brand-illustration.svg"
-                            alt="Brand Guide Book Illustration"
-                            width={200}
-                            height={200}
-                            className="object-contain mx-auto md:mx-0"
-                        />
-                    </div>
+                <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-10 w-full"> {/* Add w-full */}
                     <div className="w-full md:w-1/2">
                         <p ref={paragraphRef} className="text-xl md:text-2xl mb-8 text-white text-center md:text-left">
                             Our comprehensive brand guide books are the cornerstone of impactful brand identities. We meticulously craft every element to ensure your brand communicates consistently and powerfully across all platforms.

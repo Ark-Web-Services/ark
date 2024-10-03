@@ -16,12 +16,12 @@ const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
             <section
                 key={slideNumber}
                 id={`slide-${slideNumber}`}
-                className="flex-shrink-0 w-full h-screen flex flex-col items-center justify-center relative snap-start bg-white"
+                className="flex-shrink-0 w-full h-screen flex flex-col items-center justify-center relative snap-start bg-white overflow-hidden" // Add overflow-hidden
                 style={{
                     scrollSnapAlign: 'start',
                 }}
             >
-                <div className="relative w-full h-full flex items-center justify-center m-12">
+                <div className="relative w-full h-full flex items-center justify-center ">
                     <SlideImage slideNumber={slideNumber} />
                 </div>
                 {/* You can add additional content here if needed */}
@@ -63,6 +63,9 @@ const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
         });
     };
 
+    // Determine if the screen is mobile-sized
+    const isMobile = window.innerWidth <= 768;
+
     return (
         <div className="relative">
             {/* {currentSlide > 0 && ( // Render Navigation only if not on the first slide
@@ -70,21 +73,24 @@ const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
             )} */}
             {/* Parallax Slides */}
             <div
-                className="flex overflow-x-scroll snap-x snap-mandatory scroll-smooth h-screen hide-scrollbar"
+                className="flex overflow-x-scroll snap-x snap-mandatory scroll-smooth h-screen hide-scrollbar w-full overflow-hidden" // Add overflow-hidden
                 ref={containerRef}
                 style={{
                     scrollBehavior: 'smooth',
+                    maxWidth: '100%',
                 }}
             >
                 {slides}
             </div>
 
-            {/* Pagination Indicators */}
-            <PaginationIndicators
-                currentSlide={currentSlide}
-                totalSlides={totalSlides}
-                onIndicatorClick={handleIndicatorClick}
-            />
+            {/* Conditionally render Pagination Indicators based on screen size */}
+            {!isMobile && (
+                <PaginationIndicators
+                    currentSlide={currentSlide}
+                    totalSlides={totalSlides}
+                    onIndicatorClick={handleIndicatorClick}
+                />
+            )}
 
             {/* Hide Scrollbar Styles */}
             <style jsx>{`
