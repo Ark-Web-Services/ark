@@ -125,7 +125,7 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({
 
     // Initialize camera position once when the component mounts
     useEffect(() => {
-        camera.position.set(0, 20, 50); // Set your desired initial position
+        camera.position.set(0, 5, 8); // Updated to match the final zoomed position
         camera.lookAt(0, 6, 0); // Ensure the camera looks at the pyramid
     }, [camera]);
 
@@ -246,10 +246,12 @@ const Coordinates = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [rotationX, setRotationX] = useState(0);
     const [rotationY, setRotationY] = useState(0);
+    const [experienceButton, setExperienceButton] = useState(false);
 
     // State variables for side button animations
     const [isAnimatingToSide, setIsAnimatingToSide] = useState(false);
     const [sideOrbitAngle, setSideOrbitAngle] = useState<number | null>(null);
+    const [subTextAnimated, setSubTextAnimated] = useState(false);
 
     useEffect(() => {
         if (textRef.current) {
@@ -269,15 +271,15 @@ const Coordinates = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (showSubText && subTextRef.current) {
+    const animateSubText = () => {
+        if (subTextRef.current && !subTextAnimated) {
             gsap.set(subTextRef.current, {
                 opacity: 0,
                 position: 'absolute',
                 top: '100%',
                 left: '50%',
                 transform: 'translateX(-50%)',
-            }); // Center subtext below the welcome text
+            });
             gsap.fromTo(
                 subTextRef.current,
                 { y: 20, opacity: 0 },
@@ -286,18 +288,29 @@ const Coordinates = () => {
                     opacity: 1,
                     duration: 0.5,
                     onComplete: () => {
-                        if (buttonRef.current) {
-                            gsap.fromTo(
-                                buttonRef.current,
-                                { opacity: 0 },
-                                { opacity: 1, duration: 0.5 }
-                            );
-                        }
+                        setExperienceButton(true);
+                        setSubTextAnimated(true);
                     },
                 }
             );
         }
-    }, [showSubText]);
+    };
+
+    useEffect(() => {
+        if (showSubText && !subTextAnimated) {
+            animateSubText();
+        }
+    }, [showSubText, subTextAnimated]);
+
+    useEffect(() => {
+        if (showButtons && buttonRef.current) {
+            gsap.fromTo(
+                buttonRef.current,
+                { opacity: 0 },
+                { opacity: 1, duration: 0.5 }
+            );
+        }
+    }, [showButtons]);
 
     const handleButtonClick = () => {
         setIsZooming(true);
@@ -324,7 +337,6 @@ const Coordinates = () => {
                 if (buttonRef.current) {
                     buttonRef.current.style.display = 'none';
                 }
-                setTimeout(() => setShowButtons(true), 2000);
             },
         });
     };
@@ -427,29 +439,35 @@ const Coordinates = () => {
                 {showText && (
                     <div ref={textRef} className="text-center relative">
                         <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white">
-                            {"Ark Web Studios".split('').map((char, index) => (
+                            {"First Impressions Matter".split('').map((char, index) => (
                                 <span key={index} className="inline-block letter opacity-0">
                                     {char === ' ' ? <>&nbsp;</> : char}
                                 </span>
                             ))}
                         </h1>
                         {showSubText && (
-                            <p
-                                ref={subTextRef}
-                                className="text-xl md:text-2xl text-gray-300 mb-8"
-                            >
-                                Experience the interactive difference
-                            </p>
+                            <div className="flex flex-col items-center">
+                                <p
+                                    ref={subTextRef}
+                                    className="text-xl md:text-2xl text-gray-300 mb-6"
+                                >
+                                    make a lasting impression
+                                </p>
+
+                            </div>
                         )}
+
                     </div>
                 )}
-                <button
-                    ref={buttonRef}
-                    onClick={handleButtonClick}
-                    className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition duration-300 z-10 bg-white p-2 rounded mt-4 opacity-0 mt-20"
-                >
-                    Begin Experience
-                </button>
+                {/* {experienceButton && (
+                    <button
+                        ref={buttonRef}
+                        onClick={handleButtonClick}
+                        className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark z-10 bg-white p-2 rounded mt-4"
+                    >
+                        Begin Experience
+                    </button>
+                )} */}
             </div>
             {showButtons && (
                 <div className="absolute z-10 flex space-x-4 bottom-4 left-1/2 transform -translate-x-1/2">
