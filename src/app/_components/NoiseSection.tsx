@@ -427,7 +427,7 @@ const Coordinates = () => {
                 {showText && (
                     <div ref={textRef} className="text-center relative">
                         <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white">
-                            {"Welcome to the Noise Section".split('').map((char, index) => (
+                            {"Ark Web Studios".split('').map((char, index) => (
                                 <span key={index} className="inline-block letter opacity-0">
                                     {char === ' ' ? <>&nbsp;</> : char}
                                 </span>
@@ -438,7 +438,7 @@ const Coordinates = () => {
                                 ref={subTextRef}
                                 className="text-xl md:text-2xl text-gray-300 mb-8"
                             >
-                                Experience the dynamic visuals and animations
+                                Experience the interactive difference
                             </p>
                         )}
                     </div>
@@ -446,9 +446,9 @@ const Coordinates = () => {
                 <button
                     ref={buttonRef}
                     onClick={handleButtonClick}
-                    className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition duration-300 z-10 bg-white p-2 rounded mt-4 opacity-0 mt-14"
+                    className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition duration-300 z-10 bg-white p-2 rounded mt-4 opacity-0 mt-20"
                 >
-                    Get in Touch
+                    Begin Experience
                 </button>
             </div>
             {showButtons && (
