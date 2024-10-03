@@ -1,5 +1,12 @@
+'use client'
+
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import { useEffect, useRef } from 'react'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const projects = [
     {
@@ -50,21 +57,66 @@ const projects = [
 ]
 
 export default function Portfolio() {
+    const headingRef = useRef(null)
+    const paragraphRef = useRef(null)
+    const badgeRef = useRef(null)
+    const projectNamesRef = useRef([])
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            const [firstLine, secondLine, thirdLine] = headingRef.current.children;
+
+            gsap.set([badgeRef.current, firstLine, secondLine, thirdLine, paragraphRef.current], { opacity: 0, x: 100 });
+
+            gsap.to([badgeRef.current, firstLine, secondLine, thirdLine, paragraphRef.current], {
+                opacity: 1,
+                x: 0,
+                duration: 1.5,
+                ease: "power3.out",
+                stagger: 0.2
+            });
+
+            // Animate project names word by word
+            projectNamesRef.current.forEach((projectName, index) => {
+                const words = projectName.textContent.split(' ');
+                projectName.innerHTML = words.map(word => `<span class="inline-block">${word}</span>`).join(' ');
+                const wordSpans = projectName.children;
+
+                gsap.set(wordSpans, { opacity: 0, x: 50 });
+                gsap.to(wordSpans, {
+                    opacity: 1,
+                    x: 0,
+                    duration: 0.8,
+                    ease: "power3.out",
+                    stagger: 0.1,
+                    scrollTrigger: {
+                        trigger: projectName,
+                        start: "top bottom-=50",
+                        end: "bottom top+=50",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+        }, [headingRef, paragraphRef, badgeRef, projectNamesRef]);
+
+        return () => ctx.revert()
+    }, [])
+
     return (
         <section className="py-20 px-[70px] w-full">
             <div className="flex flex-col md:flex-row justify-between mb-24 gap-16">
-                <div className="md:w-[55%] mb-8 md:mb-0">
+                <div className="md:w-[55%]">
                     <div className="mb-4">
-                        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Webflow projects</span>
+                        <span ref={badgeRef} className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Webflow projects</span>
                     </div>
-                    <h2 className="text-[56px] font-normal leading-[1.1]">
-                        See projects that<br />
-                        impress stakeholders<br />
-                        <span className="text-gray-400">and customers alike</span>
+                    <h2 ref={headingRef} className="text-[56px] font-normal leading-[1.1]">
+                        <span className="block">See projects that impress</span>
+                        <span className="block text-gray-400">stakeholders and customers</span>
+                        <span className="block">alike</span>
                     </h2>
                 </div>
-                <div className="md:w-[40%] md:pt-20">
-                    <p className="text-[18px] text-gray-600 leading-relaxed">
+                <div className="md:w-[40%] flex items-start">
+                    <p ref={paragraphRef} className="text-[18px] text-gray-600 leading-relaxed">
                         If you're anything like our previous clients, you're probably making waves in your world. So why settle for something ordinary when you're building something extraordinary?
                     </p>
                 </div>
@@ -72,7 +124,12 @@ export default function Portfolio() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {projects.map((project, index) => (
                     <div key={index} className="flex flex-col">
-                        <h3 className="text-2xl font-semibold mb-3">{project.name}</h3>
+                        <h3
+                            ref={el => projectNamesRef.current[index] = el}
+                            className="text-2xl font-semibold mb-3"
+                        >
+                            {project.name}
+                        </h3>
                         <div className="relative rounded-lg overflow-hidden shadow-lg mb-3">
                             <Image
                                 src={project.image}

@@ -1,16 +1,101 @@
-
 "use client"
 
+import { gsap } from 'gsap'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Services() {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null)
+    const sectionRef = useRef(null)
+    const headingRef = useRef(null)
+    const paragraphRef = useRef(null)
+    const coreServicesRef = useRef(null)
+    const additionalServicesRef = useRef(null)
+    const engagingDesignRef = useRef(null)
+    const webflowDevRef = useRef(null)
+    const accordionRefs = useRef([])
+    const [isVisible, setIsVisible] = useState(false)
 
     const toggleAccordion = (id: string) => {
         setOpenAccordion(openAccordion === id ? null : id)
     }
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true)
+                    observer.unobserve(entry.target)
+                }
+            },
+            {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            }
+        )
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current)
+        }
+
+        return () => {
+            if (sectionRef.current) {
+                observer.unobserve(sectionRef.current)
+            }
+        }
+    }, [])
+
+    useEffect(() => {
+        if (isVisible) {
+            const ctx = gsap.context(() => {
+                const [firstLine, secondLine] = headingRef.current.children;
+
+                gsap.set([firstLine, secondLine], { opacity: 0, x: 100 });
+                gsap.set([paragraphRef.current, coreServicesRef.current, additionalServicesRef.current], { opacity: 0, x: 100 });
+                gsap.set([engagingDesignRef.current, webflowDevRef.current], { opacity: 0, y: 100 });
+                gsap.set(accordionRefs.current, { opacity: 0, y: 50 });
+
+                const tl = gsap.timeline();
+
+                tl.to([firstLine, secondLine], {
+                    opacity: 1,
+                    x: 0,
+                    duration: 1.5,
+                    ease: "power3.out",
+                    stagger: 0.2
+                }, 0)
+                    .to([paragraphRef.current, coreServicesRef.current, additionalServicesRef.current], {
+                        opacity: 1,
+                        x: 0,
+                        duration: 1.5,
+                        ease: "power3.out",
+                    }, 0)
+                    .to(engagingDesignRef.current, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power2.out",
+                    }, 0)
+                    .to(webflowDevRef.current, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power2.out",
+                    }, 0.3)
+                    .to(accordionRefs.current, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.6,
+                        ease: "power2.out",
+                        stagger: 0.1
+                    }, "-=0.4");
+            }, [headingRef, paragraphRef, coreServicesRef, additionalServicesRef, engagingDesignRef, webflowDevRef, accordionRefs]);
+
+            return () => ctx.revert()
+        }
+    }, [isVisible])
 
     const additionalServices = [
         {
@@ -36,26 +121,26 @@ export default function Services() {
     ]
 
     return (
-        <section className="py-20 px-[70px]">
+        <section ref={sectionRef} className="py-20 px-[70px]">
             <div>
-                <div className="mb-4">
+                <div className="mb-4" ref={coreServicesRef}>
                     <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Core services</span>
                 </div>
                 <div className="flex flex-col lg:flex-row justify-between mb-16 gap-16">
                     <div className="lg:w-1/2">
-                        <h2 className="text-[56px] font-normal leading-[1.1] mb-8">
-                            Design. Webflow development.<br />
-                            <span className="text-gray-400">Code & no-code solutions.</span>
+                        <h2 ref={headingRef} className="text-[56px] font-normal leading-[1.1] mb-8">
+                            <span className="block">Design. Webflow development.</span>
+                            <span className="block text-gray-400">Code & no-code solutions.</span>
                         </h2>
                     </div>
                     <div className="lg:w-1/2">
-                        <p className="text-[18px] text-gray-600 leading-relaxed">
+                        <p ref={paragraphRef} className="text-[18px] text-gray-600 leading-relaxed">
                             When you're in a crucial stage of business, a bare-bones website won't lead you to victory. But you know what will? A website that's not just a website – but a marketing machine that makes your teams more effective. One that doesn't just embody your brand but elevates it, too. That's what Quarter Digital is here to do.
                         </p>
                     </div>
                 </div>
                 <div className="grid lg:grid-cols-2 gap-16 mb-16">
-                    <div className="bg-gray-100 rounded-2xl p-8">
+                    <div ref={engagingDesignRef} className="bg-gray-100 rounded-2xl p-8">
                         <div className="flex items-start mb-6">
                             <svg className="w-8 h-8 mr-4 text-gray-600 flex-shrink-0 mt-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10 13C10 13.5523 9.55228 14 9 14C8.44772 14 8 13.5523 8 13C8 12.4477 8.44772 12 9 12C9.55228 12 10 12.4477 10 13Z" fill="currentColor" />
@@ -88,7 +173,7 @@ export default function Services() {
                             </a>
                         </div>
                     </div>
-                    <div className="bg-gray-100 rounded-2xl p-8">
+                    <div ref={webflowDevRef} className="bg-gray-100 rounded-2xl p-8">
                         <div className="flex items-start mb-6">
                             <span className="text-4xl mr-4 text-gray-600 font-bold w-8 flex-shrink-0 mt-1">W</span>
                             <h3 className="text-2xl font-semibold">Seamless Webflow development</h3>
@@ -115,12 +200,11 @@ export default function Services() {
                         </div>
                     </div>
                 </div>
-                <div className="grid lg:grid-cols-2 gap-16">
-                    <div className="mb-8">
-                        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Additional services</span>
-                    </div>
-                    <div></div>
-                    <div>
+                <div className="flex items-start gap-16">
+                    <div className="w-1/2">
+                        <div className="mb-8" ref={additionalServicesRef}>
+                            <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Additional services</span>
+                        </div>
                         <Image
                             src="/placeholder.svg?height=150&width=150"
                             alt="3D Graphic of interconnected blue cubes"
@@ -129,9 +213,13 @@ export default function Services() {
                             className="w-full max-w-[150px] h-auto mb-8"
                         />
                     </div>
-                    <div>
-                        {additionalServices.map((service) => (
-                            <div key={service.id} className="border-t border-gray-200">
+                    <div className="w-1/2">
+                        {additionalServices.map((service, index) => (
+                            <div
+                                key={service.id}
+                                className="border-t border-gray-200"
+                                ref={el => accordionRefs.current[index] = el}
+                            >
                                 <button
                                     onClick={() => toggleAccordion(service.id)}
                                     className="flex items-center justify-between w-full py-4 text-left text-lg focus:outline-none"
