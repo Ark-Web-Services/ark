@@ -97,10 +97,10 @@ export default function Header() {
                     <span ref={logoTextRef}>ark web studios</span>
                 </Link>
                 <div className="nav-container flex items-center space-x-4 ml-auto">
-                    <Link href="/projects" className="nav-item text-black hover:text-gray-600">Projects</Link>
-                    <Link href="/services" className="nav-item text-black hover:text-gray-600">Services</Link>
-                    <Link href="/our-story" className="nav-item text-black hover:text-gray-600">Our Story</Link>
-                    <Link href="/blog" className="nav-item text-black hover:text-gray-600">Blog</Link>
+                    <Link href="/inspiration" className="nav-item text-black hover:text-gray-600">Inspiration</Link>
+                    <Link href="/branding" className="nav-item text-black hover:text-gray-600">Branding</Link>
+                    {/* <Link href="/our-story" className="nav-item text-black hover:text-gray-600">Our Story</Link> */}
+                    {/* <Link href="/blog" className="nav-item text-black hover:text-gray-600">Blog</Link> */}
                     <Link
                         href="/contact"
                         className="contact-button px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
