@@ -90,31 +90,29 @@ const Pyramid: React.FC<PyramidProps> = ({ isAnimating, color }) => {
 
 // AnimatedCamera Component with separate logic for side buttons
 type AnimatedCameraProps = {
-    isAnimating: boolean;
     isZooming: boolean;
-    targetPosition: { x: number; y: number; z: number };
+    targetPosition: THREE.Vector3 | null;
     orbitAngle: number;
-    // New props for side button animations
     isAnimatingToSide: boolean;
     sideOrbitAngle?: number;
-    setIsAnimatingToSide: React.Dispatch<React.SetStateAction<boolean>>;
+    onZoomAnimationComplete: () => void;
+    onSideAnimationComplete: () => void;
 };
 
 const AnimatedCamera: React.FC<AnimatedCameraProps> = ({
-    isAnimating,
     isZooming,
     targetPosition,
     orbitAngle,
     isAnimatingToSide,
     sideOrbitAngle,
-    setIsAnimatingToSide,
+    onZoomAnimationComplete,
+    onSideAnimationComplete,
 }) => {
     const { camera, clock } = useThree();
-    const [startTime, setStartTime] = useState<number | null>(null);
-    const [initialPosition, setInitialPosition] = useState<THREE.Vector3 | null>(null);
-    const [initialRotation, setInitialRotation] = useState<number | null>(null);
+    const [zoomStartTime, setZoomStartTime] = useState<number | null>(null);
+    const [zoomInitialPosition, setZoomInitialPosition] = useState<THREE.Vector3 | null>(null);
+    const [zoomInitialRotation, setZoomInitialRotation] = useState<number | null>(null);
 
-    // Refs for side button animations
     const sideAnimation = useRef({
         startTime: null as number | null,
         initialPosition: null as THREE.Vector3 | null,
@@ -125,35 +123,48 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({
         targetTheta: null as number | null,
     });
 
+    // Initialize camera position once when the component mounts
+    useEffect(() => {
+        camera.position.set(0, 20, 50); // Set your desired initial position
+        camera.lookAt(0, 6, 0); // Ensure the camera looks at the pyramid
+    }, [camera]);
+
     useFrame(() => {
-        // Logic for "Get in Touch" button animation
-        if (isAnimating && isZooming) {
-            if (startTime === null) {
-                setStartTime(clock.getElapsedTime());
-                setInitialPosition(camera.position.clone());
-                setInitialRotation(camera.rotation.y);
+        // Handle Zoom Animation
+        if (isZooming && targetPosition) {
+            if (zoomStartTime === null) {
+                setZoomStartTime(clock.getElapsedTime());
+                setZoomInitialPosition(camera.position.clone());
+                setZoomInitialRotation(camera.rotation.y);
             }
-            const elapsedTime = clock.getElapsedTime() - (startTime ?? 0);
-            const t = Math.min(elapsedTime / 3, 1); // Duration of 3 seconds
+            const elapsed = clock.getElapsedTime() - (zoomStartTime ?? 0);
+            const t = Math.min(elapsed / 3, 1); // Duration of 3 seconds
             const easeInOutQuad = (t: number) =>
                 t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
             const easedT = easeInOutQuad(t);
-            if (initialPosition && initialRotation !== null) {
-                camera.position.lerpVectors(initialPosition, targetPosition, easedT);
+            if (zoomInitialPosition && zoomInitialRotation !== null) {
+                camera.position.lerpVectors(zoomInitialPosition, targetPosition, easedT);
                 camera.rotation.y = THREE.MathUtils.lerp(
-                    initialRotation,
+                    zoomInitialRotation,
                     orbitAngle,
                     easedT
                 );
             }
-        } else if (targetPosition) {
-            camera.position.lerp(targetPosition, 0.1);
+
+            if (t >= 1) {
+                // Animation complete
+                onZoomAnimationComplete(); // Notify parent component
+                setZoomStartTime(null);
+                setZoomInitialPosition(null);
+                setZoomInitialRotation(null);
+            }
         }
 
-        // Logic for side button animations
+        // Handle Side Animations
         if (isAnimatingToSide) {
             if (sideAnimation.current.startTime === null) {
+                // Initialize side animation
                 sideAnimation.current.startTime = clock.getElapsedTime();
                 sideAnimation.current.initialPosition = camera.position.clone();
                 const offset = camera.position.clone().sub(new THREE.Vector3(0, 6, 0));
@@ -164,44 +175,38 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({
                 );
                 sideAnimation.current.targetRadius =
                     sideAnimation.current.initialRadius! + 5; // Zoom out by 5 units
-                sideAnimation.current.targetTheta = sideOrbitAngle; // Orbit angle passed from Coordinates component
+                sideAnimation.current.targetTheta = sideOrbitAngle ?? 0; // Orbit angle passed from Coordinates component
             }
-            const elapsedTime =
-                clock.getElapsedTime() - (sideAnimation.current.startTime ?? 0);
-            const t = Math.min(elapsedTime / 1, 1); // duration 1 second
+
+            const elapsed = clock.getElapsedTime() - (sideAnimation.current.startTime ?? 0);
+            const t = Math.min(elapsed / 1, 1); // Duration of 1 second
             const easeInOutQuad = (t: number) =>
                 t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
             const easedT = easeInOutQuad(t);
 
+            const { initialRadius, targetRadius, initialTheta, targetTheta, initialPhi } = sideAnimation.current;
+
             if (
-                sideAnimation.current.initialRadius !== null &&
-                sideAnimation.current.initialTheta !== null &&
-                sideAnimation.current.initialPhi !== null &&
-                sideAnimation.current.targetTheta !== undefined &&
-                sideAnimation.current.targetRadius !== undefined
+                initialRadius !== null &&
+                initialTheta !== null &&
+                initialPhi !== null &&
+                targetTheta !== undefined &&
+                targetRadius !== null // Ensure targetRadius is not null
             ) {
-                const radius = THREE.MathUtils.lerp(
-                    sideAnimation.current.initialRadius!,
-                    sideAnimation.current.targetRadius!,
-                    easedT
-                );
-                const theta = THREE.MathUtils.lerp(
-                    sideAnimation.current.initialTheta!,
-                    sideAnimation.current.targetTheta!,
-                    easedT
-                );
-                const phi = sideAnimation.current.initialPhi!; // No change in phi
+                const radius = THREE.MathUtils.lerp(initialRadius, targetRadius, easedT);
+                const theta = THREE.MathUtils.lerp(initialTheta, targetTheta, easedT);
+                const phi = initialPhi; // No change in phi
 
                 const x = radius * Math.sin(phi) * Math.cos(theta);
                 const y = radius * Math.cos(phi);
                 const z = radius * Math.sin(phi) * Math.sin(theta);
 
-                camera.position.set(x + 0, y + 6, z + 0);
+                camera.position.set(x, y + 6, z);
                 camera.lookAt(0, 6, 0);
             }
+
             if (t >= 1) {
                 // Animation complete
-                setIsAnimatingToSide(false); // Stop the animation
                 sideAnimation.current.startTime = null;
                 sideAnimation.current.initialPosition = null;
                 sideAnimation.current.initialRadius = null;
@@ -209,6 +214,9 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({
                 sideAnimation.current.initialPhi = null;
                 sideAnimation.current.targetRadius = null;
                 sideAnimation.current.targetTheta = null;
+
+                // Notify parent component
+                onSideAnimationComplete();
             }
         }
 
@@ -220,20 +228,11 @@ const AnimatedCamera: React.FC<AnimatedCameraProps> = ({
         camera.lookAt(0, 6, 0);
     });
 
-    useEffect(() => {
-        if (!isZooming) {
-            setStartTime(null);
-            setInitialPosition(null);
-            setInitialRotation(null);
-        }
-    }, [isZooming]);
-
     return null;
 };
 
-// Coordinates Component with separate state and logic for side buttons
+// Coordinates Component
 const Coordinates = () => {
-    const [isAnimating, setIsAnimating] = useState(true);
     const [isZooming, setIsZooming] = useState(false);
     const [showButtons, setShowButtons] = useState(false);
     const [targetPosition, setTargetPosition] = useState<THREE.Vector3 | null>(null);
@@ -331,8 +330,7 @@ const Coordinates = () => {
     };
 
     const handleSideButtonClick = (side: number) => {
-        if (isAnimatingToSide) return; // Prevent starting a new animation if one is in progress
-
+        if (isAnimatingToSide) return;
         let newColor: string;
         let orbitAngle: number = 0;
         switch (side) {
@@ -390,6 +388,16 @@ const Coordinates = () => {
         }
     };
 
+    // Callback to reset `isAnimatingToSide` after animation completes
+    const handleSideAnimationComplete = () => {
+        setIsAnimatingToSide(false);
+    };
+
+    // Callback to reset `isZooming` after zoom animation completes
+    const handleZoomAnimationComplete = () => {
+        setIsZooming(false);
+    };
+
     return (
         <section
             id="home"
@@ -399,22 +407,19 @@ const Coordinates = () => {
             onPointerMove={handlePointerMove}
         >
             <div className="absolute inset-0 z-0">
-                <Canvas
-                    camera={{ position: [0, 20, 50] }}
-                    style={{ background: 'black' }}
-                >
+                <Canvas style={{ background: 'black' }}>
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[0, 10, 0]} intensity={1} />
-                    <GridPlane isAnimating={isAnimating} color={color} />
-                    <Pyramid isAnimating={isAnimating} color={color} />
+                    <GridPlane isAnimating={true} color={color} />
+                    <Pyramid isAnimating={true} color={color} />
                     <AnimatedCamera
-                        isAnimating={isAnimating}
                         isZooming={isZooming}
-                        targetPosition={targetPosition ?? { x: 0, y: 20, z: 50 }}
+                        targetPosition={targetPosition}
                         orbitAngle={orbitAngle}
                         isAnimatingToSide={isAnimatingToSide}
                         sideOrbitAngle={sideOrbitAngle ?? 0}
-                        setIsAnimatingToSide={setIsAnimatingToSide}
+                        onSideAnimationComplete={handleSideAnimationComplete}
+                        onZoomAnimationComplete={handleZoomAnimationComplete}
                     />
                 </Canvas>
             </div>
