@@ -48,8 +48,8 @@ export default function Footer() {
     return (
         <footer ref={footerRef} className="bg-white w-full py-16">
             <div className="max-w-[1400px] mx-auto px-[70px]">
-                <div ref={columnsRef} className="flex justify-between">
-                    <div className="w-1/3">
+                <div ref={columnsRef} className="flex flex-col md:flex-row justify-between">
+                    <div className="w-full md:w-1/3 mb-6">
                         <h3 className="font-bold text-3xl mb-6">ark web studio</h3>
                         <p className="text-base text-gray-600 mb-6">ark web studio is your partnership-driven Web design agency dedicated to crafting unique and high-converting digital experiences.</p>
                         <div className="flex space-x-4">
@@ -64,8 +64,8 @@ export default function Footer() {
                             </Link>
                         </div>
                     </div>
-                    <div className="w-2/3 flex justify-end space-x-16">
-                        <div className="services">
+                    <div className="w-full md:w-2/3 flex flex-col md:flex-row justify-end space-x-0 md:space-x-16">
+                        <div className="services mb-6">
                             <h4 className="font-bold text-lg mb-4">Services</h4>
                             <ul className="space-y-2">
                                 <li><Link href="/" className="text-base text-gray-600 hover:text-gray-900 inline-block">Custom development</Link></li>
@@ -74,7 +74,7 @@ export default function Footer() {
                                 <li><Link href="/" className="text-base text-gray-600 hover:text-gray-900 inline-block">SEO</Link></li>
                             </ul>
                         </div>
-                        <div className="quick-links">
+                        <div className="quick-links mb-6">
                             <h4 className="font-bold text-lg mb-4">Quick links</h4>
                             <ul className="space-y-2">
                                 <li><Link href="/" className="text-base text-gray-600 hover:text-gray-900 inline-block">Home</Link></li>
@@ -82,7 +82,7 @@ export default function Footer() {
                                 <li><Link href="/branding" className="text-base text-gray-600 hover:text-gray-900 inline-block">Branding</Link></li>
                             </ul>
                         </div>
-                        <div className="contact">
+                        <div className="contact mb-6">
                             <h4 className="font-bold text-lg mb-4">Contact</h4>
                             <ul className="space-y-2">
                                 <li><p className="text-base text-gray-600 inline-block">support@arkwebservices.com</p></li>
