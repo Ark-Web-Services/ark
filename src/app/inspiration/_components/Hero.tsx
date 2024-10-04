@@ -38,7 +38,7 @@ export default function Hero() {
 
     return (
         <section className="w-screen overflow-hidden py-16">
-            <div className="pb-20 px-[70px] pt-[120px]">
+            <div className="pb-20 lg:px-[70px] pt-[120px] px-8 sm:px-8">
                 <h1 ref={headingRef} className="text-5xl md:text-6xl lg:text-[80px] font-normal leading-[1.1] mb-16">
                     <span className="block">The Interactive agency for</span>
                     <span className="block text-gray-400">brands that make an impact</span>

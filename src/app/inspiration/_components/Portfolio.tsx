@@ -107,8 +107,8 @@ export default function Portfolio() {
 
     return (
         <section className="py-20 lg:px-[70px] px-8 sm:px-8 w-full">
-            <div className="flex justify-between mb-24 gap-16">
-                <div className="w-[55%]">
+            <div className="flex flex-col lg:flex-row justify-between mb-24 gap-16">
+                <div className="w-full lg:w-[55%]">
                     <div className="mb-4">
                         <span
                             ref={badgeRef}
@@ -124,7 +124,7 @@ export default function Portfolio() {
                         <span className="block">process</span>
                     </h2>
                 </div>
-                <div className="w-[40%] pt-10">
+                <div className="w-full lg:w-[40%] pt-10">
                     <p ref={paragraphRef} className="text-[18px] text-gray-600 leading-relaxed">
                         For those who push limits and redefine what's possible, ordinary simply isn't an option. So why blend in when you were born to stand out? You're creating something iconic—let’s make sure it’s nothing less than extraordinary.
                     </p>
