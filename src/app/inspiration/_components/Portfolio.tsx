@@ -106,7 +106,7 @@ export default function Portfolio() {
     }, [])
 
     return (
-        <section className="py-20 px-[70px] w-full">
+        <section className="py-20 lg:px-[70px] px-8 sm:px-8 w-full">
             <div className="flex justify-between mb-24 gap-16">
                 <div className="w-[55%]">
                     <div className="mb-4">

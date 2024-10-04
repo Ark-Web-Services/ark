@@ -123,7 +123,7 @@ export default function Services() {
     ]
 
     return (
-        <section ref={sectionRef} className="py-20 px-[70px]">
+        <section ref={sectionRef} className="py-20 lg:px-[70px] px-8 sm:px-8">
             <div>
                 <div className="mb-4" ref={coreServicesRef}>
                     <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-800">
