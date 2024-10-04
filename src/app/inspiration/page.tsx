@@ -1,6 +1,6 @@
+import Footer from '../_components/Footer'
 import Header from '../_components/Header'
 import Approach from './_components/Approach'
-import Footer from './_components/Footer'
 import Hero from './_components/Hero'
 import Portfolio from './_components/Portfolio'
 import Services from './_components/Services'
