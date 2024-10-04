@@ -55,7 +55,7 @@ export default function Approach() {
     }, [])
 
     return (
-        <section className="py-20 px-[70px]">
+        <section className="py-20 lg:px-[70px] px-8 sm:px-8">
             <div className="mb-4" ref={badgeRef}>
                 <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-800">
                     <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-blue-800"></span>
