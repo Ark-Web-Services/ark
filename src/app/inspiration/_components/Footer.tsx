@@ -47,7 +47,7 @@ export default function Footer() {
 
     return (
         <footer ref={footerRef} className="bg-white w-full py-16">
-            <div className="max-w-[1400px] mx-auto px-[70px]">
+            <div className="max-w-[1400px] mx-auto lg:px-[70px] px-8 sm:px-8">
                 <div ref={columnsRef} className="flex flex-col md:flex-row justify-between">
                     <div className="w-full md:w-1/3 mb-6">
                         <h3 className="font-bold text-3xl mb-6">ark web studio</h3>
