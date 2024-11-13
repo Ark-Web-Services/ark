@@ -65,6 +65,11 @@ export default function GridPlane({
             void main() {
                 // Calculate distance from center
                 float distance = length(vec2(vPosition.x, vPosition.z));
+
+                // Define the circular mask
+                if (distance > radius) {
+                    discard; // Make fragments outside the radius fully transparent
+                }
                 
                 // Initialize final color with base color
                 vec3 finalColor = baseColor;
@@ -103,7 +108,7 @@ export default function GridPlane({
                 rippleColors: { value: Array(MAX_RIPPLES).fill(new THREE.Color("#ffffff")) },
                 rippleStartTimes: { value: Array(MAX_RIPPLES).fill(0) },
             },
-            transparent: false,
+            transparent: true, // Changed to true to handle discarding fragments properly
         });
     }, [baseColor]);
 
