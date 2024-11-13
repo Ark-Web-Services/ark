@@ -1,6 +1,6 @@
 
 import Header from './_components/Header';
-import NoiseSection from './_components/NoiseSection';
+import NoiseSection from './_components/interactiveHero/NoiseSection';
 
 
 

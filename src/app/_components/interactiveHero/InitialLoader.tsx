@@ -66,7 +66,7 @@ const InitialLoader: React.FC<InitialLoaderProps> = ({ onStartZoom, onShowButton
 
     const handleButtonClick = () => {
         console.log('Button clicked'); // Debugging line
-        onStartZoom(new Vector3(0, 5, 8)); // Final destination
+        onStartZoom(new Vector3(0, 8, 18)); // Final destination
 
         gsap.to(textRef.current, {
             duration: 1,
@@ -119,10 +119,11 @@ const InitialLoader: React.FC<InitialLoaderProps> = ({ onStartZoom, onShowButton
                     )}
                 </div>
             )}
+
             <button
                 ref={buttonRef}
                 onClick={handleButtonClick}
-                className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition duration-300 z-10 bg-white p-2 rounded mt-4 opacity-0 mt-14"
+                className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition duration-300 z-10 bg-white p-2 rounded mt-14 opacity-0 mt-14"
             >
                 Get in Touch
             </button>

@@ -1,8 +1,9 @@
+import { Html } from '@react-three/drei';
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from 'three';
+import DisplayFaceInfo from '../pyramid/DisplayFaceInfo';
 
-// AnimatedCamera Component with separate logic for side buttons
 export type AnimatedCameraProps = {
     isZooming: boolean;
     targetPosition: THREE.Vector3 | null;
@@ -36,6 +37,33 @@ export default function AnimatedCamera({
         targetRadius: null as number | null,
         targetTheta: null as number | null,
     });
+
+    // State to track current face
+    const [currentFace, setCurrentFace] = useState<string | null>(null);
+
+    // Define the data for each face
+    const faceData = {
+        vision: {
+            title: "Vision",
+            content: "We don't just create brands, we craft visions that resonate across generations. Every pixel, every color, every word is deliberately chosen to tell your story.",
+            visualConcept: "Expanding Possibility",
+        },
+        impact: {
+            title: "Impact",
+            content: "Transform your market presence with strategies that don't just reach audiences - they move them. We measure success in minds changed and hearts won.",
+            visualConcept: "Force of Change",
+        },
+        artistry: {
+            title: "Artistry",
+            content: "Where creativity meets purpose. Our designs aren't just beautiful - they're carefully crafted solutions to your unique challenges.",
+            visualConcept: "Creative Flow",
+        },
+        innovation: {
+            title: "Innovation",
+            content: "Pushing boundaries isn't just what we do - it's who we are. We blend cutting-edge technology with timeless design principles.",
+            visualConcept: "Digital Evolution",
+        },
+    };
 
     // Initialize camera position once when the component mounts
     useEffect(() => {
@@ -139,7 +167,36 @@ export default function AnimatedCamera({
 
         // Always look at the pyramid's position
         camera.lookAt(0, 6, 0);
+
+        // Determine the current face based on sideOrbitAngle
+        if (isAnimatingToSide && sideOrbitAngle !== undefined) {
+            const angleInDegrees = THREE.MathUtils.radToDeg(sideOrbitAngle % (2 * Math.PI));
+            let face: string | null = null;
+
+            if (angleInDegrees >= -45 && angleInDegrees < 45) {
+                face = "vision";
+            } else if (angleInDegrees >= 45 && angleInDegrees < 135) {
+                face = "impact";
+            } else if (angleInDegrees >= 135 || angleInDegrees < -135) {
+                face = "artistry";
+            } else if (angleInDegrees >= -135 && angleInDegrees < -45) {
+                face = "innovation";
+            }
+
+            setCurrentFace(face);
+        } else {
+            setCurrentFace(null); // Reset if not animating
+        }
     });
 
-    return null;
-};
+    return (
+        <>
+            {/* Optionally, use Html to render information within the 3D scene */}
+            {currentFace && (
+                <Html position={[0, 10, 0]} center>
+                    <DisplayFaceInfo faceData={faceData[currentFace]} />
+                </Html>
+            )}
+        </>
+    );
+}

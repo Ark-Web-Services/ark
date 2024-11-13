@@ -1,13 +1,13 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
-
+import * as THREE from 'three';
 // Pyramid Component
-interface PyramidProps {
+export interface PyramidProps {
     isAnimating: boolean;
     color: string;
 }
 
-const Pyramid: React.FC<PyramidProps> = ({ isAnimating, color }) => {
+export default function Pyramid({ isAnimating, color }: PyramidProps) {
     const meshRef = useRef<THREE.Mesh>(null);
     const amplitude = 0.5;
     const speed = 2;
