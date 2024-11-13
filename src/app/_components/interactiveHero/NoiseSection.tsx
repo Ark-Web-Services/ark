@@ -12,7 +12,7 @@ import AnimatedCamera from './AnimatedCamera';
 import ClickAndDragAnimation from './ClickAndDragAnimation';
 import GridPlane from './GridPlane';
 import InitialLoader from './InitialLoader';
-import InteractiveButton3D from './InteractiveButton3D';
+import InteractiveButton3D from './InteractiveButton3d';
 
 
 // Coordinates Component
