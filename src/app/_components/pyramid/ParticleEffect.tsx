@@ -8,12 +8,6 @@ interface ParticleEffectProps {
     onComplete: () => void; // Callback to notify when the effect is complete
 }
 
-interface MouseState {
-    x: number;
-    y: number;
-    pressed: boolean;
-}
-
 
 export default function ParticleEffect({ position, color, onComplete }: ParticleEffectProps) {
     const meshRef = useRef<THREE.InstancedMesh>(null);
@@ -91,14 +85,14 @@ export default function ParticleEffect({ position, color, onComplete }: Particle
                     );
                     dummy.scale.set(s, s, s);
                     dummy.updateMatrix();
-                    meshRef.current.setMatrixAt(i, dummy.matrix);
+                    meshRef.current?.setMatrixAt(i, dummy.matrix);
                 }
             });
 
             // Update opacity for each instance
             for (let i = 0; i < particleCount; i++) {
                 const instanceMaterial = meshRef.current.material as THREE.MeshPhongMaterial;
-                instanceMaterial.opacity = opacityRef.current[i];
+                instanceMaterial.opacity ?? opacityRef.current[i];
             }
 
             meshRef.current.instanceMatrix.needsUpdate = true;

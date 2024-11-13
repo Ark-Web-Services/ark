@@ -12,7 +12,7 @@ import AnimatedCamera from './AnimatedCamera';
 import ClickAndDragAnimation from './ClickAndDragAnimation';
 import GridPlane from './GridPlane';
 import InitialLoader from './InitialLoader';
-import InteractiveButton3D from './InteractiveButton3d';
+import InteractiveButton3D from './InteractiveButton3D';
 
 
 // Coordinates Component
@@ -21,7 +21,7 @@ const Coordinates = () => {
     const [showButtons, setShowButtons] = useState(false);
     const [targetPosition, setTargetPosition] = useState<THREE.Vector3 | null>(null);
     const [orbitAngle, setOrbitAngle] = useState(0);
-    const [color, setColor] = useState("#DA70D6");
+    const [color, setColor] = useState("#5c5c5c");
 
     // State variables for side button animations
     const [isAnimatingToSide, setIsAnimatingToSide] = useState(false);
@@ -145,7 +145,7 @@ const Coordinates = () => {
                     <directionalLight position={[0, 20, 10]} intensity={1} castShadow />
                     <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
                     <GridPlane isAnimating={true} color={color} />
-                    <Pyramid isAnimating={true} color={color} />
+                    <Pyramid isAnimating={true} />
                     <AnimatedCamera
                         isZooming={isZooming}
                         targetPosition={targetPosition}

@@ -109,6 +109,7 @@ export default function GridPlane({
                 rippleStartTimes: { value: Array(MAX_RIPPLES).fill(0) },
             },
             transparent: true, // Changed to true to handle discarding fragments properly
+            wireframe: true,
         });
     }, [baseColor]);
 
@@ -118,35 +119,45 @@ export default function GridPlane({
             const material = meshRef.current.material as ShaderMaterial;
 
             // Update the time uniform
-            material.uniforms.time.value = elapsedTime;
+            if (material.uniforms.time) {
+                material.uniforms.time.value = elapsedTime;
+            }
 
             // Filter active ripples
             const activeRipples = ripples.filter(
-                (ripple) => elapsedTime - ripple.startTime < material.uniforms.transitionDuration.value
+                (ripple) => elapsedTime - ripple.startTime < (material.uniforms.transitionDuration?.value || 5.0)
             );
 
             // Identify completed ripples
             const completedRipples = ripples.filter(
-                (ripple) => elapsedTime - ripple.startTime >= material.uniforms.transitionDuration.value
+                (ripple) => elapsedTime - ripple.startTime >= (material.uniforms.transitionDuration?.value || 5.0)
             );
 
             // Update baseColor with the color of the last completed ripple
             if (completedRipples.length > 0) {
                 const latestCompletedRipple = completedRipples[completedRipples.length - 1];
-                setBaseColor(latestCompletedRipple.color.clone());
+                if (latestCompletedRipple) {
+                    setBaseColor(latestCompletedRipple.color.clone());
+                }
             }
 
             // Update numRipples uniform
-            material.uniforms.numRipples.value = activeRipples.length;
+            if (material.uniforms.numRipples) {
+                material.uniforms.numRipples.value = activeRipples.length;
+            }
 
             // Prepare arrays for ripple colors and start times
-            const colorsArray = material.uniforms.rippleColors.value;
-            const startTimesArray = material.uniforms.rippleStartTimes.value;
+            const colorsArray = material.uniforms.rippleColors?.value;
+            const startTimesArray = material.uniforms.rippleStartTimes?.value;
 
             for (let i = 0; i < MAX_RIPPLES; i++) {
                 if (i < activeRipples.length) {
-                    colorsArray[i] = activeRipples[i].color;
-                    startTimesArray[i] = activeRipples[i].startTime;
+                    if (colorsArray) {
+                        colorsArray[i] = activeRipples[i]?.color;
+                    }
+                    if (startTimesArray) {
+                        startTimesArray[i] = activeRipples[i]?.startTime;
+                    }
                 } else {
                     colorsArray[i] = new THREE.Color("#ffffff"); // Default color (won't affect final color as ripple is inactive)
                     startTimesArray[i] = 0;
@@ -154,8 +165,12 @@ export default function GridPlane({
             }
 
             // Mark uniforms as updated
-            material.uniforms.rippleColors.value = colorsArray;
-            material.uniforms.rippleStartTimes.value = startTimesArray;
+            if (material.uniforms.rippleColors) {
+                material.uniforms.rippleColors.value = colorsArray;
+            }
+            if (material.uniforms.rippleStartTimes) {
+                material.uniforms.rippleStartTimes.value = startTimesArray;
+            }
 
             // Remove completed ripples from the state
             if (completedRipples.length > 0) {
@@ -163,7 +178,9 @@ export default function GridPlane({
             }
 
             // Update the baseColor uniform
-            material.uniforms.baseColor.value = baseColor;
+            if (material.uniforms.baseColor) {
+                material.uniforms.baseColor.value = baseColor;
+            }
 
             // Update wave animation
             if (isAnimating) {
@@ -176,17 +193,20 @@ export default function GridPlane({
                     for (let i = 0; i < positions.length; i += 3) {
                         const x = positions[i];
                         const z = positions[i + 2];
+                        if (x !== undefined && z !== undefined) {
+                            const distance = Math.sqrt(x * x + z * z);
 
-                        const distance = Math.sqrt(x * x + z * z);
-
-                        if (distance <= radius) {
-                            positions[i + 1] = Math.sin(distance - elapsedTime) * 0.55;
-                        } else {
-                            positions[i + 1] = 0; // Reset displacement outside the circle
+                            if (distance <= radius) {
+                                positions[i + 1] = Math.sin(distance - elapsedTime) * 0.55;
+                            } else {
+                                positions[i + 1] = 0; // Reset displacement outside the circle
+                            }
                         }
                     }
 
-                    geometry.attributes.position.needsUpdate = true;
+                    if (geometry.attributes.position) {
+                        geometry.attributes.position.needsUpdate = true;
+                    }
                     geometry.computeVertexNormals();
                 }
             }

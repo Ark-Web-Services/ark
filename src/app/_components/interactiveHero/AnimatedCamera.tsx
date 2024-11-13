@@ -45,12 +45,12 @@ export default function AnimatedCamera({
     const faceData = {
         vision: {
             title: "Vision",
-            content: "We don't just create brands, we craft visions that resonate across generations. Every pixel, every color, every word is deliberately chosen to tell your story.",
+            content: "We craft visions that resonate across generations. Every pixel, every color, every word is deliberately chosen to tell your story.",
             visualConcept: "Expanding Possibility",
         },
         impact: {
             title: "Impact",
-            content: "Transform your market presence with strategies that don't just reach audiences - they move them. We measure success in minds changed and hearts won.",
+            content: "Transform your market presence with strategies that do more than reach audiences - they move them. We measure success in minds changed and hearts won.",
             visualConcept: "Force of Change",
         },
         artistry: {
@@ -197,7 +197,7 @@ export default function AnimatedCamera({
                 initialRadius !== null &&
                 initialTheta !== null &&
                 initialPhi !== null &&
-                targetTheta !== undefined &&
+                targetTheta !== null && // Updated from targetTheta !== undefined
                 targetRadius !== null // Ensure targetRadius is not null
             ) {
                 const radius = initialRadius; // Maintain the same radius
@@ -242,7 +242,7 @@ export default function AnimatedCamera({
             {/* Render DisplayFaceInfo only when currentFace is set */}
             {currentFace && (
                 <Html position={[0, 10, 0]} center>
-                    <DisplayFaceInfo faceData={faceData[currentFace]} />
+                    <DisplayFaceInfo faceData={faceData[currentFace as keyof typeof faceData]} />
                 </Html>
             )}
         </>
