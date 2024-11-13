@@ -69,7 +69,65 @@ export default function AnimatedCamera({
     useEffect(() => {
         camera.position.set(0, 20, 50); // Set your desired initial position
         camera.lookAt(0, 6, 0); // Ensure the camera looks at the pyramid
-    }, [camera]);
+        console.log("Camera initialized.");
+    }, []); // Ensures this runs only once on mount
+
+    // Helper function to determine the face based on angle
+    const determineFace = (angleInDegrees: number): string | null => {
+        console.log(`Determining face for angle: ${angleInDegrees}°`);
+        let face: string | null = null;
+
+        if (angleInDegrees >= -45 && angleInDegrees < 45) {
+            face = "vision";
+        } else if (angleInDegrees >= 45 && angleInDegrees < 135) {
+            face = "impact";
+        } else if (angleInDegrees >= 135 || angleInDegrees < -135) {
+            face = "artistry";
+        } else if (angleInDegrees >= -135 && angleInDegrees < -45) {
+            face = "innovation";
+        }
+
+        console.log(`Face determined: ${face}`);
+        return face;
+    };
+
+    // Internal callback for when zoom animation completes
+    const handleZoomAnimationComplete = () => {
+        console.log("Zoom animation completed.");
+        onZoomAnimationComplete(); // Notify parent component
+
+        // Determine the current face based on final camera orientation
+        const cameraPosition = new THREE.Vector3();
+        camera.getWorldPosition(cameraPosition);
+        const offset = cameraPosition.clone().sub(new THREE.Vector3(0, 6, 0));
+        const currentTheta = Math.atan2(offset.z, offset.x);
+        let angleInDegrees = THREE.MathUtils.radToDeg(currentTheta);
+
+        // Normalize angle to be between -180 and 180
+        angleInDegrees = ((angleInDegrees + 180) % 360) - 180;
+
+        const face = determineFace(angleInDegrees);
+        setCurrentFace(face);
+    };
+
+    // Internal callback for when side animation completes
+    const handleSideAnimationComplete = () => {
+        console.log("Side animation completed.");
+        onSideAnimationComplete(); // Notify parent component
+
+        // Determine the current face based on final camera orientation
+        const cameraPosition = new THREE.Vector3();
+        camera.getWorldPosition(cameraPosition);
+        const offset = cameraPosition.clone().sub(new THREE.Vector3(0, 6, 0));
+        const currentTheta = Math.atan2(offset.z, offset.x);
+        let angleInDegrees = THREE.MathUtils.radToDeg(currentTheta);
+
+        // Normalize angle to be between -180 and 180
+        angleInDegrees = ((angleInDegrees + 180) % 360) - 180;
+
+        const face = determineFace(angleInDegrees);
+        setCurrentFace(face);
+    };
 
     useFrame(() => {
         // Handle Zoom Animation
@@ -78,6 +136,7 @@ export default function AnimatedCamera({
                 zoomStartTime.current = clock.getElapsedTime();
                 zoomInitialPosition.current = camera.position.clone();
                 zoomInitialRotation.current = camera.rotation.y;
+                console.log("Zoom animation started.");
             }
             const elapsed = clock.getElapsedTime() - (zoomStartTime.current ?? 0);
             const t = Math.min(elapsed / 3, 1); // Duration of 3 seconds
@@ -85,21 +144,25 @@ export default function AnimatedCamera({
                 t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
             const easedT = easeInOutQuad(t);
-            if (zoomInitialPosition.current && zoomInitialRotation.current !== null) {
+            if (zoomInitialPosition.current !== null && zoomInitialRotation.current !== null) {
                 camera.position.lerpVectors(zoomInitialPosition.current, targetPosition, easedT);
                 camera.rotation.y = THREE.MathUtils.lerp(
                     zoomInitialRotation.current,
                     orbitAngle,
                     easedT
                 );
+                console.log(`Zoom animation progress: t=${t.toFixed(2)}, easedT=${easedT.toFixed(2)}`);
             }
 
             if (t >= 1) {
                 // Animation complete
-                onZoomAnimationComplete(); // Notify parent component
+                console.log("Zoom animation reached completion.");
                 zoomStartTime.current = null;
                 zoomInitialPosition.current = null;
                 zoomInitialRotation.current = null;
+
+                // Call the internal callback
+                handleZoomAnimationComplete();
             }
         }
 
@@ -117,6 +180,8 @@ export default function AnimatedCamera({
                 );
                 sideAnimation.current.targetRadius = sideAnimation.current.initialRadius!; // Maintain current radius or set to desired fixed value
                 sideAnimation.current.targetTheta = sideOrbitAngle ?? sideAnimation.current.initialTheta; // Orbit angle passed from Coordinates component
+
+                console.log("Side animation started.");
             }
 
             const elapsed = clock.getElapsedTime() - (sideAnimation.current.startTime ?? 0);
@@ -124,6 +189,7 @@ export default function AnimatedCamera({
             const easeInOutQuad = (t: number) =>
                 t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
             const easedT = easeInOutQuad(t);
+            console.log(`Side animation progress: t=${t.toFixed(2)}, easedT=${easedT.toFixed(2)}`);
 
             const { initialRadius, targetRadius, initialTheta, targetTheta, initialPhi } = sideAnimation.current;
 
@@ -144,10 +210,12 @@ export default function AnimatedCamera({
 
                 camera.position.set(x, y + 6, z);
                 camera.lookAt(0, 6, 0);
+                console.log(`Camera position set to x:${x.toFixed(2)}, y:${y + 6}, z:${z.toFixed(2)}`);
             }
 
             if (t >= 1) {
                 // Animation complete
+                console.log("Side animation reached completion.");
                 sideAnimation.current.startTime = null;
                 sideAnimation.current.initialPosition = null;
                 sideAnimation.current.initialRadius = null;
@@ -156,8 +224,8 @@ export default function AnimatedCamera({
                 sideAnimation.current.targetRadius = null;
                 sideAnimation.current.targetTheta = null;
 
-                // Notify parent component
-                onSideAnimationComplete();
+                // Call the internal callback
+                handleSideAnimationComplete();
             }
         }
 
@@ -167,31 +235,11 @@ export default function AnimatedCamera({
 
         // Always look at the pyramid's position
         camera.lookAt(0, 6, 0);
-
-        // Determine the current face based on sideOrbitAngle
-        if (isAnimatingToSide && sideOrbitAngle !== undefined) {
-            const angleInDegrees = THREE.MathUtils.radToDeg(sideOrbitAngle % (2 * Math.PI));
-            let face: string | null = null;
-
-            if (angleInDegrees >= -45 && angleInDegrees < 45) {
-                face = "vision";
-            } else if (angleInDegrees >= 45 && angleInDegrees < 135) {
-                face = "impact";
-            } else if (angleInDegrees >= 135 || angleInDegrees < -135) {
-                face = "artistry";
-            } else if (angleInDegrees >= -135 && angleInDegrees < -45) {
-                face = "innovation";
-            }
-
-            setCurrentFace(face);
-        } else {
-            setCurrentFace(null); // Reset if not animating
-        }
     });
 
     return (
         <>
-            {/* Optionally, use Html to render information within the 3D scene */}
+            {/* Render DisplayFaceInfo only when currentFace is set */}
             {currentFace && (
                 <Html position={[0, 10, 0]} center>
                     <DisplayFaceInfo faceData={faceData[currentFace]} />

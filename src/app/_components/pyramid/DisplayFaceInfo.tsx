@@ -15,7 +15,6 @@ export default function DisplayFaceInfo({ faceData }: DisplayFaceInfoProps) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100vh',
             width: '100vw',
             background: 'rgba(0, 0, 0, 0.7)',
             padding: '15px 25px',

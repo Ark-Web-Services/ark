@@ -73,11 +73,11 @@ const InitialLoader: React.FC<InitialLoaderProps> = ({ onStartZoom, onShowButton
             opacity: 0,
             scale: 2,
             ease: "power2.inOut",
-            // onComplete: () => {
-            //     // if (textRef.current) {
-            //     //     textRef.current.style.display = 'none';
-            //     // }
-            // },
+            onComplete: () => {
+                if (textRef.current) {
+                    textRef.current.style.display = 'none';
+                }
+            },
         });
 
         gsap.to(buttonRef.current, {
@@ -86,17 +86,17 @@ const InitialLoader: React.FC<InitialLoaderProps> = ({ onStartZoom, onShowButton
             y: 50, // Move the button down
             ease: "power2.inOut",
             onComplete: () => {
-                // if (buttonRef.current) {
-                //     // buttonRef.current.style.display = 'none';
-                // }
+
                 setTimeout(() => {
+                    if (buttonRef.current) {
+                        buttonRef.current.style.display = 'none';
+                    }
                     setShowButtons(true);
                     onShowButtons();
                 }, 2000);
             },
         });
     };
-
 
     return (
         <div className="container mx-auto px-6 relative z-10 flex flex-col items-center mt-20">
@@ -125,7 +125,7 @@ const InitialLoader: React.FC<InitialLoaderProps> = ({ onStartZoom, onShowButton
                 onClick={handleButtonClick}
                 className="bg-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition duration-300 z-10 bg-white p-2 rounded mt-14 opacity-0 mt-14"
             >
-                Get in Touch
+                Experience
             </button>
 
         </div>

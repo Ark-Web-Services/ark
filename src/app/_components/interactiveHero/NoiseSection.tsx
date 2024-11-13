@@ -56,7 +56,7 @@ const Coordinates = () => {
                 orbitAngleValue = Math.PI / 4; // Rotate 45 degrees to the right
                 break;
             case 2:
-                newColor = "#06ABDB";
+                newColor = "#FADF45";
                 orbitAngleValue = -Math.PI / 4; // Rotate 45 degrees to the left
                 break;
             case 3:
@@ -64,7 +64,7 @@ const Coordinates = () => {
                 orbitAngleValue = -Math.PI * 0.75; // Rotate 135 degrees to the left
                 break;
             case 4:
-                newColor = "#FADF45";
+                newColor = "#06ABDB";
                 orbitAngleValue = Math.PI * 0.75; // Rotate 135 degrees to the right
                 break;
             default:
@@ -159,9 +159,9 @@ const Coordinates = () => {
                         <>
                             {[
                                 { side: 1, color: "#F7AA64" },
-                                { side: 2, color: "#06ABDB" },
+                                { side: 2, color: "#FADF45" },
                                 { side: 3, color: "#e961A5" },
-                                { side: 4, color: "#FADF45" },
+                                { side: 4, color: "#06ABDB" },
                             ].map(({ side, color }) => (
                                 <InteractiveButton3D
                                     key={side}

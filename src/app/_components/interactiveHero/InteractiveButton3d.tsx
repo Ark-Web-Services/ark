@@ -57,7 +57,12 @@ export default function InteractiveButton3D({ side, color, onClick }: Interactiv
                 emissiveIntensity={hovered ? 0.5 : 0}
             />
             {/* Label */}
-            <Html position={[0, 0, 0.11]} center>
+            <Html
+                position={[0, 0, 0.11]}
+                center
+                transform
+                occlude
+            >
                 <div className="text-center text-white font-bold">{side}</div>
             </Html>
         </mesh>
