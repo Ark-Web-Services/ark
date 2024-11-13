@@ -9,6 +9,11 @@ interface SlidesContainerProps {
 const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true); // Set to true when component mounts on client
+    }, []);
 
     const slides = Array.from({ length: totalSlides }, (_, index) => {
         const slideNumber = index; // Start numbering from 0
@@ -16,12 +21,12 @@ const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
             <section
                 key={slideNumber}
                 id={`slide-${slideNumber}`}
-                className="flex-shrink-0 w-full h-screen flex flex-col items-center justify-center relative snap-start bg-white"
+                className="flex-shrink-0 w-full h-screen flex flex-col items-center justify-center relative snap-start bg-white overflow-hidden" // Add overflow-hidden
                 style={{
                     scrollSnapAlign: 'start',
                 }}
             >
-                <div className="relative w-full h-full flex items-center justify-center m-12">
+                <div className="relative w-full h-full flex items-center justify-center ">
                     <SlideImage slideNumber={slideNumber} />
                 </div>
                 {/* You can add additional content here if needed */}
@@ -70,21 +75,26 @@ const SlidesContainer: React.FC<SlidesContainerProps> = ({ totalSlides }) => {
             )} */}
             {/* Parallax Slides */}
             <div
-                className="flex overflow-x-scroll snap-x snap-mandatory scroll-smooth h-screen hide-scrollbar"
+                className="flex overflow-x-scroll snap-x snap-mandatory scroll-smooth h-screen hide-scrollbar w-full overflow-hidden" // Add overflow-hidden
                 ref={containerRef}
                 style={{
                     scrollBehavior: 'smooth',
+                    maxWidth: '100%',
                 }}
             >
                 {slides}
             </div>
 
-            {/* Pagination Indicators */}
-            <PaginationIndicators
-                currentSlide={currentSlide}
-                totalSlides={totalSlides}
-                onIndicatorClick={handleIndicatorClick}
-            />
+            {/* Use Tailwind's responsive classes to hide on mobile */}
+            {isClient && (
+                <div className="hidden md:block">
+                    <PaginationIndicators
+                        currentSlide={currentSlide}
+                        totalSlides={totalSlides}
+                        onIndicatorClick={handleIndicatorClick}
+                    />
+                </div>
+            )}
 
             {/* Hide Scrollbar Styles */}
             <style jsx>{`

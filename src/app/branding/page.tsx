@@ -12,12 +12,12 @@ const BrandingPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col bg-white min-h-screen">
+        <div className="flex flex-col bg-white min-h-screen w-full"> {/* Add w-full */}
             {/* Hero Section */}
             <Hero onButtonClick={handleScrollToSlides} />
 
             {/* Slides Wrapper */}
-            <div ref={slidesContainerRef}>
+            <div ref={slidesContainerRef as any}>
                 <SlidesContainer totalSlides={totalSlides} />
             </div>
         </div>
