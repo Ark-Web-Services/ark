@@ -105,20 +105,32 @@ export default function Header() {
                     ref={logoRef}
                     className="logo text-xl sm:text-2xl font-bold text-black transition-all duration-300 font-montserrat-alternates"
                 >
-                    <span ref={logoTextRef}>ark web studios</span>
+                    <span ref={logoTextRef}>ARK Web Services</span>
                 </Link>
-                <div className="hidden sm:flex items-center space-x-4 nav-container">
-                    <Link href="/inspiration" className="nav-item text-black hover:text-gray-600 text-base">
-                        Inspiration
+                <div className="hidden sm:flex items-center space-x-6 nav-container">
+                    <Link href="/services" className="nav-item text-black hover:text-gray-600 text-base">
+                        Services
                     </Link>
-                    <Link href="/branding" className="nav-item text-black hover:text-gray-600 text-base">
-                        Branding
+                    <Link href="/industries" className="nav-item text-black hover:text-gray-600 text-base">
+                        Industries
+                    </Link>
+                    <Link href="/case-studies" className="nav-item text-black hover:text-gray-600 text-base">
+                        Case Studies
+                    </Link>
+                    <Link href="/insights" className="nav-item text-black hover:text-gray-600 text-base">
+                        Insights
+                    </Link>
+                    <Link href="/process" className="nav-item text-black hover:text-gray-600 text-base">
+                        Process
+                    </Link>
+                    <Link href="/about" className="nav-item text-black hover:text-gray-600 text-base">
+                        About
                     </Link>
                     <Link
                         href="/contact"
-                        className="contact-button px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors text-base"
+                        className="contact-button px-6 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors text-base font-semibold"
                     >
-                        Contact
+                        Book a Discovery Call
                     </Link>
                 </div>
                 <button
@@ -132,18 +144,30 @@ export default function Header() {
                 </button>
             </nav>
             {menuOpen && (
-                <div className="flex flex-col items-center bg-white w-full mt-2 sm:hidden">
-                    <Link href="/inspiration" className="nav-item text-black hover:text-gray-600 text-base font-bold py-4 w-full text-center hover:bg-gray-200">
-                        Inspiration
+                <div className="flex flex-col items-center bg-white w-full mt-2 sm:hidden border-t">
+                    <Link href="/services" className="nav-item text-black hover:text-gray-600 text-base font-bold py-4 w-full text-center hover:bg-gray-200">
+                        Services
                     </Link>
-                    <Link href="/branding" className="nav-item text-black hover:text-gray-600 text-base font-bold py-4 w-full text-center hover:bg-gray-200">
-                        Branding
+                    <Link href="/industries" className="nav-item text-black hover:text-gray-600 text-base font-bold py-4 w-full text-center hover:bg-gray-200">
+                        Industries
+                    </Link>
+                    <Link href="/case-studies" className="nav-item text-black hover:text-gray-600 text-base font-bold py-4 w-full text-center hover:bg-gray-200">
+                        Case Studies
+                    </Link>
+                    <Link href="/insights" className="nav-item text-black hover:text-gray-600 text-base font-bold py-4 w-full text-center hover:bg-gray-200">
+                        Insights
+                    </Link>
+                    <Link href="/process" className="nav-item text-black hover:text-gray-600 text-base font-bold py-4 w-full text-center hover:bg-gray-200">
+                        Process
+                    </Link>
+                    <Link href="/about" className="nav-item text-black hover:text-gray-600 text-base font-bold py-4 w-full text-center hover:bg-gray-200">
+                        About
                     </Link>
                     <Link
                         href="/contact"
-                        className="contact-button px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors text-base font-bold py-4 w-full text-center hover:bg-gray-200"
+                        className="contact-button px-4 py-4 bg-blue-600 text-white hover:bg-blue-700 transition-colors text-base font-bold w-full text-center"
                     >
-                        Contact
+                        Book a Discovery Call
                     </Link>
                 </div>
             )}

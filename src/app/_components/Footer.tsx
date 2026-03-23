@@ -50,8 +50,8 @@ export default function Footer() {
             <div className="max-w-[1400px] mx-auto lg:px-[70px] px-8 sm:px-8">
                 <div ref={columnsRef} className="flex flex-col md:flex-row justify-between">
                     <div className="w-full md:w-1/3 mb-6">
-                        <h3 className="font-bold text-3xl mb-6">ark web studio</h3>
-                        <p className="text-base text-gray-600 mb-6">ark web studio is your partnership-driven Web design agency dedicated to crafting unique and high-converting digital experiences.</p>
+                        <h3 className="font-bold text-3xl mb-6">ARK Web Services</h3>
+                        <p className="text-base text-gray-600 mb-6">ARK Web Services helps service businesses turn their websites into growth assets with clear messaging, strategic design, and SEO foundations.</p>
                         <div className="flex space-x-4">
                             <Link href="#" aria-label="LinkedIn" className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                                 <Linkedin className="w-4 h-4 text-gray-600" />
@@ -68,18 +68,19 @@ export default function Footer() {
                         <div className="services mb-6">
                             <h4 className="font-bold text-lg mb-4">Services</h4>
                             <ul className="space-y-2">
-                                <li><Link href="/" className="text-base text-gray-600 hover:text-gray-900 inline-block">Custom development</Link></li>
-                                <li><Link href="/" className="text-base text-gray-600 hover:text-gray-900 inline-block">Web design</Link></li>
-                                <li><Link href="/" className="text-base text-gray-600 hover:text-gray-900 inline-block">Branding</Link></li>
-                                <li><Link href="/" className="text-base text-gray-600 hover:text-gray-900 inline-block">SEO</Link></li>
+                                <li><Link href="/services/web-design" className="text-base text-gray-600 hover:text-gray-900 inline-block">Web Design</Link></li>
+                                <li><Link href="/services/branding" className="text-base text-gray-600 hover:text-gray-900 inline-block">Branding</Link></li>
+                                <li><Link href="/services/seo-for-service-businesses" className="text-base text-gray-600 hover:text-gray-900 inline-block">SEO</Link></li>
+                                <li><Link href="/services/webflow-development" className="text-base text-gray-600 hover:text-gray-900 inline-block">Webflow Development</Link></li>
                             </ul>
                         </div>
                         <div className="quick-links mb-6">
                             <h4 className="font-bold text-lg mb-4">Quick links</h4>
                             <ul className="space-y-2">
                                 <li><Link href="/" className="text-base text-gray-600 hover:text-gray-900 inline-block">Home</Link></li>
-                                <li><Link href="/inspiration" className="text-base text-gray-600 hover:text-gray-900 inline-block">Inspiration</Link></li>
-                                <li><Link href="/branding" className="text-base text-gray-600 hover:text-gray-900 inline-block">Branding</Link></li>
+                                <li><Link href="/case-studies" className="text-base text-gray-600 hover:text-gray-900 inline-block">Case Studies</Link></li>
+                                <li><Link href="/insights" className="text-base text-gray-600 hover:text-gray-900 inline-block">Insights</Link></li>
+                                <li><Link href="/process" className="text-base text-gray-600 hover:text-gray-900 inline-block">Process</Link></li>
                             </ul>
                         </div>
                         <div className="contact mb-6">
@@ -92,7 +93,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="mt-16 pt-8 border-t border-gray-200 flex justify-between items-center">
-                    <p className="text-base text-gray-600">&copy; {new Date().getFullYear()} ark web studio. All rights reserved.</p>
+                    <p className="text-base text-gray-600">&copy; {new Date().getFullYear()} ARK Web Services. All rights reserved.</p>
                     <div className="space-x-4">
                         <Link href="/privacy-policy" className="text-base text-gray-600 hover:text-gray-900">Privacy Policy</Link>
                         <Link href="/terms-and-conditions" className="text-base text-gray-600 hover:text-gray-900">Terms and Conditions</Link>

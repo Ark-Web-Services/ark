@@ -5,8 +5,8 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { Providers } from "./_components/providers";
 
 export const metadata = {
-  title: "Ark Web Studio",
-  description: "Global leader in web design and innovation, driving brand growth.",
+  title: "ARK Web Services | Web Design, Branding & SEO for Service Businesses",
+  description: "ARK Web Services helps service businesses build high-converting websites, stronger brands, and SEO foundations that drive inbound leads.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
