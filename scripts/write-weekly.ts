@@ -13,6 +13,7 @@ import type { WeeklyTrend } from './analyze';
 import { generateHeroImage } from './lib/images';
 import { resolveImplementations, writeWeeklyReview } from './lib/ledger';
 import { assertLlmReady, callModel, printLlmError } from './lib/llm';
+import { registerCandidate } from './lib/publish-promotion';
 
 interface GeneratedArticle {
   title: string;
@@ -24,7 +25,7 @@ interface GeneratedArticle {
   atomicAnswer: string;
   markdown: string;
 }
-interface FactCheck { passed: boolean; issues: string[]; correctedMarkdown: string }
+interface FactCheck { passed: boolean; businessScopePassed: boolean; issues: string[]; correctedMarkdown: string }
 
 const POSTS_DIR = join(process.cwd(), 'src/content/posts');
 const TREND_DIR = join(process.cwd(), 'data/trends');
@@ -74,7 +75,7 @@ function isArticle(value: unknown): value is GeneratedArticle {
 function isFactCheck(value: unknown): value is FactCheck {
   if (!value || typeof value !== 'object') return false;
   const item = value as any;
-  return typeof item.passed === 'boolean' && Array.isArray(item.issues) && item.issues.every((issue: unknown) => typeof issue === 'string') && typeof item.correctedMarkdown === 'string';
+  return typeof item.passed === 'boolean' && typeof item.businessScopePassed === 'boolean' && Array.isArray(item.issues) && item.issues.every((issue: unknown) => typeof issue === 'string') && typeof item.correctedMarkdown === 'string';
 }
 
 function yamlString(value: string): string { return JSON.stringify(value); }
@@ -158,10 +159,10 @@ export async function writeWeekly(): Promise<void> {
   console.log('🔍 Running factual-claim pass on the LIGHT tier...');
   const factCheck = await callModel<FactCheck>({
     tier: 'light', task: 'fact-check', json: true, validate: isFactCheck, maxTokens: 10000, temperature: 0.1,
-    system: `You are a conservative fact checker for ${nicheConfig.siteName}, covering ${nicheConfig.nicheNoun}. ${nicheConfig.nicheContext} Check numbers, units, timelines, named entities, technical claims, compatibility, and safety claims against the supplied context. ${nicheConfig.contentGuidelines} Preserve valid Markdown and links. Return JSON only.`,
-    prompt: `Review this article. Return {"passed":boolean,"issues":["specific issue"],"correctedMarkdown":"full corrected article when issues exist, otherwise the unchanged full article"}. Never invent a citation.\n\n${article.markdown}`,
+    system: `You are an independent conservative fact checker for ${nicheConfig.siteName}, covering ${nicheConfig.nicheNoun}. ${nicheConfig.nicheContext} Check numbers, units, timelines, named entities, technical claims, compatibility, and safety claims against the supplied primary sources. ${nicheConfig.contentGuidelines} Check company claims separately against the exact approved business facts and configured service scope. Preserve valid Markdown and links. Return JSON only.`,
+    prompt: `Review this article and the supplied sources and business facts. Return {"passed":boolean,"businessScopePassed":boolean,"issues":["specific issue"],"correctedMarkdown":"full corrected article when issues exist, otherwise the unchanged full article"}. Set passed true only when factual claims are supported by supplied sources; set businessScopePassed true only when every company-specific claim matches approved facts and configured scope. Remove unsupported business promises. Never invent a citation.\n\nBUSINESS CONTEXT: ${businessConfig.name}; location ${businessConfig.location}; service areas ${businessConfig.serviceAreas.join(", ")}; email ${businessConfig.email}; phone ${businessConfig.phone ?? "not configured"}. Configured services: ${businessConfig.services.map((service) => `${service.title}: ${service.description}`).join("; ")}.\n\nRESEARCH SOURCES:\n${gap.sources?.map((source) => `- ${source.label}: ${source.url} — ${source.use}`).join("\n") || "No sources supplied."}\n\nARTICLE:\n${article.markdown}`,
   });
-  if (!factCheck.passed && !factCheck.correctedMarkdown.trim()) throw new Error(`Fact-check found unresolved issues: ${factCheck.issues.join('; ')}`);
+  if (!factCheck.passed || !factCheck.businessScopePassed) throw new Error(`Fact-check gate failed: ${factCheck.issues.join('; ') || 'factual or business-scope reviewer did not approve the claims'}`);
   const hubPath = getSiloById(article.category)?.pillar;
   const hubLabel = getSiloById(article.category)?.label ?? article.category;
   const factCheckedMarkdown = factCheck.correctedMarkdown || article.markdown;
@@ -195,8 +196,8 @@ export async function writeWeekly(): Promise<void> {
   }
 
   const brief = {
-    generatedAt: new Date().toISOString(), week: trend.week, slug, title: checkedArticle.title,
-    targetKeyword: gap.targetKeyword, category: gap.category, demandEvidence: gap.demandEvidence,
+    generatedAt: new Date().toISOString(), runId: process.env.CONTENT_RUN_ID, week: trend.week, slug, title: checkedArticle.title,
+    targetKeyword: gap.targetKeyword, category: gap.category, demandEvidence: gap.demandEvidence, sources: gap.sources ?? [],
     whyWeCanWin: gap.whyWeCanWin, outline: gap.outline, internalLinkCandidates: checkedArticle.relatedSlugs,
     hub: getSiloById(gap.category)?.pillar, image: hero, factCheck: { passed: factCheck.passed, issues: factCheck.issues }, review,
   };
@@ -220,10 +221,11 @@ export async function writeWeekly(): Promise<void> {
     if (queuedBrief) {
       queuedBrief.status = 'drafted';
       queuedBrief.generatedAt = new Date().toISOString();
-      queuedBrief.note = 'Quality-gated draft created; human approval is required before status can change to published.';
+      queuedBrief.note = 'Automated fact-check and independent quality review passed; awaiting bounded preflight/build publication gates.';
       writeFileSync(editorialQueuePath, `${JSON.stringify(editorialQueue, null, 2)}\n`);
     }
   }
+  registerCandidate({ runId: process.env.CONTENT_RUN_ID ?? '', kind: 'article', slug, queueId: slug, contentPath: `src/content/posts/${slug}.md`, evidencePath: `data/briefs/${slug}.json`, sourcePath: 'data/editorial/article-queue.json' });
   console.log(`✅ Article published to working tree: ${outputPath}`);
   console.log(`✅ Brief written: ${join(BRIEF_DIR, `${slug}.json`)}`);
   console.log(`✅ Suggestion marked implemented: ${slug}`);

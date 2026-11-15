@@ -4,6 +4,7 @@ import business from "../business.config";
 import nicheConfig from "../niche.config";
 import { REVIEW_TEMPLATES, reviewWork } from "../agents/reviewer";
 import { assertLlmReady, callModel, printLlmError } from "./lib/llm";
+import { registerCandidate } from "./lib/publish-promotion";
 
 interface QueueItem {
   id: string;
@@ -19,6 +20,7 @@ interface QueueItem {
 
 interface QueueFile { version: 1; items: QueueItem[] }
 interface LeadPageDraft { title: string; description: string; markdown: string }
+interface LeadPageFactCheck { passed: boolean; businessScopePassed: boolean; issues: string[]; correctedMarkdown: string }
 
 const QUEUE_PATH = join(process.cwd(), "data/lead-pages/queue.json");
 const OUTPUT_DIR = join(process.cwd(), "src/content/lead-pages");
@@ -88,16 +90,35 @@ async function writeLeadPage(): Promise<void> {
     prompt: `Draft one focused, practical page that answers the reader's task.\n\nPAGE ID: ${item.id}\nTARGET QUERY: ${item.targetKeyword}\nAUDIENCE: ${item.audience}\nPURPOSE: ${item.purpose}\nSERVICE: ${service.title} — ${service.description}\nVERIFIED BUSINESS FACTS (these are the only allowed company-specific claims): ${business.name}; location ${business.location}; service areas ${business.serviceAreas.join(", ")}; email ${business.email}; phone ${business.phone ?? "not configured"}. Service description: ${service.description}.\nEXISTING INTERNAL LINKS (include both exactly, but use them sparingly): [${service.title}](/services/${service.id}/) and [Contact](${contactPath}).\nVERIFIED SOURCE REFERENCES (cite every source inline where relevant; do not imply endorsement):\n${item.sources.map((source) => `- ${source.label}: ${source.url} — ${source.use}`).join("\n")}\n\nSTRUCTURE: Open with a direct answer, then explain what the issue/process means, a safe step-by-step approach, what the reader should avoid, what evidence to record, and when a specialist may be appropriate. Use clear sections and concrete steps tied to the supplied sources. Keep business details to one small closing section; do not repeat the location, phone, or service areas as filler. Include exactly one restrained closing CTA with the supplied contact link. Never describe a local office, emergency availability, a guaranteed result, or a technical intervention unless verified by the supplied facts. Avoid false urgency, invented statistics, generic filler, and unsupported competitor claims. The page must stand on its own as useful guidance, not primarily collect a lead.`,
   });
 
-  const review = await reviewWork(REVIEW_TEMPLATES.writer, draft.markdown, `Review this for factual accuracy and reader value as a page about ${item.targetKeyword}, for audience ${item.audience} and purpose ${item.purpose}. Its first duty is to answer that task; it should not read like an intake page. Allowed company facts only: ${business.name}; location ${business.location}; service areas ${business.serviceAreas.join(", ")}; email ${business.email}; phone ${business.phone ?? "not configured"}; this configured service: ${service.title} — ${service.description}. Do not accept any other company-specific claim unless supported by these sources: ${item.sources.map((source) => `${source.label}: ${source.url} (${source.use})`).join("; ")}.`, 1);
+  const factCheck = await callModel<LeadPageFactCheck>({
+    tier: "light", task: "fact-check", json: true, maxTokens: 7000, temperature: 0.1,
+    validate: (value): value is LeadPageFactCheck => Boolean(value && typeof value === "object"
+      && typeof (value as any).passed === "boolean"
+      && typeof (value as any).businessScopePassed === "boolean"
+      && Array.isArray((value as any).issues)
+      && (value as any).issues.every((issue: unknown) => typeof issue === "string")
+      && typeof (value as any).correctedMarkdown === "string"),
+    system: `You are an independent fact checker for ${nicheConfig.siteName}. Verify technical and general claims against the supplied references. Separately verify all company-specific wording against only the supplied business facts and configured service. Set businessScopePassed false for any claim of unverified results, clients, price, availability, turnaround, guarantee, location, credentials, or ongoing services. Correct or remove unsupported wording. Return JSON only.`,
+    prompt: `Review this lead-page draft and return {"passed":boolean,"businessScopePassed":boolean,"issues":["specific issue"],"correctedMarkdown":"the full corrected Markdown"}. Both booleans must be true only if the final Markdown is factually supported and stays within the supplied business scope. Never invent facts or citations.\n\nAPPROVED BUSINESS FACTS: ${business.name}; location ${business.location}; service areas ${business.serviceAreas.join(", ")}; email ${business.email}; phone ${business.phone ?? "not configured"}. Configured service: ${service.title} — ${service.description}.\n\nSOURCES:\n${item.sources.map((source) => `- ${source.label}: ${source.url} — ${source.use}`).join("\n")}\n\nDRAFT:\n${draft.markdown}`,
+  });
+  if (!factCheck.passed || !factCheck.businessScopePassed) throw new Error(`Lead-page fact-check failed; nothing was published. ${factCheck.issues.join("; ")}`);
+  const checkedDraft = { ...draft, markdown: factCheck.correctedMarkdown.trim() };
+  if (!validateDraft(checkedDraft, item)) throw new Error("Fact-check corrections broke the lead-page structure, links, source citations, or length gate.");
+
+  const review = await reviewWork(REVIEW_TEMPLATES.writer, checkedDraft.markdown, `Review this for factual accuracy and reader value as a page about ${item.targetKeyword}, for audience ${item.audience} and purpose ${item.purpose}. Its first duty is to answer that task; it should not read like an intake page. Allowed company facts only: ${business.name}; location ${business.location}; service areas ${business.serviceAreas.join(", ")}; email ${business.email}; phone ${business.phone ?? "not configured"}; this configured service: ${service.title} — ${service.description}. Do not accept any other company-specific claim unless supported by these sources: ${item.sources.map((source) => `${source.label}: ${source.url} (${source.use})`).join("; ")}.`, 1);
   if (!review.passed) throw new Error(`Lead-page quality review failed (${review.score}/10); nothing was written. ${review.feedback}`);
 
   mkdirSync(OUTPUT_DIR, { recursive: true });
-  writeFileSync(outputPath, makeFrontmatter(item, draft) + draft.markdown.trim() + "\n", { flag: "wx" });
+  writeFileSync(outputPath, makeFrontmatter(item, checkedDraft) + checkedDraft.markdown.trim() + "\n", { flag: "wx" });
   item.status = "drafted";
   item.generatedAt = new Date().toISOString();
-  item.note = "Quality-reviewed draft; human approval is required before status can change to published.";
+  item.note = "Automated fact-check and independent quality review passed; awaiting bounded preflight/build publication gates.";
   writeFileSync(QUEUE_PATH, `${JSON.stringify(queue, null, 2)}\n`);
-  console.log(`Lead-page draft created for review: ${item.id}. It remains unpublished until its frontmatter status is explicitly changed.`);
+  const evidencePath = `data/briefs/lead-${item.id}.json`;
+  mkdirSync(join(process.cwd(), "data/briefs"), { recursive: true });
+  writeFileSync(join(process.cwd(), evidencePath), `${JSON.stringify({ runId: process.env.CONTENT_RUN_ID, slug: item.id, serviceId: item.service, sources: item.sources, factCheck: { passed: factCheck.passed, businessScopePassed: factCheck.businessScopePassed, issues: factCheck.issues }, review }, null, 2)}\n`, { flag: "wx" });
+  registerCandidate({ runId: process.env.CONTENT_RUN_ID ?? "", kind: "lead-page", slug: item.id, queueId: item.id, contentPath: `src/content/lead-pages/${item.id}.md`, evidencePath, sourcePath: "data/lead-pages/queue.json" });
+  console.log(`Quality-gated lead-page draft created for the current run: ${item.id}.`);
 }
 
 if (process.argv[1]?.endsWith("write-lead-page.ts")) {

@@ -44,6 +44,7 @@
     "lead:write": "node --import tsx scripts/write-lead-page.ts",
     "content:preflight": "node --import tsx scripts/content-preflight.ts",
     "editorial:trend": "node --import tsx scripts/prepare-editorial-trend.ts",
+    "content:promotion": "node --import tsx scripts/publish-generated-content.ts",
     "audit:seo": "node --import tsx scripts/run-schedule.ts audit-seo",
     "backlinks": "node --import tsx scripts/run-schedule.ts backlinks",
     "weekly:all": "node --import tsx scripts/run-schedule.ts weekly-all",

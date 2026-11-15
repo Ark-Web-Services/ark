@@ -35,7 +35,7 @@ steps:
 
 trigger:
   branch:
-    - main
+    - master
   event:
     - push
 
@@ -48,7 +48,7 @@ clone:
   depth: 0
 
 steps:
-  - name: write-reviewed-drafts
+  - name: generate-promote-and-publish
     image: node:22
     environment:
       # These subscription/compute routes are the only allowed providers.
@@ -57,7 +57,8 @@ steps:
       LLM_PROVIDER_ORDER_LIGHT: codex-cli
       LLM_PROVIDER_ORDER_HEAVY: codex-cli
       LLM_ALLOW_PAID: "0"
-      LLM_MAX_CALLS_PER_RUN: "10"
+      LLM_MAX_CALLS_PER_RUN: "6"
+      PROMOTION_BRANCH: master
       CODEX_CLI_HOST:
         from_secret: AGENT_CLI_HOST
       AGENT_CLI_SSH_KEY:
@@ -65,22 +66,26 @@ steps:
       AGENT_CLI_SSH_KEY_FILE: /tmp/agent-cli-key
       CODEX_CLI_BIN: codex.cmd
     commands:
+      - 'git checkout -B "$PROMOTION_BRANCH" "$DRONE_COMMIT_SHA"'
       - npm ci
       - npm run content:preflight
       - 'printf "%s\n" "$AGENT_CLI_SSH_KEY" > "$AGENT_CLI_SSH_KEY_FILE" && chmod 600 "$AGENT_CLI_SSH_KEY_FILE"'
       - mkdir -p ~/.ssh && chmod 700 ~/.ssh
       - 'echo "192.168.1.241 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMdyaayirvJ1qJT01CBa3+J/kwSYjRV3DgEYUbTuvbYl" >> ~/.ssh/known_hosts'
+      - 'npm run content:promotion -- init "$DRONE_BUILD_NUMBER"'
       - npm run editorial:trend
-      - npm run write:weekly
-      - npm run lead:write
+      - 'CONTENT_RUN_ID="$DRONE_BUILD_NUMBER" npm run write:weekly'
+      - 'CONTENT_RUN_ID="$DRONE_BUILD_NUMBER" npm run lead:write'
       - npm run content:preflight
-
-  # Persist generated material as draft source on main. Draft article and lead
-  # routes are excluded from the public site, feeds, and sitemaps until review.
-  - name: persist-drafts
-    image: node:22
-    commands:
-      - 'node --import tsx scripts/lib/repo-commit.ts --message "chore(content): add gated weekly draft [skip ci]" data/editorial/article-queue.json data/lead-pages/queue.json data/trends/ data/briefs/ data/runs/ data/engine-ledger.json src/content/posts/ src/content/lead-pages/'
+      - npm run check
+      - npm test
+      - npm run build
+      - 'npm run content:promotion -- promote "$DRONE_BUILD_NUMBER"'
+      - npm run content:preflight
+      - npm run check
+      - npm test
+      - npm run build
+      - 'npm run content:promotion -- persist "$DRONE_BUILD_NUMBER"'
 
 trigger:
   event:
