@@ -48,11 +48,31 @@ clone:
   depth: 0
 
 steps:
-  - name: generate-promote-and-publish
+  - name: install
     image: node:22
     environment:
-      # These subscription/compute routes are the only allowed providers.
-      # Do not add API providers or set LLM_ALLOW_PAID=1 in this pipeline.
+      PROMOTION_BRANCH: master
+    commands:
+      - 'git checkout -B "$PROMOTION_BRANCH" "$DRONE_COMMIT_SHA"'
+      - npm ci
+
+  - name: publication-sync-preflight
+    image: node:22
+    environment:
+      PROMOTION_BRANCH: master
+      GITHUB_PUBLICATION_URL: git@github.com:Ark-Web-Services/ark.git
+      GITHUB_PUBLICATION_SSH_KEY:
+        from_secret: GITHUB_PUBLICATION_SSH_KEY
+      GITHUB_PUBLICATION_SSH_KEY_FILE: /tmp/github-deploy-key
+      GITHUB_KNOWN_HOSTS_FILE: /tmp/github-known-hosts
+    commands:
+      - 'printf "%s\n" "$GITHUB_PUBLICATION_SSH_KEY" > "$GITHUB_PUBLICATION_SSH_KEY_FILE" && chmod 600 "$GITHUB_PUBLICATION_SSH_KEY_FILE"'
+      - 'printf "%s\n" "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" > "$GITHUB_KNOWN_HOSTS_FILE" && chmod 600 "$GITHUB_KNOWN_HOSTS_FILE"'
+      - npm run content:sync-preflight
+
+  - name: generate-promote-and-validate
+    image: node:22
+    environment:
       LLM_PROVIDER_ORDER: codex-cli
       LLM_PROVIDER_ORDER_LIGHT: codex-cli
       LLM_PROVIDER_ORDER_HEAVY: codex-cli
@@ -66,8 +86,6 @@ steps:
       AGENT_CLI_SSH_KEY_FILE: /tmp/agent-cli-key
       CODEX_CLI_BIN: codex.cmd
     commands:
-      - 'git checkout -B "$PROMOTION_BRANCH" "$DRONE_COMMIT_SHA"'
-      - npm ci
       - npm run content:preflight
       - 'printf "%s\n" "$AGENT_CLI_SSH_KEY" > "$AGENT_CLI_SSH_KEY_FILE" && chmod 600 "$AGENT_CLI_SSH_KEY_FILE"'
       - mkdir -p ~/.ssh && chmod 700 ~/.ssh
@@ -85,6 +103,19 @@ steps:
       - npm run check
       - npm test
       - npm run build
+
+  - name: persist-published-content
+    image: node:22
+    environment:
+      PROMOTION_BRANCH: master
+      GITHUB_PUBLICATION_URL: git@github.com:Ark-Web-Services/ark.git
+      GITHUB_PUBLICATION_SSH_KEY:
+        from_secret: GITHUB_PUBLICATION_SSH_KEY
+      GITHUB_PUBLICATION_SSH_KEY_FILE: /tmp/github-deploy-key
+      GITHUB_KNOWN_HOSTS_FILE: /tmp/github-known-hosts
+    commands:
+      - 'printf "%s\n" "$GITHUB_PUBLICATION_SSH_KEY" > "$GITHUB_PUBLICATION_SSH_KEY_FILE" && chmod 600 "$GITHUB_PUBLICATION_SSH_KEY_FILE"'
+      - 'printf "%s\n" "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" > "$GITHUB_KNOWN_HOSTS_FILE" && chmod 600 "$GITHUB_KNOWN_HOSTS_FILE"'
       - 'npm run content:promotion -- persist "$DRONE_BUILD_NUMBER"'
 
 trigger:

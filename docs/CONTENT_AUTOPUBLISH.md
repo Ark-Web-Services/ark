@@ -24,10 +24,7 @@ requests across the two weekly writers.
 ## Activate after repository access is ready
 
 Use the authenticated Drone CLI after verifying the correct Gitea repo mapping.
-The repo must permit CI pushes to `master`, and the writable Gitea source must
-sync publication commits back to the reviewed GitHub repository. Do not copy
-local SSH private keys or another project's Cloudflare credentials into this
-repo.
+The repo must permit CI pushes to Gitea `master`. Configure a repository-scoped GitHub deploy key with write access to this Ark repository only as Drone secret `GITHUB_PUBLICATION_SSH_KEY`. The pipeline pins GitHub’s official Ed25519 host key and verifies that both GitHub and Gitea remain at the reviewed base before each normal push. Do not copy local SSH private keys or another project's Cloudflare credentials into this repo. If GitHub advances between preflight and push, the run fails without force; if GitHub succeeds but Gitea fails, reconcile the two refs with a reviewed fast-forward before retrying.
 
 Drone starts from a detached commit SHA; the job reattaches that exact commit
 to the configured Git branch before writing. This follows [Drone's documented
@@ -39,6 +36,7 @@ Required existing Drone secret names:
 - `AGENT_CLI_SSH_KEY`
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
+- `GITHUB_PUBLICATION_SSH_KEY` (repository-scoped write deploy key for the Ark GitHub repository)
 
 Register the six-field UTC cron only after the repo and push path are verified:
 

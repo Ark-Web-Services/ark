@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import nicheConfig, { getSiteDomain } from '../../niche.config';
+import { pushPublicationCommit, runPublicationPreflight } from './publication-sync';
 
 function git(args: string[], allowFailure = false): boolean {
   const result = spawnSync('git', args, { cwd: process.cwd(), stdio: 'inherit' });
@@ -57,6 +58,8 @@ export function commitAndPushStrict(paths: string[], message: string, branch: st
   const checkedOutResult = spawnSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: process.cwd(), encoding: "utf8" });
   const checkedOut = checkedOutResult.status === 0 ? checkedOutResult.stdout.trim() : "";
   assertPublicationBranch(branch, checkedOut, process.env.DRONE_BRANCH ?? "");
+  const baseSha = runPublicationPreflight(process.cwd(), process.env);
+  delete process.env.GITHUB_PUBLICATION_SSH_KEY;
   const preStaged = spawnSync("git", ["diff", "--cached", "--name-only"], { cwd: process.cwd(), encoding: "utf8" });
   if (preStaged.status !== 0) throw new Error("Could not inspect the staging area before publication.");
   if (preStaged.stdout.trim()) throw new Error(`Refusing publication with pre-staged user files: ${preStaged.stdout.trim().replace(/\n/g, ", ")}`);
@@ -76,8 +79,9 @@ export function commitAndPushStrict(paths: string[], message: string, branch: st
   git(["config", "user.email", process.env.GIT_BOT_EMAIL || `bot@${getSiteDomain()}`]);
   git(["config", "user.name", process.env.GIT_BOT_NAME || `${nicheConfig.siteName} Bot`]);
   git(["commit", "-m", message]);
-  const pushed = spawnSync("git", ["push", "origin", `HEAD:${branch}`], { cwd: process.cwd(), stdio: "inherit" });
-  assertPublicationPushSucceeded(pushed.status);
+  const head = spawnSync("git", ["rev-parse", "HEAD"], { cwd: process.cwd(), encoding: "utf8" });
+  if (head.status !== 0) throw new Error("Could not resolve the new publication commit.");
+  pushPublicationCommit(process.cwd(), branch, baseSha, head.stdout.trim(), process.env);
   return true;
 }
 

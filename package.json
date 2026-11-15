@@ -66,7 +66,8 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "check:launch": "node --import tsx scripts/check-launch.ts",
     "client:presence": "node --import tsx scripts/client-presence.ts",
-    "leads": "node --import tsx scripts/leads.ts"
+    "leads": "node --import tsx scripts/leads.ts",
+    "content:sync-preflight": "node --import tsx scripts/publication-sync-preflight.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.0.0",
