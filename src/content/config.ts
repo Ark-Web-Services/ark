@@ -79,7 +79,7 @@ const leadPages = defineCollection({
     service: z.string().min(1).max(80),
     status: z.enum(["draft", "published"]).default("draft"),
     updated: z.coerce.date().optional(),
-    ctaLabel: z.string().min(3).max(60).default("Request a site review"),
+    ctaLabel: z.string().min(3).max(60).default("Get a free site review"),
   }),
 });
 

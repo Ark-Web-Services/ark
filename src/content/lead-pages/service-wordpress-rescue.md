@@ -3,7 +3,7 @@ title: "WordPress Troubleshooting and Rescue"
 description: "Get help investigating WordPress errors, plugin conflicts, failed updates, and other website problems with a clear scope and careful recovery process."
 service: "wordpress-rescue"
 status: published
-ctaLabel: "Describe Your WordPress Issue"
+ctaLabel: "Get a free site review"
 updated: "2026-11-14"
 ---
 

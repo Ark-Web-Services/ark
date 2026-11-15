@@ -3,7 +3,7 @@ title: "SEO Foundations for Small-Business Websites"
 description: "Improve a new or redesigned site’s clarity with useful page content, descriptive titles, internal links, and basic Search Console checks."
 service: "seo-for-service-businesses"
 status: published
-ctaLabel: "Discuss Your Website's Search Setup"
+ctaLabel: "Get a free site review"
 updated: "2026-11-14"
 ---
 

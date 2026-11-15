@@ -3,7 +3,7 @@ title: "Responding to a Suspected WordPress Compromise"
 description: "Document and preserve evidence from a suspected WordPress compromise before coordinating cleanup and recovery with the site owner and host."
 service: "wordpress-rescue"
 status: published
-ctaLabel: "Discuss a WordPress Security Concern"
+ctaLabel: "Get a free site review"
 updated: "2026-11-14"
 ---
 

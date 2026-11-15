@@ -20,7 +20,7 @@ const pages = (await getCollection("leadPages", ({ data }) => data.status === "p
           <p>{page.data.description}</p>
         </li>)}
       </ul> : <p>Focused solution pages will appear here as they are prepared.</p>}
-      <a class="business-button" href={business.customHome ? (business.customHomeContactHref || "/#contact") : "/contact/"}>Start a conversation</a>
+      <a class="business-button" href={business.customHome ? (business.customHomeContactHref || "/#contact") : "/contact/"}>Get a free site review</a>
     </section>
   </div>
 </BusinessLayout>

@@ -47,6 +47,9 @@ const contactHref = customHome ? config.customHomeContactHref || "/#contact" : "
 const nav: [string, string][] = customHome
   ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["Contact", contactHref]]
   : [["Services", "/services/"], ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["How it works", "/process/"]];
+const footerNav: [string, string][] = customHome
+  ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["Contact", contactHref], ["Privacy", "/privacy/"]]
+  : [["Services", "/services/"], ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["How it works", "/process/"], ["Pricing", "/pricing/"], ["Contact", "/contact/"], ["Privacy", "/privacy/"]];
 const validGa4Id = config.ga4Id && /^G-[A-Z0-9]+$/.test(config.ga4Id) ? config.ga4Id : undefined;
 const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
 ---
@@ -83,13 +86,19 @@ const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
     </header>
     <main id="main-content"><slot /></main>
     <footer class="business-footer">
-      <a class="business-brand" href="/">{config.name}</a>
-      <p>{config.location ? `${config.location} · Serving businesses nationwide` : "White-label fulfillment for agency partners"}</p>
-      {config.contentEnabled && <p><a href="/articles/">Guides</a> · <a href="/solutions/">Solutions</a></p>}
-      {config.email && <a href={`mailto:${config.email}`}>{config.email}</a>}
-      {config.phone && <a href={`tel:${config.phone.replace(/[^+\d]/g, "")}`}>{config.phone}</a>}
-      {config.socials.length > 0 && <ul class="business-socials">{config.socials.map((social) => <li><a href={social.url} rel="me noopener noreferrer">{social.label}</a></li>)}</ul>}
-      <p>© {new Date().getFullYear()} {config.name}. <a href="/privacy/">Privacy</a> · <a href="#analytics-preferences">Privacy settings</a></p>
+      <div class="business-footer__inner">
+        <a class="business-brand" href="/">{config.name}</a>
+        <p class="business-footer__location">{config.location ? `${config.location} · Serving businesses nationwide` : "White-label fulfillment for agency partners"}</p>
+        <nav class="business-footer__navigation" aria-label="Footer navigation">
+          <ul>{footerNav.map(([label, href]) => <li><a href={href}>{label}</a></li>)}</ul>
+        </nav>
+        <div class="business-footer__contact">
+          {config.email && <a href={`mailto:${config.email}`}>{config.email}</a>}
+          {config.phone && <a href={`tel:${config.phone.replace(/[^+\d]/g, "")}`}>{config.phone}</a>}
+        </div>
+        {config.socials.length > 0 && <ul class="business-socials">{config.socials.map((social) => <li><a href={social.url} rel="me noopener noreferrer">{social.label}</a></li>)}</ul>}
+        <p class="business-footer__legal">© {new Date().getFullYear()} {config.name}. <a href="#analytics-preferences">Privacy settings</a></p>
+      </div>
     </footer>
     <script is:inline>
     (() => {

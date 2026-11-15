@@ -3,7 +3,7 @@ title: "Website Design for Charlotte Small Businesses"
 description: "Plan a useful website for your Charlotte-area business with clear services, accurate service-area details, and a simple way for customers to contact you."
 service: "website-redesign"
 status: published
-ctaLabel: "Talk About Your Website"
+ctaLabel: "Get a free site review"
 updated: "2026-11-14"
 ---
 

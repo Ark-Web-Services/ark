@@ -3,7 +3,7 @@ title: "WordPress Site Review and Recovery Planning"
 description: "Organize WordPress errors, recent changes, backups, and hosting details before deciding whether a focused repair or recovery project fits."
 service: "wordpress-rescue"
 status: published
-ctaLabel: "Discuss a WordPress Site Issue"
+ctaLabel: "Get a free site review"
 updated: "2026-11-14"
 ---
 

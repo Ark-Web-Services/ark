@@ -24,6 +24,7 @@ const service = business.services.find((item) => item.id === page.data.service);
       <p class="solution-page__eyebrow">{service?.title}</p>
       <h1>{page.data.title}</h1>
       <p>{page.data.description}</p>
+      <a class="business-button solution-page__intro-cta" href={contactHref}>{page.data.ctaLabel}</a>
     </header>
     <div class="business-section business-prose"><Content /></div>
     <section class="business-section solution-page__cta" aria-labelledby="solution-cta-title">
@@ -37,5 +38,6 @@ const service = business.services.find((item) => item.id === page.data.service);
 
 <style>
   .solution-page__eyebrow { margin: 0 0 .75rem; color: #555; font-size: .85rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .solution-page__intro-cta { margin-top: 1.25rem; }
   .solution-page__cta { max-width: 70ch; padding-bottom: 5rem; }
 </style>

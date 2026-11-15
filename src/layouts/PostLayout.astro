@@ -303,7 +303,6 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
     <!-- Key Takeaways -->
     {data.keyTakeaways.length > 0 && (
       <div class="callout callout--takeaways" role="note" aria-label="Key takeaways">
-        <div class="callout__icon">💡</div>
         <div class="callout__content">
           <strong class="callout__title">Key Takeaways</strong>
           <ul class="callout__list">
@@ -313,12 +312,13 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
       </div>
     )}
 
+    <p class="article-review-cta"><a class="business-button" href="/contact/">Get a free site review</a></p>
+
     <!-- Table of Contents (collapsible) -->
     {data.toc && (
       <nav class="toc" aria-label="Table of contents">
         <details class="toc__wrapper" open>
           <summary class="toc__toggle">
-            <span class="toc__icon">📑</span>
             <span>Table of Contents</span>
             <svg class="toc__chevron" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
