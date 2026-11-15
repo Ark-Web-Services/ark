@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { Picture } from "astro:assets";
-import { getSiloColor } from "@lib/internal-links";
+import { getSiloColor, getSiloLabel } from "@lib/internal-links";
 import { estimateReadingTime, excerptFromMarkdown } from "@lib/seo";
 import type { CollectionEntry } from "astro:content";
 
@@ -59,7 +59,7 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
   <div class="card__body">
     {data.category && (
       <span class="badge badge--sm" style={`--badge-color: ${siloColor}`}>
-        {data.category.replace(/-/g, " ")}
+        {getSiloLabel(data.category)}
       </span>
     )}
     {headingLevel === 2 ? (

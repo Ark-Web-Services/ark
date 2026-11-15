@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { getCollection } from "astro:content";
+import { getSiloLabel } from "@lib/internal-links";
 import nicheConfig from "../../niche.config";
 
 interface Props {
@@ -93,7 +94,7 @@ const newsletterHref = `mailto:${nicheConfig.contactEmail}?subject=${encodeURICo
 <!-- Popular in Category -->
 {categoryPosts.length > 0 && (
   <div class="sidebar__section">
-    <h3 class="sidebar__title">Popular in {category?.replace(/-/g, " ") ?? "Guides"}</h3>
+    <h3 class="sidebar__title">Popular in {category ? getSiloLabel(category) : "Guides"}</h3>
     <ul class="sidebar__post-list">
       {categoryPosts.map((post) => (
         <li class="sidebar__post-item">

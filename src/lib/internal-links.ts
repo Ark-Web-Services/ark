@@ -88,6 +88,11 @@ export function getSiloColor(category: string): string {
   return silo?.color ?? "#6B7280";
 }
 
+export function getSiloLabel(category: string): string {
+  const silo = silos.find((s) => s.id === category);
+  return silo?.label ?? category.replace(/-/g, " ");
+}
+
 // ── Generate breadcrumbs from URL ────────────────────────────
 export function generateBreadcrumbs(
   url: string,

@@ -116,15 +116,20 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .business-button:focus-visible, .analytics-settings-button:focus-visible { outline: 3px solid #555; outline-offset: 3px; }
 
 @media (max-width: 850px) {
-  .business-header { flex-wrap: wrap; gap: 1rem; }
-  .business-header nav { order: 3; width: 100%; overflow-x: auto; }
-  .business-header nav ul { width: max-content; padding-bottom: .5rem; }
+  .business-header { flex-wrap: wrap; gap: .75rem 1rem; }
+  .business-header nav { order: 3; width: 100%; min-width: 0; }
+  .business-header nav ul { width: 100%; flex-wrap: wrap; gap: .15rem .85rem; }
+  .business-header nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  .business-header__contact { order: 4; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: .55rem .9rem; border: 1px solid var(--business-accent); background: var(--business-accent); color: var(--business-bg) !important; font-weight: 600; text-decoration: none; }
   .business-hero { min-height: auto; grid-template-columns: 1fr; gap: 2.5rem; }
   .business-hero__image { height: auto; min-height: auto; aspect-ratio: 4 / 3; }
   .business-inquiry { grid-template-columns: 1fr; gap: 1.5rem; }
 }
 @media (max-width: 600px) {
-  .business-header__contact { display: none; }
+  .business-header { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; }
+  .business-header nav { order: 0; }
+  .business-header nav ul { column-gap: .75rem; }
+  .business-header__contact { order: 0; width: 100%; }
   .business-home { padding-inline: 1.25rem; }
   .business-hero { padding-block: 4rem; }
   .business-hero h1 { font-size: clamp(2.6rem, 10vw, 3.5rem); }

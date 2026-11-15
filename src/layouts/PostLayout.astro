@@ -13,7 +13,7 @@ import ProductBox from "@components/ProductBox.astro";
 import RelatedPosts from "@components/RelatedPosts.astro";
 import { Picture } from "astro:assets";
 import { siteConfig } from "@data/navigation";
-import { getSiloColor, generateBreadcrumbs } from "@lib/internal-links";
+import { getSiloColor, getSiloLabel, generateBreadcrumbs } from "@lib/internal-links";
 import { getProductsForPage } from "@lib/d1";
 import { estimateReadingTime, excerptFromMarkdown, wordCount } from "@lib/seo";
 import type { CollectionEntry } from "astro:content";
@@ -224,7 +224,7 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
             class="badge"
             style={`--badge-color: ${siloColor}`}
           >
-            {data.category.replace(/-/g, " ")}
+            {getSiloLabel(data.category)}
           </a>
         </div>
       )}
