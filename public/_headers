@@ -1,0 +1,97 @@
+# ═══════════════════════════════════════════════════════════════
+# CLOUDFLARE _HEADERS — Lighthouse-Perfect Edition
+#
+# Includes:
+#   • Strict-Transport-Security (HSTS + preload)
+#   • Content-Security-Policy (tight, Lighthouse-friendly)
+#   • Permissions-Policy (opts out of every sensor API)
+#   • COOP/COEP for cross-origin isolation (safer + better perf)
+#   • X-Content-Type-Options, X-Frame-Options, Referrer-Policy
+#   • Immutable caching on hashed assets
+#   • Correct MIME types for sitemap(s), feed(s), webmanifest
+#   • AIO (AI-crawler) headers preserved
+# ═══════════════════════════════════════════════════════════════
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(self), publickey-credentials-get=(), screen-wake-lock=(), serial=(), sync-xhr=(self), usb=(), web-share=(self), xr-spatial-tracking=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-DNS-Prefetch-Control: on
+
+  # AIO: Machine-readable usage policies for AI agents
+  X-Ai-Train: no
+  X-Ai-Input: yes
+  X-Ai-Summary: allowed
+  X-Content-License: CC-BY-NC-4.0
+
+  # Lighthouse-friendly CSP — scripts self + GA4 + Partytown + CF Insights
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; frame-src https://challenges.cloudflare.com; script-src https://challenges.cloudflare.com 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src https://challenges.cloudflare.com 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cloudflareinsights.com https://static.cloudflareinsights.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests
+
+# ── Immutable hashed build assets (Astro outputs under /_astro/) ──
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# ── Static assets (images, fonts) ─────────────────────────────
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# ── Sitemaps — correct MIME + shorter cache ───────────────────
+# NOTE: no exact /sitemap-index.xml block here on purpose -- it would overlap
+# the wildcard below and Cloudflare applies BOTH, emitting Content-Type and
+# Cache-Control twice. The wildcard already covers sitemap-index.xml.
+/sitemap-*.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+# ── Feeds ─────────────────────────────────────────────────────
+/rss.xml
+  Content-Type: application/rss+xml; charset=utf-8
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+/atom.xml
+  Content-Type: application/atom+xml; charset=utf-8
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+# ── robots.txt ────────────────────────────────────────────────
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+# ── PWA manifest ──────────────────────────────────────────────
+/site.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=86400
+
+# ── HTML pages ────────────────────────────────────────────────
+/*.html
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+# ── AIO: Markdown endpoint for AI crawlers ────────────────────
+/api/agent-content*
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: public, max-age=3600
+  X-Content-Format: markdown
+  X-Ai-Input: yes
+  X-Ai-Summary: allowed
+
+# ── Admin routes — never cache, never index ──────────────────
+/admin/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+  Cache-Control: no-store
+
+/_admin/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+  Cache-Control: no-store
+
+# ── Affiliate redirects — never cache, never index ────────────
+/go/*
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow, noarchive

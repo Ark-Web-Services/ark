@@ -1,0 +1,36 @@
+---
+import BusinessLayout from "@layouts/BusinessLayout.astro";
+import business from "../../../business.config";
+
+export async function getStaticPaths() {
+  if (!business.enabled) return [];
+  return business.services.map((service) => ({ params: { service: service.id }, props: { service } }));
+}
+
+const { service } = Astro.props;
+const businessRouting = business as typeof business & { landingPageOnly?: boolean; customHomeContactHref?: string };
+const contactHref = business.customHome || businessRouting.landingPageOnly ? businessRouting.customHomeContactHref || "/#contact" : "/contact/";
+---
+
+<BusinessLayout title={service.title} description={service.description}>
+  <article class="business-home business-page service-page">
+    <header class="business-page-heading">
+      <h1>{service.title}</h1>
+      <p>{service.description}</p>
+    </header>
+    {service.details?.length > 0 && <section class="business-section business-prose">
+      <h2>Project scope</h2>
+      <ul>{service.details.map((detail) => <li>{detail}</li>)}</ul>
+    </section>}
+    <section class="business-section service-page__cta">
+      <h2>Discuss your project</h2>
+      <p>Share the current site and the specific work you have in mind. We can review the scope before deciding on next steps.</p>
+      <a class="business-button" href={contactHref}>Start a conversation</a>
+      <p><a href={`mailto:${business.email}?subject=${encodeURIComponent(service.title)}`}>Or email {business.email}</a></p>
+    </section>
+  </article>
+</BusinessLayout>
+
+<style>
+  .service-page__cta { max-width: 70ch; padding-bottom: 5rem; }
+</style>

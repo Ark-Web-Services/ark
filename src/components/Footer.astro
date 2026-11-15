@@ -1,0 +1,85 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// FOOTER COMPONENT — Trust signals, sitemap, legal links
+// ═══════════════════════════════════════════════════════════════
+
+import { siteConfig, primaryNav, footerNav } from "@data/navigation";
+import { affiliateDisclaimer } from "@data/affiliates";
+import { getCollection } from "astro:content";
+import nicheConfig from "../../niche.config";
+
+const allPosts = await getCollection("posts");
+const popularPosts = allPosts
+  .sort((a, b) => (b.data.popularity ?? 0) - (a.data.popularity ?? 0))
+  .slice(0, 5);
+
+const currentYear = new Date().getFullYear();
+const newsletterHref = `mailto:${nicheConfig.contactEmail}?subject=${encodeURIComponent("Subscribe me to new guides")}`;
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+
+    <!-- Footer Top -->
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <a href="/" class="site-footer__logo-link" aria-label={`${siteConfig.title} — Home`}>
+          <span class="site-footer__title">{siteConfig.title}</span>
+        </a>
+        <p class="site-footer__tagline">{siteConfig.tagline}</p>
+      </div>
+
+      <div class="site-footer__newsletter">
+        <h3 class="site-footer__heading">Get New Guides by Email</h3>
+        <p class="site-footer__text">No spam, ever. Unsubscribe anytime.</p>
+        <a href={newsletterHref} class="btn btn--primary newsletter-form__btn">Email Us to Subscribe</a>
+      </div>
+    </div>
+
+    <!-- Footer Columns -->
+    <div class="site-footer__columns">
+      <div class="site-footer__column">
+        <h4 class="site-footer__column-title">Explore</h4>
+        <ul class="site-footer__links">
+          {primaryNav.map((item) => (
+            <li><a href={item.url}>{item.title}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="site-footer__column">
+        <h4 class="site-footer__column-title">Popular Guides</h4>
+        <ul class="site-footer__links">
+          {popularPosts.map((post) => (
+            <li><a href={`/posts/${post.id.replace(/\.(mdx?|md)$/, "")}/`}>{post.data.title.substring(0, 40)}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="site-footer__column">
+        <h4 class="site-footer__column-title">Trust & Legal</h4>
+        <ul class="site-footer__links">
+          {footerNav.map((item) => (
+            <li><a href={item.url}>{item.title}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="site-footer__column">
+        <h4 class="site-footer__column-title">Privacy choices</h4>
+        <ul class="site-footer__links">
+          <li><a href="/privacy/">Privacy notice</a></li>
+          <li><a href="#analytics-preferences">Analytics settings</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="site-footer__bottom">
+      <p class="site-footer__copyright">
+        © {currentYear} {siteConfig.title}. All rights reserved.
+      </p>
+      <p class="site-footer__disclosure">{affiliateDisclaimer}</p>
+    </div>
+  </div>
+</footer>

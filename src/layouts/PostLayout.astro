@@ -1,0 +1,367 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// POST LAYOUT — Article template (replaces _layouts/post.html)
+// Includes: Schema, TOC, Affiliate Grid, Related Posts, Author Box
+// ═══════════════════════════════════════════════════════════════
+
+import BusinessLayout from "./BusinessLayout.astro";
+import "../styles/global.css";
+import SchemaArticle from "@components/SchemaArticle.astro";
+import SchemaHowTo from "@components/SchemaHowTo.astro";
+import AffiliateDisclosure from "@components/AffiliateDisclosure.astro";
+import ProductBox from "@components/ProductBox.astro";
+import RelatedPosts from "@components/RelatedPosts.astro";
+import { Picture } from "astro:assets";
+import { siteConfig } from "@data/navigation";
+import { getSiloColor, generateBreadcrumbs } from "@lib/internal-links";
+import { getProductsForPage } from "@lib/d1";
+import { estimateReadingTime, excerptFromMarkdown, wordCount } from "@lib/seo";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  content: string; // Raw content for word count
+}
+
+const { post, content } = Astro.props;
+const { data } = post;
+
+const readTime = estimateReadingTime(content);
+const words = wordCount(content);
+const description = data.description.trim() || excerptFromMarkdown(content);
+const siloColor = getSiloColor(data.category);
+const slug = post.id.replace(/\.(mdx?|md)$/, "");
+const breadcrumbs = generateBreadcrumbs(
+  `/posts/${slug}/`,
+  data.title
+);
+const canonical = `${siteConfig.url}/posts/${slug}/`;
+
+const merchantHosts = [
+  "amazon.com",
+  "amzn.to",
+  "petsmart.com",
+  "petco.com",
+  "chewy.com",
+  "ebay.com",
+  "aliexpress.com",
+];
+const hasAffiliateLinks = merchantHosts.some((host) => {
+  const escapedHost = host.replace(/\./g, "\\.");
+  return new RegExp(`https?://(?:[\\w-]+\\.)*${escapedHost}(?:[/:?#]|$)`, "i").test(content);
+});
+
+function plainText(markdown: string): string {
+  return markdown
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/[`*_~]/g, "")
+    .replace(/^\s*[-+]\s+/gm, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function sectionLines(markdown: string, headingPattern: RegExp): string[] {
+  const lines = markdown.split(/\r?\n/);
+  const start = lines.findIndex((line) => {
+    const match = line.match(/^(#{1,6})\s+(.+)$/);
+    return match && headingPattern.test(plainText(match[2]));
+  });
+  if (start < 0) return [];
+
+  const startLevel = lines[start].match(/^(#{1,6})/)?.[1].length ?? 6;
+  let end = lines.length;
+  for (let index = start + 1; index < lines.length; index += 1) {
+    const match = lines[index].match(/^(#{1,6})\s+/);
+    if (match && match[1].length <= startLevel) {
+      end = index;
+      break;
+    }
+  }
+  return lines.slice(start + 1, end);
+}
+
+function orderedSteps(lines: string[]): { name: string; text: string }[] {
+  const steps: { name: string; text: string }[] = [];
+  let current: string[] = [];
+
+  const pushCurrent = () => {
+    if (current.length === 0) return;
+    const first = current[0].replace(/^\d+\.\s+/, "");
+    const nameMatch = first.match(/^\*\*([^*]+?)\*\*:?\s*(.*)$/);
+    const text = plainText(current.join(" "));
+    steps.push({
+      name: plainText(nameMatch?.[1] ?? first.split(/[.:]/, 1)[0]),
+      text,
+    });
+    current = [];
+  };
+
+  for (const line of lines) {
+    if (/^\d+\.\s+/.test(line)) {
+      pushCurrent();
+      current.push(line);
+    } else if (current.length > 0 && !/^#{1,6}\s+/.test(line)) {
+      current.push(line);
+    }
+  }
+  pushCurrent();
+  return steps;
+}
+
+function numberedHeadingSteps(lines: string[]): { name: string; text: string }[] {
+  const steps: { name: string; text: string }[] = [];
+  let name = "";
+  let body: string[] = [];
+  const pushCurrent = () => {
+    if (!name) return;
+    steps.push({ name, text: plainText(body.join(" ")) || name });
+    body = [];
+  };
+
+  for (const line of lines) {
+    const match = line.match(/^#{3,6}\s+\d+\.\s+(.+)$/);
+    if (match) {
+      pushCurrent();
+      name = plainText(match[1]);
+    } else if (name) {
+      body.push(line);
+    }
+  }
+  pushCurrent();
+  return steps;
+}
+
+function phaseSteps(markdown: string): { name: string; text: string }[] {
+  const lines = markdown.split(/\r?\n/);
+  const steps: { name: string; text: string }[] = [];
+  let name = "";
+  let body: string[] = [];
+  const pushCurrent = () => {
+    if (!name) return;
+    steps.push({ name, text: plainText(body.join(" ")) || name });
+    body = [];
+  };
+
+  for (const line of lines) {
+    const match = line.match(/^##\s+(Phase\s+\d+:.+)$/i);
+    if (match) {
+      pushCurrent();
+      name = plainText(match[1]);
+    } else if (name && !/^##\s+/.test(line)) {
+      body.push(line);
+    } else if (name && /^##\s+/.test(line)) {
+      pushCurrent();
+      name = "";
+    }
+  }
+  pushCurrent();
+  return steps;
+}
+
+let howToSteps: { name: string; text: string }[] = [];
+if (/^how to\b/i.test(data.title.trim())) {
+  const stepSection = sectionLines(content, /step[- ]by[- ]step|instructions|process|procedure/i);
+  howToSteps = orderedSteps(stepSection);
+  if (howToSteps.length < 2) howToSteps = numberedHeadingSteps(content.split(/\r?\n/));
+  if (howToSteps.length < 2) howToSteps = phaseSteps(content);
+  if (howToSteps.length < 2) howToSteps = orderedSteps(content.split(/\r?\n/));
+}
+
+// Phase 2: Try D1 for products, fallback to static
+const db = Astro.locals?.runtime?.env?.DB;
+const productData = data.affiliateProducts
+  ? await getProductsForPage(post.id.replace(/\.(mdx?|md)$/, ""), db)
+  : null;
+
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/posts/**/*.{jpeg,jpg,png,gif,webp}');
+const imagePath = data.image ? data.image.replace('/assets/images/', '/src/assets/images/') : null;
+const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : data.image;
+
+---
+
+<BusinessLayout
+  title={data.title}
+  description={description}
+  image={data.image}
+  canonicalUrl={canonical}
+  image={data.image}
+  imageAlt={data.imageAlt}
+  ogType="article"
+  publishedTime={data.date.toISOString()}
+  modifiedTime={(data.lastModified ?? data.date).toISOString()}
+>
+  <!-- Schema.org Structured Data -->
+  <SchemaArticle
+    title={data.title}
+    description={description}
+    url={`/posts/${post.id.replace(/\.(mdx?|md)$/, "")}/`}
+    image={data.image}
+    date={data.date}
+    lastModified={data.lastModified}
+    author={data.author}
+    wordCount={words}
+    faq={data.faq}
+  />
+  {howToSteps.length > 1 && (
+    <SchemaHowTo
+      name={data.title}
+      description={description}
+      image={data.image}
+      steps={howToSteps}
+    />
+  )}
+
+  <article class="article" itemscope itemtype="https://schema.org/Article">
+
+    <!-- Article Header -->
+    <header class="article__header">
+      {data.category && (
+        <div class="article__category">
+          <a
+            href={`/${data.category}/`}
+            class="badge"
+            style={`--badge-color: ${siloColor}`}
+          >
+            {data.category.replace(/-/g, " ")}
+          </a>
+        </div>
+      )}
+
+      <h1 class="article__title" itemprop="headline">{data.title}</h1>
+
+      {description && (
+        <p class="article__subtitle" itemprop="description">{description}</p>
+      )}
+
+      <div class="article__meta">
+        <div class="article__author" itemprop="author" itemscope itemtype="https://schema.org/Organization">
+          {siteConfig.author.avatar && <img
+            src={siteConfig.author.avatar}
+            alt={siteConfig.author.name}
+            class="avatar avatar--sm"
+            width="36"
+            height="36"
+            loading="lazy"
+          />}
+          <div>
+            <span class="article__author-name" itemprop="name">
+              {data.author ?? siteConfig.author.name}
+            </span>
+            <div class="article__meta-details">
+              <time datetime={data.date.toISOString()} itemprop="datePublished">
+                {data.date.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </time>
+              {data.lastModified && (
+                <>
+                  <span class="article__meta-separator">·</span>
+                  <time datetime={data.lastModified.toISOString()} itemprop="dateModified">
+                    Updated {data.lastModified.toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </time>
+                </>
+              )}
+              <span class="article__meta-separator">·</span>
+              <span class="article__read-time">{readTime} min read</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {data.image && (
+        <figure class="article__hero">
+          <Picture
+            src={resolvedImage}
+            alt={data.imageAlt ?? data.title}
+            width={1200}
+            height={630}
+            widths={[400, 800, 1200]}
+            sizes="(min-width: 768px) 1200px, 100vw"
+            formats={['avif', 'webp']}
+            loading="eager"
+            fetchpriority="high"
+            pictureAttributes={{ class: "article__hero-wrapper" }}
+            class="article__hero-img"
+          />
+          {data.imageCredit && (
+            <figcaption class="article__hero-credit">{data.imageCredit}</figcaption>
+          )}
+        </figure>
+      )}
+    </header>
+
+    {hasAffiliateLinks && <AffiliateDisclosure />}
+
+    <!-- Key Takeaways -->
+    {data.keyTakeaways.length > 0 && (
+      <div class="callout callout--takeaways" role="note" aria-label="Key takeaways">
+        <div class="callout__icon">💡</div>
+        <div class="callout__content">
+          <strong class="callout__title">Key Takeaways</strong>
+          <ul class="callout__list">
+            {data.keyTakeaways.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </div>
+    )}
+
+    <!-- Table of Contents (collapsible) -->
+    {data.toc && (
+      <nav class="toc" aria-label="Table of contents">
+        <details class="toc__wrapper" open>
+          <summary class="toc__toggle">
+            <span class="toc__icon">📑</span>
+            <span>Table of Contents</span>
+            <svg class="toc__chevron" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </summary>
+          <div class="toc__content" id="toc-list">
+            <!-- Populated by client-side JS from article headings -->
+          </div>
+        </details>
+      </nav>
+    )}
+
+    <!-- Article Body (MDX renders here) -->
+    <div class="article__body prose" itemprop="articleBody">
+      <slot />
+    </div>
+
+    <!-- Affiliate Product Grid (Phase 2: D1-powered) -->
+    {productData && (
+      <section class="product-grid" aria-label="Recommended products">
+        <h2 class="product-grid__heading">{productData.heading}</h2>
+        <p class="product-grid__disclaimer">
+          This site contains affiliate links. We may earn a commission at no extra cost to you.
+        </p>
+        <div class="product-grid__items">
+          {productData.items.map((product) => (
+            <ProductBox product={product} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Related Posts (Internal Linking Engine) -->
+    <RelatedPosts currentPost={post} />
+
+    <!-- Comments Section -->
+    {data.comments && (
+      <section class="comments" id="comments" aria-label="Comments">
+        <h2>Discussion</h2>
+        <div id="comments-container"></div>
+      </section>
+    )}
+  </article>
+
+<script src="../scripts/article-toc.ts"></script>
+</BusinessLayout>

@@ -1,0 +1,140 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// HEADER COMPONENT — Sticky, accessible, mobile-first nav
+// Replaces _includes/header.html
+// ═══════════════════════════════════════════════════════════════
+
+import { siteConfig, primaryNav } from "@data/navigation";
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header" role="banner">
+  <div class="container">
+    <div class="site-header__inner">
+
+      <!-- Logo / Site Identity -->
+      <a href="/" class="site-header__brand" aria-label={`${siteConfig.title} — Home`}>
+        <svg class="site-header__logo" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" fill="var(--color-primary)" opacity="0.15" />
+          <circle cx="16" cy="16" r="8" fill="var(--color-primary)" />
+        </svg>
+        <span class="site-header__title">{siteConfig.title}</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul class="site-nav__list" role="menubar">
+          {primaryNav.map((item) => (
+            <li class:list={["site-nav__item", item.children && "has-dropdown"]} role="none">
+              <a
+                href={item.url}
+                class:list={["site-nav__link", currentPath === item.url && "is-active"]}
+                role="menuitem"
+                {...(item.children ? { "aria-haspopup": "true", "aria-expanded": "false" } : {})}
+              >
+                {item.title}
+                {item.children && (
+                  <svg class="site-nav__dropdown-icon" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                    <path d="M3 5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" />
+                  </svg>
+                )}
+              </a>
+
+              {item.children && (
+                <div class="dropdown" role="menu" aria-label={`${item.title} submenu`}>
+                  <div class="dropdown__inner">
+                    {item.description && (
+                      <p class="dropdown__description">{item.description}</p>
+                    )}
+                    <ul class="dropdown__list">
+                      {item.children.map((child) => (
+                        <li role="none">
+                          <a href={child.url} class="dropdown__link" role="menuitem">
+                            {child.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                    <a href={item.url} class="dropdown__view-all">
+                      View all {item.title.toLowerCase()} →
+                    </a>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Actions: Search + Dark Mode + Mobile Toggle -->
+      <div class="site-header__actions">
+        <button class="btn-icon" id="search-toggle" aria-label="Search" aria-expanded="false" aria-controls="search-panel">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.5" />
+            <path d="M13 13l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </button>
+
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle dark mode">
+          <svg class="icon-sun" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5" />
+            <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707 8.003 8.003 0 0010 18c3.094 0 5.738-1.756 7.293-4.707z" stroke="currentColor" stroke-width="1.5" />
+          </svg>
+        </button>
+
+        <button class="btn-icon site-header__mobile-toggle" id="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path class="hamburger-top" d="M4 6h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path class="hamburger-mid" d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path class="hamburger-bot" d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Panel -->
+  <div class="search-panel" id="search-panel" hidden aria-label="Site search">
+    <div class="container">
+      <form class="search-panel__form" action="/search/" method="get" role="search">
+        <input
+          type="search"
+          name="q"
+          class="search-panel__input"
+          placeholder="Search guides, species, reviews..."
+          autocomplete="off"
+          aria-label="Search the site"
+        />
+        <button type="submit" class="search-panel__submit" aria-label="Submit search">
+          Search
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu" hidden aria-label="Mobile navigation">
+    <nav class="mobile-menu__nav">
+      {primaryNav.map((item) => (
+        <div class="mobile-menu__group">
+          <a href={item.url} class="mobile-menu__link mobile-menu__link--primary">
+            {item.title}
+          </a>
+          {item.children && (
+            <ul class="mobile-menu__sublist">
+              {item.children.map((child) => (
+                <li>
+                  <a href={child.url} class="mobile-menu__link">{child.title}</a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </nav>
+  </div>
+</header>

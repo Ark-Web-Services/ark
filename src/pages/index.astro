@@ -1,0 +1,114 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// HOMEPAGE — SEO Authority Site
+// Progressive disclosure: Hero → Silos → Latest → CTA
+// ═══════════════════════════════════════════════════════════════
+
+import business from "../../business.config";
+import BusinessLayout from "@layouts/BusinessLayout.astro";
+import BusinessHome from "@components/business/BusinessHome.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import ArticleCard from "@components/ArticleCard.astro";
+import { siteConfig, silos } from "@data/navigation";
+import { getCollection } from "astro:content";
+import nicheConfig from "../../niche.config";
+
+const allPosts = business.enabled ? [] : await getCollection("posts");
+const latestPosts = allPosts
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 6);
+
+// Count posts per silo
+const siloCounts = silos.map((silo) => ({
+  ...silo,
+  count: allPosts.filter((p) => p.data.category === silo.id).length,
+}));
+const firstSilo = siloCounts[0];
+const newsletterHref = `mailto:${nicheConfig.contactEmail}?subject=${encodeURIComponent("Subscribe me to new guides")}`;
+---
+
+{business.enabled ? <BusinessLayout><BusinessHome /></BusinessLayout> : <BaseLayout
+  title={siteConfig.title}
+  description={siteConfig.description}
+>
+
+  <!-- Hero Section -->
+  <section class="hero" aria-label="Welcome">
+    <div class="container">
+      <div class="hero__content">
+        <h1 class="hero__title">
+          {siteConfig.tagline}
+        </h1>
+        <p class="hero__subtitle">
+          {siteConfig.description}
+        </p>
+        <div class="hero__actions">
+          <a href={firstSilo.pillar} class="btn btn--primary btn--lg">Start Here →</a>
+          <a href="/articles/" class="btn btn--outline btn--lg">Browse All Guides</a>
+        </div>
+        <div class="hero__trust">
+          <span class="hero__trust-item">📚 {allPosts.length}+ Articles</span>
+          <span class="hero__trust-item">✓ Expert-curated guidance</span>
+          <span class="hero__trust-item">✓ Focused on {nicheConfig.nicheNoun}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Silos -->
+  <section class="home-section" aria-label="Browse by topic">
+    <div class="container">
+      <h2 class="home-section__title">Explore Our Guides</h2>
+      <p class="home-section__subtitle">
+        Organized by topic so you can find exactly what you need.
+      </p>
+
+      <div class="silo-grid">
+        {siloCounts.map((silo) => (
+          <a href={silo.pillar} class="silo-card" style={`--silo-color: ${silo.color}`}>
+            <div class="silo-card__icon" style={`background: ${silo.color}20; color: ${silo.color}`}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <h3 class="silo-card__title">{silo.label}</h3>
+            <p class="silo-card__count">{silo.count} articles</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Articles -->
+  <section class="home-section home-section--alt" aria-label="Latest articles">
+    <div class="container">
+      <h2 class="home-section__title">Latest Articles</h2>
+      <p class="home-section__subtitle">Guides are reviewed and updated as the site grows.</p>
+
+      <div class="article-grid">
+        {latestPosts.map((post) => (
+          <ArticleCard post={post} />
+        ))}
+      </div>
+
+      <div style="text-align: center; margin-top: var(--space-8);">
+        <a href="/articles/" class="btn btn--outline">View All Articles →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter CTA -->
+  <section class="home-cta" aria-label="Newsletter signup">
+    <div class="container">
+      <div class="home-cta__inner">
+        <h2 class="home-cta__title">Get Smarter Every Week</h2>
+        <p class="home-cta__text">
+          Get new guides and practical {nicheConfig.nicheNoun} tips in your inbox.
+        </p>
+        <a href={newsletterHref} class="btn btn--primary newsletter-form__btn">Email Us to Subscribe</a>
+        <p class="home-cta__disclaimer">No spam, ever. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>}

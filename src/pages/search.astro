@@ -1,0 +1,119 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import ArticleCard from "@components/ArticleCard.astro";
+import { siteConfig } from "@data/navigation";
+import { getCollection } from "astro:content";
+import nicheConfig from "../../niche.config";
+
+const posts = (await getCollection("posts", ({ data }) => data.status === "published")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const searchDescription = `Search ${siteConfig.title}'s guides and articles about ${nicheConfig.nicheNoun}.`;
+const searchSummary = `Search ${posts.length} guides and articles about ${nicheConfig.nicheNoun}.`;
+---
+
+<BaseLayout
+  title={`Search — ${siteConfig.title}`}
+  description={searchDescription}
+  canonicalUrl={`${siteConfig.url}/search/`}
+  noindex
+>
+  <section class="articles-page">
+    <div class="container">
+      <header class="articles-page__header">
+        <h1 class="articles-page__title">Search {siteConfig.title}</h1>
+        <p class="articles-page__subtitle" id="search-summary" data-default-summary={searchSummary}>
+          {searchSummary}
+        </p>
+      </header>
+
+      <form class="search-results__form" role="search">
+        <label class="sr-only" for="site-search">Search articles</label>
+        <input
+          id="site-search"
+          class="search-panel__input"
+          type="search"
+          name="q"
+          placeholder="Try a topic, question, or product name"
+          autocomplete="off"
+        />
+        <button class="search-panel__submit" type="submit">Search</button>
+      </form>
+
+      <div class="article-grid" id="search-results">
+        {posts.map((post) => <ArticleCard post={post} headingLevel={2} />)}
+      </div>
+
+      <p class="search-results__empty" id="search-empty" hidden>
+        No articles matched that search. Try a broader term.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>(".search-results__form");
+    const input = document.querySelector<HTMLInputElement>("#site-search");
+    const cards = [...document.querySelectorAll<HTMLElement>("#search-results .card")];
+    const summary = document.querySelector<HTMLElement>("#search-summary");
+    const empty = document.querySelector<HTMLElement>("#search-empty");
+
+    function applySearch(query: string) {
+      const normalized = query.trim().toLowerCase();
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const matches = !normalized || (card.dataset.search ?? "").includes(normalized);
+        card.hidden = !matches;
+        if (matches) visible += 1;
+      });
+
+      if (summary) {
+        summary.textContent = normalized
+          ? `${visible} article${visible === 1 ? "" : "s"} found for "${query.trim()}".`
+          : summary.dataset.defaultSummary ?? `Search ${cards.length} guides and articles.`;
+      }
+      if (empty) empty.hidden = visible !== 0;
+    }
+
+    const initialQuery = new URLSearchParams(window.location.search).get("q") ?? "";
+    if (input) input.value = initialQuery;
+    applySearch(initialQuery);
+
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = input?.value ?? "";
+      const url = new URL(window.location.href);
+      if (query.trim()) url.searchParams.set("q", query.trim());
+      else url.searchParams.delete("q");
+      history.replaceState({}, "", url);
+      applySearch(query);
+    });
+
+    input?.addEventListener("input", () => applySearch(input.value));
+  </script>
+</BaseLayout>
+
+<style>
+  .search-results__form {
+    display: flex;
+    gap: var(--space-2);
+    max-width: 48rem;
+    margin: 0 auto var(--space-8);
+  }
+
+  .search-results__form .search-panel__input {
+    flex: 1;
+  }
+
+  .search-results__empty {
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--color-neutral-600);
+  }
+
+  @media (max-width: 639px) {
+    .search-results__form {
+      flex-direction: column;
+    }
+  }
+</style>

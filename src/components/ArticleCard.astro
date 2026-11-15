@@ -1,0 +1,89 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// ARTICLE CARD — Reusable card for article grids
+// ═══════════════════════════════════════════════════════════════
+
+import { Picture } from "astro:assets";
+import { getSiloColor } from "@lib/internal-links";
+import { estimateReadingTime, excerptFromMarkdown } from "@lib/seo";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  variant?: "default" | "related";
+  headingLevel?: 2 | 3;
+}
+
+const { post, variant = "default", headingLevel = 3 } = Astro.props;
+const { data } = post;
+const siloColor = getSiloColor(data.category);
+const readTime = estimateReadingTime(post.body ?? "");
+const description = data.description.trim() || excerptFromMarkdown(post.body ?? "", 120);
+const searchText = [
+  data.title,
+  description,
+  data.category,
+  ...(data.tags ?? []),
+].join(" ").toLowerCase();
+
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/posts/**/*.{jpeg,jpg,png,gif,webp}');
+const imagePath = data.image ? data.image.replace('/assets/images/', '/src/assets/images/') : null;
+const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : data.image;
+---
+
+<article
+  class:list={["card", variant === "related" && "card--related"]}
+  data-category={data.category}
+  data-search={searchText}
+>
+  {data.image && (
+    <a href={`/posts/${post.id.replace(/\.(mdx?|md)$/, "")}/`} class="card__image-link" tabindex="-1" aria-hidden="true">
+      <Picture
+        src={resolvedImage}
+        {/* A real alt, not alt="" -- astro.config.mjs sets compressHTML:true,
+            which strips empty attributes, leaving <img> with no alt at all
+            (a WCAG failure). The wrapping <a> is aria-hidden, so assistive
+            tech still won't double-announce the card. */}
+        alt={data.title}
+        width={400}
+        height={225}
+        widths={[200, 400, 800]}
+        sizes="(min-width: 640px) 400px, 100vw"
+        formats={['avif', 'webp']}
+        loading="lazy"
+        pictureAttributes={{ class: "card__image-wrapper" }}
+        class="card__image"
+      />
+    </a>
+  )}
+  <div class="card__body">
+    {data.category && (
+      <span class="badge badge--sm" style={`--badge-color: ${siloColor}`}>
+        {data.category.replace(/-/g, " ")}
+      </span>
+    )}
+    {headingLevel === 2 ? (
+      <h2 class="card__title">
+        <a href={`/posts/${post.id.replace(/\.(mdx?|md)$/, "")}/`} class="card__link">{data.title}</a>
+      </h2>
+    ) : (
+      <h3 class="card__title">
+        <a href={`/posts/${post.id.replace(/\.(mdx?|md)$/, "")}/`} class="card__link">{data.title}</a>
+      </h3>
+    )}
+    <p class="card__excerpt">
+      {description}
+    </p>
+    <div class="card__meta">
+      <time datetime={data.date.toISOString()}>
+        {data.date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        })}
+      </time>
+      <span>·</span>
+      <span>{readTime} min read</span>
+    </div>
+  </div>
+</article>

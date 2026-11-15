@@ -1,0 +1,144 @@
+---
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import './styles.css';
+
+type Run = { job: string; lastStartedAt: string | null; lastSucceededAt: string | null; lastStatus: string; lastError: string | null; consecutiveFailures: number };
+type LedgerEntry = { id: string; week: string; weeks: string[]; type: 'content-gap' | 'interactive-tool' | 'ctr-rewrite'; title: string; target: string; proposedAt: string; lastProposedAt: string; status: 'proposed' | 'implemented' | 'superseded'; implementedAt: string | null; evidence: string };
+type Trend = { week: string; generatedAt: string; communityTopics: Array<{ topic: string; reasoning: string }> };
+
+const root = process.cwd();
+const readJson = (file: string) => JSON.parse(readFileSync(file, 'utf8'));
+const latestFile = (dir: string, pattern: RegExp) => existsSync(dir) ? readdirSync(dir).filter((file) => pattern.test(file)).sort().at(-1) : undefined;
+// A freshly cloned niche has generated no run/trend data yet — treat a
+// missing directory as "nothing to show" rather than a build failure.
+const listFiles = (dir: string) => existsSync(dir) ? readdirSync(dir) : [];
+const displayDate = (value: string | null | undefined) => value ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(value)) : 'Never';
+const displayDateTime = (value: string | null | undefined) => value ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(new Date(value)) : 'Unavailable';
+const formatNumber = (value: number | undefined, digits = 0) => Number(value ?? 0).toLocaleString('en-US', { maximumFractionDigits: digits, minimumFractionDigits: digits });
+const formatPercent = (value: number | undefined) => `${formatNumber((value ?? 0) * 100, 2)}%`;
+const signed = (value: number | undefined, digits = 0) => `${(value ?? 0) > 0 ? '+' : ''}${formatNumber(value, digits)}`;
+const statusLabel = (value: string | null | undefined) => (value ?? 'unknown').replace(/-/g, ' ');
+const typeLabel = (type: LedgerEntry['type']) => ({ 'content-gap': 'Content gap', 'interactive-tool': 'Interactive tool', 'ctr-rewrite': 'CTR rewrite' })[type];
+const targetPath = (entry: LedgerEntry) => entry.type === 'content-gap' ? `/posts/${entry.target}/` : entry.type === 'interactive-tool' ? `/tools/${entry.target}/` : entry.target;
+const daysBetween = (start: string, end: string | null) => end ? Math.max(0, Math.round((Date.parse(end) - Date.parse(start)) / 86_400_000)) : null;
+
+const cadence: Record<string, { label: string; intervalDays: number }> = {
+  observe: { label: 'Daily · 05:00 UTC', intervalDays: 1 },
+  analyze: { label: 'Mon · 06:00 UTC', intervalDays: 7 },
+  'write-weekly': { label: 'Mon · after analysis', intervalDays: 7 },
+  'audit-seo': { label: 'Wed · 07:00 UTC', intervalDays: 7 },
+  backlinks: { label: 'Fri · 08:00 UTC', intervalDays: 7 },
+};
+const now = Date.now();
+const runsDir = join(root, 'data/runs');
+const runs: Array<Run & { health: 'ok' | 'stale' | 'failed'; cadenceLabel: string }> = listFiles(runsDir).filter((file) => file.endsWith('.json')).sort()
+  .map((file) => readJson(join(runsDir, file)) as Run)
+  // Guard: only entries that actually look like job records. A stray
+  // diagnostics file in data/runs/ once took the whole build down.
+  .filter((run) => run && typeof run.job === 'string')
+  .map((run) => {
+
+  const schedule = cadence[run.job] ?? { label: 'Cadence unknown', intervalDays: 7 };
+  const stale = !run.lastSucceededAt || now - Date.parse(run.lastSucceededAt) > schedule.intervalDays * 2 * 86_400_000;
+  const health = run.lastStatus === 'failed' ? 'failed' : stale ? 'stale' : 'ok';
+  return { ...run, health, cadenceLabel: schedule.label };
+});
+
+const ledgerFile = join(root, 'data/engine-ledger.json');
+const ledger = (existsSync(ledgerFile) ? readJson(ledgerFile) : []) as LedgerEntry[];
+const openSuggestions = ledger.filter((entry) => entry.status === 'proposed').sort((a, b) => b.lastProposedAt.localeCompare(a.lastProposedAt) || a.title.localeCompare(b.title));
+const implemented = ledger.filter((entry) => entry.status === 'implemented').sort((a, b) => (b.implementedAt ?? '').localeCompare(a.implementedAt ?? '') || b.proposedAt.localeCompare(a.proposedAt));
+
+const observationsDir = join(root, 'data/observations');
+const observationName = latestFile(observationsDir, /^\d{4}-\d{2}-\d{2}\.json$/);
+const observation = observationName ? readJson(join(observationsDir, observationName)) : null;
+const periods = ['7d', '28d'].map((key) => ({ key, data: observation?.gsc?.[key] }));
+const sourceRows = observation ? [
+  { name: 'Reddit', status: observation.community?.reddit?.status ?? 'unavailable', count: observation.community?.reddit?.threads?.length ?? 0 },
+  { name: 'Forums', status: observation.community?.forums?.status ?? 'unavailable', count: observation.community?.forums?.records?.length ?? 0 },
+  { name: 'YouTube', status: observation.community?.youtube?.status ?? 'unavailable', count: observation.community?.youtube?.records?.length ?? 0 },
+  { name: 'Autocomplete', status: observation.community?.autocomplete?.status ?? 'unavailable', count: observation.community?.autocomplete?.records?.length ?? 0 },
+] : [];
+const topTerms = observation ? ['unigrams', 'bigrams', 'trigrams'].flatMap((kind) => (observation.termFrequency?.[kind] ?? []).map((term: any) => ({ ...term, kind: kind.slice(0, -1) }))).sort((a, b) => b.weightedDemand - a.weightedDemand || b.documentFrequency - a.documentFrequency).slice(0, 12) : [];
+
+const auditsDir = join(root, 'data/audits');
+const auditName = latestFile(auditsDir, /^\d{4}-\d{2}-\d{2}\.json$/);
+const audit = auditName ? readJson(join(auditsDir, auditName)) : null;
+const auditIssues = audit?.issues?.filter((issue: any) => issue.severity === 'P0' || issue.severity === 'P1') ?? [];
+
+const trendsDir = join(root, 'data/trends');
+const trends: Trend[] = listFiles(trendsDir).filter((file) => /^\d{4}-W\d{2}\.json$/.test(file)).sort().reverse().map((file) => readJson(join(trendsDir, file)) as Trend);
+const failedJobs = runs.filter((run) => run.health === 'failed').length;
+const staleJobs = runs.filter((run) => run.health === 'stale').length;
+const latestTrend = trends[0];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Engine weekly review</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Weekly pipeline health, search performance, suggestions, and audit review." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to review</a>
+    <div class="engine-shell">
+      <header class="masthead">
+        <div><h1>Engine weekly review</h1><p>One operating view of pipeline health, search movement, and every recommendation still waiting for action.</p></div>
+        <div class="masthead__meta"><strong>{latestTrend?.week ?? 'No trend week'}</strong><span>Observation {displayDate(observation?.collectedAt)}</span><span>Built {displayDateTime(new Date().toISOString())}</span></div>
+      </header>
+
+      <div class="overview" aria-label="Review summary">
+        <div class="overview__item"><span class="overview__value">{openSuggestions.length}</span><span class="overview__label">open suggestions</span></div>
+        <div class="overview__item"><span class="overview__value">{implemented.length}</span><span class="overview__label">implemented suggestions</span></div>
+        <div class="overview__item"><span class="overview__value">{failedJobs} failed · {staleJobs} stale</span><span class="overview__label">pipeline jobs needing attention</span></div>
+        <div class="overview__item"><span class="overview__value">P0 {audit?.summary?.P0 ?? 0} · P1 {audit?.summary?.P1 ?? 0}</span><span class="overview__label">latest audit posture</span></div>
+      </div>
+
+      <nav class="jump-nav" aria-label="Review sections"><a href="#pipeline">Pipeline</a><a href="#search">Search</a><a href="#suggestions">Open suggestions</a><a href="#implemented">Implemented</a><a href="#audit">Audit</a><a href="#harvest">Harvest</a><a href="#weeks">Weeks</a></nav>
+
+      <main class="engine-main" id="main">
+        <section class="section" id="pipeline">
+          <div class="section__head"><div><h2>Pipeline health</h2><p>A job becomes stale when its last success is more than twice its scheduled interval old.</p></div><span class="section__count">{runs.length} jobs</span></div>
+          <div class="table-scroll"><table><thead><tr><th>Job</th><th>Health</th><th>Last status</th><th>Last success</th><th class="num">Failures</th><th>Cadence</th></tr></thead><tbody>{runs.map((run) => <tr><td class="primary-cell">{run.job}</td><td><span class:list={['pill', `pill--${run.health}`]}>{run.health}</span></td><td>{statusLabel(run.lastStatus)}</td><td class="nowrap">{displayDateTime(run.lastSucceededAt)}</td><td class="num">{run.consecutiveFailures}</td><td class="muted nowrap">{run.cadenceLabel}</td></tr>)}</tbody></table></div>
+        </section>
+
+        <section class="section" id="search">
+          <div class="section__head"><div><h2>Search performance</h2><p>Current totals and change against the immediately preceding equal-length period.</p></div><span class="section__count">through {displayDate(observation?.gsc?.['7d']?.endDate)}</span></div>
+          {observation ? <div class="table-scroll"><table><thead><tr><th>Period</th><th class="num">Clicks</th><th class="num">Δ clicks</th><th class="num">Impressions</th><th class="num">Δ impressions</th><th class="num">CTR</th><th class="num">Δ CTR</th><th class="num">Position</th><th class="num">Δ position</th></tr></thead><tbody>{periods.map(({ key, data }) => <tr><td class="primary-cell">{key}</td><td class="num">{formatNumber(data?.totals?.current?.clicks)}</td><td class:list={['num','delta',(data?.totals?.delta?.clicks ?? 0) > 0 ? 'delta--good' : 'delta--flat']}>{signed(data?.totals?.delta?.clicks)}</td><td class="num">{formatNumber(data?.totals?.current?.impressions)}</td><td class:list={['num','delta',(data?.totals?.delta?.impressions ?? 0) > 0 ? 'delta--good' : 'delta--flat']}>{signed(data?.totals?.delta?.impressions)}</td><td class="num">{formatPercent(data?.totals?.current?.ctr)}</td><td class:list={['num','delta',(data?.totals?.delta?.ctr ?? 0) >= 0 ? 'delta--good' : 'delta--bad']}>{signed((data?.totals?.delta?.ctr ?? 0) * 100, 2)} pp</td><td class="num">{formatNumber(data?.totals?.current?.position, 2)}</td><td class:list={['num','delta',(data?.totals?.delta?.position ?? 0) <= 0 ? 'delta--good' : 'delta--bad']}>{signed(data?.totals?.delta?.position, 2)}</td></tr>)}</tbody></table></div> : <p class="empty">No dated observation is available.</p>}
+          {observation && <div class="overview"><div class="overview__item"><span class="overview__value">{formatNumber(observation.indexation?.sitemapUrlCount)}</span><span class="overview__label">URLs in sitemap</span></div><div class="overview__item"><span class="overview__value">{formatNumber(observation.indexation?.urlsWithImpressionsCount)}</span><span class="overview__label">URLs earning impressions</span></div><div class="overview__item"><span class="overview__value">{formatNumber(observation.indexation?.coverageDelta)}</span><span class="overview__label">sitemap URLs without impressions</span></div></div>}
+        </section>
+
+        <section class="section section--priority" id="suggestions">
+          <div class="section__head"><div><h2>Open suggestions</h2><p>The active decision queue. Targets are the exact files, slugs, or URLs the resolver checks.</p></div><span class="section__count">{openSuggestions.length} proposed</span></div>
+          {openSuggestions.length ? <div class="suggestion-list">{openSuggestions.map((entry) => <article class="suggestion"><div class="suggestion__kind"><span class="pill pill--proposed">Proposed</span><span class="suggestion__week">{entry.weeks.at(-1) ?? entry.week}</span><span class="muted">{typeLabel(entry.type)}</span></div><div><h3>{entry.title}</h3><p>{entry.evidence}</p></div><div class="suggestion__target"><span>Resolution target</span><code>{targetPath(entry)}</code></div></article>)}</div> : <p class="empty">No suggestions are awaiting implementation.</p>}
+        </section>
+
+        <section class="section" id="implemented">
+          <div class="section__head"><div><h2>Implemented</h2><p>Resolved suggestions stay in the ledger permanently and never return to proposed.</p></div><span class="section__count">{implemented.length} total</span></div>
+          {implemented.length ? <div class="table-scroll"><table><thead><tr><th>Suggestion</th><th>Type</th><th>Proposed</th><th>Implemented</th><th class="num">Lead time</th><th>Target</th></tr></thead><tbody>{implemented.map((entry) => <tr><td class="primary-cell">{entry.title}</td><td><span class="pill pill--implemented">Implemented</span><br /><span class="muted">{typeLabel(entry.type)}</span></td><td class="nowrap">{displayDate(entry.proposedAt)}</td><td class="nowrap">{displayDate(entry.implementedAt)}</td><td class="num">{daysBetween(entry.proposedAt, entry.implementedAt)} days</td><td><code>{targetPath(entry)}</code></td></tr>)}</tbody></table></div> : <p class="empty">No suggestions have been resolved yet.</p>}
+        </section>
+
+        <section class="section" id="audit">
+          <div class="section__head"><div><h2>Site audit</h2><p>Newest static and live SEO audit, with priority issues expanded.</p></div><span class="section__count">{displayDate(audit?.generatedAt)}</span></div>
+          {audit ? <div class="audit-grid"><div class="audit-posture"><div class="severity-row"><span class="pill pill--p0">P0</span><strong>{audit.summary?.P0 ?? 0}</strong><span class="muted">critical</span></div><div class="severity-row"><span class="pill pill--p1">P1</span><strong>{audit.summary?.P1 ?? 0}</strong><span class="muted">high priority</span></div><div class="severity-row"><span class="pill">P2</span><strong>{audit.summary?.P2 ?? 0}</strong><span class="muted">monitor</span></div></div><div class="audit-posture">{auditIssues.length ? <ul class="issue-list">{auditIssues.map((issue: any) => <li><strong>{issue.severity}</strong> {issue.message}</li>)}</ul> : <p class="muted">No P0 or P1 messages in the latest audit.</p>}</div></div> : <p class="empty">No audit report is available.</p>}
+        </section>
+
+        <section class="section" id="harvest">
+          <div class="section__head"><div><h2>Harvest</h2><p>Collection health and the strongest deterministic demand terms in the latest observation.</p></div><span class="section__count">{formatNumber(observation?.community?.records?.length)} records</span></div>
+          {observation ? <div class="harvest-grid"><div class="table-scroll"><table><thead><tr><th>Source</th><th>Status</th><th class="num">Records</th></tr></thead><tbody>{sourceRows.map((source) => <tr><td class="primary-cell">{source.name}</td><td><span class:list={['pill', `pill--${source.status}`]}>{statusLabel(source.status)}</span></td><td class="num">{source.count}</td></tr>)}</tbody></table></div><ol class="term-list">{topTerms.map((term: any) => <li><span>{term.term}</span><span class="term-list__kind">{term.kind}</span><span class="term-list__value">{formatNumber(term.weightedDemand, 2)}</span></li>)}</ol></div> : <p class="empty">No harvest data is available.</p>}
+        </section>
+
+        <section class="section" id="weeks">
+          <div class="section__head"><div><h2>Week index</h2><p>Every persisted trend has a static drill-down with its complete recommendation set.</p></div><span class="section__count">{trends.length} weeks</span></div>
+          <div class="table-scroll"><table><thead><tr><th>Week</th><th>Generated</th><th>Headline finding</th></tr></thead><tbody>{trends.map((trend) => <tr><td><a class="week-link" href={`/admin/engine/${trend.week}/`}>{trend.week}</a></td><td class="nowrap">{displayDate(trend.generatedAt)}</td><td class="week-headline">{trend.communityTopics[0]?.topic ?? 'No headline recorded'}</td></tr>)}</tbody></table></div>
+        </section>
+      </main>
+      <footer class="engine-footer">Static operations view · source data is read from the repository at build time.</footer>
+    </div>
+  </body>
+</html>

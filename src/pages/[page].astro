@@ -1,0 +1,86 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// STATIC CONTENT PAGES — Tokenized Markdown rendered at /<slug>/
+// ═══════════════════════════════════════════════════════════════
+
+import business from "../../business.config";
+import BusinessPage from "@components/business/BusinessPage.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { generateBreadcrumbs } from "@lib/internal-links";
+import rehypeExternalLinks from "@lib/rehype-external-links";
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import { getCollection, type CollectionEntry } from "astro:content";
+import nicheConfig, { getSiteDomain, type ExternalLink } from "../../niche.config";
+
+const tokenValues = {
+  siteName: nicheConfig.siteName,
+  siteUrl: nicheConfig.url,
+  domain: getSiteDomain(),
+  contactEmail: nicheConfig.contactEmail,
+  authorName: nicheConfig.author.name,
+  nicheNoun: nicheConfig.nicheNoun,
+};
+
+function interpolateTokens(value: string): string {
+  return value.replace(
+    /\{\{(siteName|siteUrl|domain|contactEmail|authorName|nicheNoun)\}\}/g,
+    (_, token: keyof typeof tokenValues) => tokenValues[token]
+  );
+}
+
+function linkList(links: ExternalLink[]): string {
+  if (links.length === 0) return "_No links have been configured yet._";
+  return links
+    .map((link) => `- [${link.label}](${link.url})${link.note ? ` — ${link.note}` : ""}`)
+    .join("\n");
+}
+
+function interpolateBody(value: string): string {
+  return interpolateTokens(value)
+    .replace(/\{\{communityLinks\}\}/g, linkList(nicheConfig.communityLinks))
+    .replace(/\{\{trustedSources\}\}/g, linkList(nicheConfig.trustedSources));
+}
+
+export async function getStaticPaths() {
+  if (business.enabled) return business.customHome ? [] : ["services", "about", "contact", "privacy", "process", "pricing"].map(slug => ({ params: { page: slug }, props: { businessSlug: slug } }));
+  const pages = await getCollection("pages");
+  return pages.map((page) => ({
+    params: { page: page.id.replace(/\.(mdx?|md)$/, "") },
+    props: { page },
+  }));
+}
+
+const { businessSlug } = Astro.props;
+const page = Astro.props.page ?? { id: businessSlug, data: { title: businessSlug, description: business.description }, body: "" };
+const title = interpolateTokens(page.data.title);
+const description = interpolateTokens(page.data.description);
+const slug = page.id.replace(/\.(mdx?|md)$/, "");
+const breadcrumbs = generateBreadcrumbs(`/${slug}/`, title);
+const markdown = await createMarkdownProcessor({ rehypePlugins: [rehypeExternalLinks] });
+const rendered = await markdown.render(interpolateBody(page.body ?? ""));
+const updated = page.data.updated?.toLocaleDateString(nicheConfig.lang, {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+{business.enabled ? <BusinessPage slug={businessSlug} /> : <BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  noindex={page.data.noindex ?? false}
+>
+  <section class="static-page">
+    <div class="container">
+      <article class="article">
+        <header class="article__header">
+          <h1 class="article__title">{title}</h1>
+          {updated && <p class="article__subtitle">Last updated: {updated}</p>}
+        </header>
+
+        <div class="article__body prose" set:html={rendered.code} />
+      </article>
+    </div>
+  </section>
+</BaseLayout>}

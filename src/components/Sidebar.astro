@@ -1,0 +1,116 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// SIDEBAR — Context-aware (default, species, review)
+// ═══════════════════════════════════════════════════════════════
+
+import { getCollection } from "astro:content";
+import nicheConfig from "../../niche.config";
+
+interface Props {
+  type?: "default" | "species" | "review";
+  category?: string;
+  difficulty?: string;
+  tankSize?: string;
+  temperature?: string;
+  phRange?: string;
+  lifespan?: string;
+  score?: number;
+  verdict?: string;
+}
+
+const {
+  type = "default",
+  category,
+  difficulty, tankSize, temperature, phRange, lifespan,
+  score, verdict,
+} = Astro.props;
+
+const allPosts = await getCollection("posts");
+const categoryPosts = category
+  ? allPosts.filter((p) => p.data.category === category).slice(0, 5)
+  : [];
+const newsletterHref = `mailto:${nicheConfig.contactEmail}?subject=${encodeURIComponent("Subscribe me to new guides")}`;
+---
+
+<!-- On-page TOC (sticky, populated by JS) -->
+<div class="sidebar__section sidebar__section--sticky">
+  <h3 class="sidebar__title">On This Page</h3>
+  <nav class="sidebar__toc" id="sidebar-toc" aria-label="Page sections">
+    <!-- Populated by client-side JS from article headings -->
+  </nav>
+</div>
+
+<!-- Species Quick Facts -->
+{type === "species" && (
+  <div class="sidebar__section">
+    <h3 class="sidebar__title">Species Quick Facts</h3>
+    <dl class="sidebar__facts">
+      {difficulty && (
+        <>
+          <dt>Difficulty</dt>
+          <dd><span class={`difficulty difficulty--${difficulty.toLowerCase()}`}>{difficulty}</span></dd>
+        </>
+      )}
+      {tankSize && (
+        <>
+          <dt>Min. Tank Size</dt>
+          <dd>{tankSize}</dd>
+        </>
+      )}
+      {temperature && (
+        <>
+          <dt>Temperature</dt>
+          <dd>{temperature}</dd>
+        </>
+      )}
+      {phRange && (
+        <>
+          <dt>pH Range</dt>
+          <dd>{phRange}</dd>
+        </>
+      )}
+      {lifespan && (
+        <>
+          <dt>Lifespan</dt>
+          <dd>{lifespan}</dd>
+        </>
+      )}
+    </dl>
+  </div>
+)}
+
+<!-- Review Quick Verdict -->
+{type === "review" && score && (
+  <div class="sidebar__section">
+    <h3 class="sidebar__title">Quick Verdict</h3>
+    <div class="sidebar__verdict">
+      <div class="sidebar__score">{score}<span>/10</span></div>
+      {verdict && <p>{verdict}</p>}
+    </div>
+  </div>
+)}
+
+<!-- Popular in Category -->
+{categoryPosts.length > 0 && (
+  <div class="sidebar__section">
+    <h3 class="sidebar__title">Popular in {category?.replace(/-/g, " ") ?? "Guides"}</h3>
+    <ul class="sidebar__post-list">
+      {categoryPosts.map((post) => (
+        <li class="sidebar__post-item">
+          <a href={`/posts/${post.id.replace(/\.(mdx?|md)$/, "")}/`} class="sidebar__post-link">
+            {post.data.title.substring(0, 50)}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+<!-- Newsletter CTA -->
+<div class="sidebar__section sidebar__section--cta">
+  <div class="sidebar__cta">
+    <h3 class="sidebar__cta-title">📧 New Guides by Email</h3>
+    <p class="sidebar__cta-text">Get new {nicheConfig.nicheNoun} guides and practical tips in your inbox.</p>
+    <a href={newsletterHref} class="btn btn--primary btn--block">Email Us to Subscribe</a>
+  </div>
+</div>

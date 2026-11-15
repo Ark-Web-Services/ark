@@ -1,0 +1,7 @@
+---
+const { faqs = [] } = Astro.props;
+---
+{faqs.length > 0 && <section class="business-section business-faq" aria-labelledby="faq-title">
+  <h2 id="faq-title">A few useful details</h2>
+  <dl>{faqs.map((faq) => <div><dt>{faq.question}</dt><dd>{faq.answer}</dd></div>)}</dl>
+</section>}

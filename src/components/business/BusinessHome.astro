@@ -1,0 +1,31 @@
+---
+import businessConfig from "../../../business.config";
+import ServiceList from "./ServiceList.astro";
+import PortfolioGallery from "./PortfolioGallery.astro";
+import Testimonials from "./Testimonials.astro";
+import ProcessSteps from "./ProcessSteps.astro";
+import FaqList from "./FaqList.astro";
+import InquiryForm from "./InquiryForm.astro";
+
+const { config = businessConfig, preview = false } = Astro.props;
+---
+<div class="business-home">
+  <section class:list={["business-hero", !config.hero.image && "business-hero--text-only"]} aria-labelledby="business-title">
+    <div class="business-hero__copy">
+      {config.hero.eyebrow && <p class="business-hero__eyebrow">{config.hero.eyebrow}</p>}
+      <h1 id="business-title">{config.hero.heading}</h1>
+      <p>{config.hero.body}</p>
+      <div class="business-hero__actions">
+        <a class="business-button" href="/contact/">Get a free site review</a>
+        <a class="business-button business-button--secondary" href="/pricing/">See pricing &amp; services</a>
+      </div>
+    </div>
+    {config.hero.image && <figure class="business-hero__image"><img src={config.hero.image} alt={config.hero.imageAlt || ""} fetchpriority="high" /></figure>}
+  </section>
+  <ServiceList services={config.services} />
+  <PortfolioGallery projects={config.projects} preview={preview} />
+  <ProcessSteps steps={config.process} />
+  <Testimonials testimonials={config.testimonials} preview={preview} />
+  <FaqList faqs={config.faqs} />
+  <InquiryForm config={config} />
+</div>

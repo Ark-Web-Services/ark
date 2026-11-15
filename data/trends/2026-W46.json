@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-11-15T02:59:24.372Z",
+  "week": "2026-W46",
+  "communityTopics": [],
+  "patterns": [],
+  "pages": {
+    "rising": [],
+    "decaying": []
+  },
+  "contentGaps": [
+    {
+      "rank": 1,
+      "title": "WordPress Database Connection Error: Safe First Checks",
+      "suggestedSlug": "wordpress-database-connection-error",
+      "targetKeyword": "WordPress database connection error",
+      "category": "wordpress-recovery",
+      "demandEvidence": "Research-backed editorial queue topic from official WordPress troubleshooting documentation. Search demand, impressions, and community volume have not been measured for this brief.",
+      "whyWeCanWin": "Focus the guide on distinguishing configuration issues from host/database availability problems, preserving sensitive credentials, and knowing when to contact the host. This narrower troubleshooting intent complements the existing general site-down and plugin-conflict checklists.",
+      "outline": [
+        "What the database-connection error indicates and what it does not diagnose by itself",
+        "Record the exact message, affected URLs, recent changes, and provider alerts before changing files",
+        "Check whether the host reports a database or resource issue before editing configuration",
+        "Protect credentials and backups; avoid publishing or copying wp-config.php contents",
+        "When to involve the hosting provider or a WordPress technician"
+      ],
+      "sources": [
+        {
+          "label": "WordPress common errors",
+          "url": "https://developer.wordpress.org/advanced-administration/wordpress/common-errors/",
+          "use": "Primary reference for the database connection error and common causes, including configuration and hosting issues."
+        },
+        {
+          "label": "Debugging in WordPress",
+          "url": "https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/",
+          "use": "Official reference for WordPress debugging tools; do not recommend exposing logs or debug output publicly."
+        }
+      ]
+    }
+  ],
+  "interactiveTool": {
+    "name": "",
+    "slug": "",
+    "problemSolved": "",
+    "evidence": "Not proposed in this editorial-only run.",
+    "reasoning": "This run only processes one queued article brief."
+  },
+  "ctrRewrites": [],
+  "analysis": {
+    "source": "editorial-queue",
+    "observationDays": 0,
+    "uniqueThreads": 0,
+    "stage0Calls": 0,
+    "stage1Calls": 0,
+    "stage1Requests": 0,
+    "stage1CacheHits": 0,
+    "stage1PredictSeconds": 0,
+    "stage1EstimatedCostUsd": 0,
+    "stage2Calls": 0,
+    "stage2Requests": 0,
+    "stage2PredictSeconds": 0,
+    "stage2EstimatedCostUsd": 0,
+    "totalLogicalCalls": 0,
+    "totalRequests": 0,
+    "predictSeconds": 0,
+    "estimatedCostUsd": 0
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "wordpress-database-connection-error",
+      "rank": 1,
+      "title": "WordPress Database Connection Error: Safe First Checks",
+      "suggestedSlug": "wordpress-database-connection-error",
+      "targetKeyword": "WordPress database connection error",
+      "category": "wordpress-recovery",
+      "demandEvidence": "Research-backed editorial queue topic from official WordPress troubleshooting documentation. Search demand, impressions, and community volume have not been measured for this brief.",
+      "whyWeCanWin": "Focus the guide on distinguishing configuration issues from host/database availability problems, preserving sensitive credentials, and knowing when to contact the host. This narrower troubleshooting intent complements the existing general site-down and plugin-conflict checklists.",
+      "outline": [
+        "What the database-connection error indicates and what it does not diagnose by itself",
+        "Record the exact message, affected URLs, recent changes, and provider alerts before changing files",
+        "Check whether the host reports a database or resource issue before editing configuration",
+        "Protect credentials and backups; avoid publishing or copying wp-config.php contents",
+        "When to involve the hosting provider or a WordPress technician"
+      ],
+      "sources": [
+        {
+          "label": "WordPress common errors",
+          "url": "https://developer.wordpress.org/advanced-administration/wordpress/common-errors/",
+          "use": "Primary reference for the database connection error and common causes, including configuration and hosting issues."
+        },
+        {
+          "label": "Debugging in WordPress",
+          "url": "https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/",
+          "use": "Official reference for WordPress debugging tools; do not recommend exposing logs or debug output publicly."
+        }
+      ],
+      "status": "drafted",
+      "generatedAt": "2026-11-15T03:02:21.429Z",
+      "note": "Quality-gated draft created; human approval is required before status can change to published."
+    },
+    {
+      "id": "google-search-console-url-inspection-basics",
+      "rank": 2,
+      "title": "Google URL Inspection: What a Website Owner Can Check",
+      "suggestedSlug": "google-url-inspection-basics",
+      "targetKeyword": "Google Search Console URL Inspection",
+      "category": "local-seo",
+      "demandEvidence": "Research-backed editorial queue topic using current Google Search Central documentation. No Search Console performance data or search-volume estimate is attached.",
+      "whyWeCanWin": "Explain how to use an official Google tool to investigate one URL and set realistic expectations about indexing requests. Keep crawling, indexing, and ranking as separate ideas and avoid guaranteeing inclusion or timing.",
+      "outline": [
+        "What the URL Inspection tool reports and who can access it",
+        "Check the live URL and the indexed version as separate views",
+        "What a request to recrawl does and why it is not a ranking or timing guarantee",
+        "Basic checks for canonical, robots directives, and page availability",
+        "When a site owner should collect details for a technical review"
+      ],
+      "sources": [
+        {
+          "label": "Ask Google to recrawl a URL",
+          "url": "https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl",
+          "use": "Primary source for recrawl requests and Search Console URL Inspection access requirements."
+        },
+        {
+          "label": "Google Search Central SEO Starter Guide",
+          "url": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+          "use": "Primary source for basic crawling, indexing, and search visibility concepts."
+        }
+      ],
+      "status": "queued"
+    },
+    {
+      "id": "local-business-website-location-information",
+      "rank": 3,
+      "title": "Local Business Website Details: Keep Location Information Clear",
+      "suggestedSlug": "local-business-website-location-information",
+      "targetKeyword": "local business website location information",
+      "category": "website-planning",
+      "demandEvidence": "Research-backed editorial queue topic based on Google Search Central's public documentation. No local ranking factor, search volume, or performance result is claimed.",
+      "whyWeCanWin": "Help a service business decide what location and coverage information belongs on its site, and distinguish real service areas from thin location pages. Ground structured-data advice in Google's documentation and avoid claiming that markup guarantees enhanced search results.",
+      "outline": [
+        "State the business name and contact details consistently with the real organization",
+        "Describe actual coverage plainly instead of generating near-duplicate neighborhood pages",
+        "Keep structured data aligned with information visible on the page",
+        "What LocalBusiness markup can describe and what it cannot guarantee",
+        "Review the service-page structure and contact path before launch"
+      ],
+      "sources": [
+        {
+          "label": "Google: Get on Google",
+          "url": "https://developers.google.com/search/docs/fundamentals/get-on-google",
+          "use": "Primary guidance about business presence and ways Google may surface a business."
+        },
+        {
+          "label": "Google LocalBusiness structured data",
+          "url": "https://developers.google.com/search/docs/appearance/structured-data/local-business",
+          "use": "Primary requirements and limits for LocalBusiness structured data; markup must reflect real visible business details."
+        }
+      ],
+      "status": "queued"
+    }
+  ]
+}

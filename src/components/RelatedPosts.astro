@@ -1,0 +1,38 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// RELATED POSTS — Internal Linking Engine
+// Uses the automated silo-based linking from lib/internal-links.ts
+// ═══════════════════════════════════════════════════════════════
+
+import ArticleCard from "./ArticleCard.astro";
+import { getRelatedPosts, getPillarForCategory } from "@lib/internal-links";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  currentPost: CollectionEntry<"posts">;
+  maxRelated?: number;
+}
+
+const { currentPost, maxRelated = 4 } = Astro.props;
+const related = await getRelatedPosts(currentPost, maxRelated);
+const pillar = getPillarForCategory(currentPost.data.category);
+---
+
+{related.length > 0 && (
+  <section class="related-posts" aria-label="Related articles">
+    <h2 class="related-posts__heading">Continue Reading</h2>
+
+    {/* Silo link back to pillar (enforces hub-and-spoke) */}
+    {pillar && (
+      <p class="related-posts__pillar-link">
+        ← Back to <a href={pillar.url}>{pillar.label}</a>
+      </p>
+    )}
+
+    <div class="related-posts__grid">
+      {related.map((post) => (
+        <ArticleCard post={post} variant="related" />
+      ))}
+    </div>
+  </section>
+)}

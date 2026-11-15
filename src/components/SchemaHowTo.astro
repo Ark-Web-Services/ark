@@ -1,0 +1,15 @@
+---
+import { generateHowToSchema } from "@lib/seo";
+
+interface Props {
+  name: string;
+  description: string;
+  image?: string;
+  steps: { name: string; text: string }[];
+}
+
+const { name, description, image, steps } = Astro.props;
+const schema = generateHowToSchema({ name, description, image, steps });
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

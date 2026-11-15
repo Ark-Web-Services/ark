@@ -1,0 +1,9 @@
+{
+  "job": "write-weekly",
+  "lastStartedAt": "2026-11-15T02:59:35.168Z",
+  "lastSucceededAt": "2026-11-15T03:02:21.430Z",
+  "lastStatus": "succeeded",
+  "lastError": null,
+  "durationMs": 166262,
+  "consecutiveFailures": 0
+}

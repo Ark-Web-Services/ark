@@ -1,0 +1,43 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// AUTHOR BOX — E-A-T Trust Signal
+// ═══════════════════════════════════════════════════════════════
+
+import { siteConfig } from "@data/navigation";
+---
+
+<div class="author-box" itemscope itemtype="https://schema.org/Organization">
+  <div class="author-box__avatar">
+    <img
+      src={siteConfig.author.avatar}
+      alt={siteConfig.author.name}
+      width="80"
+      height="80"
+      loading="lazy"
+      class="avatar avatar--lg"
+      itemprop="image"
+    />
+  </div>
+  <div class="author-box__content">
+    <p class="author-box__label">Published by</p>
+    <h3 class="author-box__name" itemprop="name">
+      <a href="/about/" itemprop="url">{siteConfig.author.name}</a>
+    </h3>
+    <p class="author-box__bio" itemprop="description">{siteConfig.author.bio}</p>
+    {siteConfig.author.social.length > 0 && (
+      <div class="author-box__socials">
+        {siteConfig.author.social.map((s) => (
+          <a
+            href={s.url}
+            class="author-box__social-link"
+            target="_blank"
+            rel="noopener"
+            aria-label={`Follow on ${s.platform.charAt(0).toUpperCase() + s.platform.slice(1)}`}
+          >
+            {s.platform.charAt(0).toUpperCase() + s.platform.slice(1)}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</div>

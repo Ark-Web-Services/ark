@@ -1,0 +1,33 @@
+---
+import { getCollection } from "astro:content";
+import BusinessLayout from "@layouts/BusinessLayout.astro";
+import business from "../../../business.config";
+
+const pages = (await getCollection("leadPages", ({ data }) => data.status === "published"))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BusinessLayout title="Solutions" description={`Focused website project pages from ${business.name}.`}>
+  <div class="business-home business-page">
+    <header class="business-page-heading">
+      <h1>Solutions</h1>
+      <p>Focused project pages for specific website needs.</p>
+    </header>
+    <section class="business-section">
+      {pages.length ? <ul class="solution-list">
+        {pages.map((page) => <li>
+          <h2><a href={`/solutions/${page.id}/`}>{page.data.title}</a></h2>
+          <p>{page.data.description}</p>
+        </li>)}
+      </ul> : <p>Focused solution pages will appear here as they are prepared.</p>}
+      <a class="business-button" href={business.customHome ? (business.customHomeContactHref || "/#contact") : "/contact/"}>Start a conversation</a>
+    </section>
+  </div>
+</BusinessLayout>
+
+<style>
+  .solution-list { display: grid; gap: 1.5rem; padding: 0; list-style: none; }
+  .solution-list li { padding-bottom: 1.5rem; border-bottom: 1px solid #ddd; }
+  .solution-list h2 { margin: 0 0 .5rem; font-size: 1.35rem; }
+  .solution-list a { color: inherit; text-underline-offset: .2em; }
+</style>

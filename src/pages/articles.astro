@@ -1,0 +1,73 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// ARTICLES INDEX — Hub page, filterable by category
+// ═══════════════════════════════════════════════════════════════
+
+import BusinessLayout from "@layouts/BusinessLayout.astro";
+import ArticleCard from "@components/ArticleCard.astro";
+import { silos, siteConfig } from "@data/navigation";
+import { getCollection } from "astro:content";
+import nicheConfig from "../../niche.config";
+
+const allPosts = await getCollection("posts", ({ data }) => data.status === "published");
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<BusinessLayout
+  title="Guides"
+  description={`Browse the complete ${siteConfig.title} library of practical guides, explainers, and reviews about ${nicheConfig.nicheNoun}.`}
+>
+  <section class="articles-page">
+    <div class="container">
+      <header class="articles-page__header">
+        <h1 class="articles-page__title">All Articles</h1>
+        <p class="articles-page__subtitle">
+          Practical guides on WordPress recovery, website planning, and local SEO.
+        </p>
+      </header>
+
+      <!-- Category Filters -->
+      <nav class="article-filters" aria-label="Filter by category">
+        <button class="article-filters__btn is-active" data-filter="all">All</button>
+        {silos.map((silo) => (
+          <button class="article-filters__btn" data-filter={silo.id}>
+            {silo.label}
+          </button>
+        ))}
+      </nav>
+
+      <!-- Article Grid -->
+      <div class="article-grid" id="article-grid">
+        {sortedPosts.map((post) => (
+          <ArticleCard post={post} headingLevel={2} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Client-side filter script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const buttons = document.querySelectorAll<HTMLButtonElement>(".article-filters__btn");
+      const cards = document.querySelectorAll<HTMLElement>("#article-grid .card");
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          buttons.forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+
+          const filter = btn.dataset.filter;
+          cards.forEach((card) => {
+            if (filter === "all" || card.dataset.category === filter) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        });
+      });
+    });
+  </script>
+</BusinessLayout>

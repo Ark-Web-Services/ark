@@ -1,0 +1,58 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// 404.astro — Custom Not-Found page with noindex + helpful links
+// Lighthouse Best-Practices: proper HTTP semantics + meta noindex
+// ═══════════════════════════════════════════════════════════════
+
+import business from "../../business.config";
+import BusinessLayout from "@layouts/BusinessLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { silos, siteConfig } from "@data/navigation";
+import { getCollection } from "astro:content";
+import nicheConfig from "../../niche.config";
+
+const allPosts = await getCollection("posts", ({ data }) => data.status === "published");
+const popular = allPosts
+  .sort((a, b) => (b.data.popularity ?? 0) - (a.data.popularity ?? 0))
+  .slice(0, 4);
+---
+
+{business.enabled ? <BusinessLayout title="Page not found" noindex><section class="business-home business-section"><h1>Page not found</h1><p>The page may have moved. <a href="/">Return home</a> or <a href="/contact/">get in touch</a>.</p></section></BusinessLayout> : <BaseLayout
+  title="Page Not Found (404)"
+  description={`The page you are looking for doesn't exist. Explore our practical guides to ${nicheConfig.nicheNoun} instead.`}
+  noindex={true}
+>
+  <section class="notfound">
+    <div class="container" style="text-align:center; padding: var(--space-16) 0;">
+      <h1 style="font-size: var(--text-4xl); margin-top: var(--space-4);">
+        404 — We couldn't find that page
+      </h1>
+      <p style="color: var(--color-neutral-600); max-width: 48ch; margin: var(--space-4) auto;">
+        The page you are looking for may have moved, been renamed, or never
+        existed. Here are some places to continue exploring {nicheConfig.nicheNoun}:
+      </p>
+
+      <div class="silo-grid" style="margin-top: var(--space-8);">
+        {silos.map((silo) => (
+          <a href={silo.pillar} class="silo-card" style={`--silo-color: ${silo.color}`}>
+            <h2 class="silo-card__title">{silo.label}</h2>
+            <p class="silo-card__count">{silo.description}</p>
+          </a>
+        ))}
+      </div>
+
+      <h2 style="margin-top: var(--space-12);">Popular Guides</h2>
+      <ul style="list-style:none; padding:0; margin: var(--space-4) auto; max-width: 60ch; text-align:left;">
+        {popular.map((p) => (
+          <li style="margin: var(--space-2) 0;">
+            → <a href={`/posts/${p.id.replace(/\.(mdx?|md)$/, "")}/`}>{p.data.title}</a>
+          </li>
+        ))}
+      </ul>
+
+      <a href="/" class="btn btn--primary" style="margin-top: var(--space-6);">
+        ← Back to {siteConfig.title}
+      </a>
+    </div>
+  </section>
+</BaseLayout>}

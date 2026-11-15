@@ -1,0 +1,98 @@
+---
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import './styles.css';
+
+type Evidence = { title: string; permalink: string; subreddit: string };
+type Trend = {
+  week: string;
+  generatedAt: string;
+  communityTopics: Array<{ topic: string; evidence: Evidence[]; reasoning: string }>;
+  patterns: Array<{ pattern: string; direction: 'rising' | 'steady' | 'falling'; evidence: string }>;
+  pages: { rising: Array<{ url: string; evidence: string; likelyReason: string }>; decaying: Array<{ url: string; evidence: string; likelyReason: string }> };
+  contentGaps: Array<{ rank: number; title: string; suggestedSlug: string; targetKeyword: string; category: string; demandEvidence: string; whyWeCanWin: string; outline: string[] }>;
+  interactiveTool: { name: string; slug: string; problemSolved: string; evidence: string; reasoning: string };
+  ctrRewrites: Array<{ url: string; currentTitle: string; proposedTitle: string; proposedDescription: string; impressions: number; ctr: number; position: number; rationale: string }>;
+  analysis?: { observationDays?: number; uniqueThreads?: number; totalLogicalCalls?: number; estimatedCostUsd?: number };
+};
+
+export function getStaticPaths() {
+  const dir = join(process.cwd(), 'data/trends');
+  // A freshly cloned niche has run no weekly analysis yet, so data/trends
+  // may not exist. Emit no pages rather than failing the build.
+  let files: string[] = [];
+  try {
+    files = readdirSync(dir);
+  } catch {
+    return [];
+  }
+  return files.filter((file) => /^\d{4}-W\d{2}\.json$/.test(file)).map((file) => {
+    const trend = JSON.parse(readFileSync(join(dir, file), 'utf8')) as Trend;
+    return { params: { week: trend.week }, props: { trend } };
+  });
+}
+
+const { trend } = Astro.props as { trend: Trend };
+const displayDateTime = (value: string) => new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(new Date(value));
+const formatNumber = (value: number, digits = 0) => value.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>{trend.week} engine review</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={`Community topics, search movement, and recommendations for ${trend.week}.`} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to week detail</a>
+    <div class="engine-shell">
+      <a class="back-link" href="/admin/engine/">← All engine reviews</a>
+      <header class="masthead">
+        <div><h1>{trend.week} detail</h1><p>The complete evidence and recommendation record captured by this weekly analysis.</p></div>
+        <div class="masthead__meta"><strong>{displayDateTime(trend.generatedAt)}</strong><span>{trend.analysis?.observationDays ?? 0} observation days</span><span>{formatNumber(trend.analysis?.uniqueThreads ?? 0)} unique demand records</span></div>
+      </header>
+
+      <nav class="jump-nav" aria-label="Week detail sections"><a href="#topics">Topics</a><a href="#patterns">Patterns</a><a href="#movement">Page movement</a><a href="#gaps">Content gaps</a><a href="#tool">Tool</a><a href="#ctr">CTR rewrites</a></nav>
+
+      <main class="engine-main" id="main">
+        <section class="section" id="topics">
+          <div class="section__head"><div><h2>Community topics</h2><p>Demand clusters with the source records used as evidence.</p></div><span class="section__count">{trend.communityTopics.length} topics</span></div>
+          <div class="detail-grid">{trend.communityTopics.map((topic) => <article class="detail-block"><h3>{topic.topic}</h3><p>{topic.reasoning}</p><div class="evidence-links">{topic.evidence.map((item) => <a href={item.permalink} rel="noreferrer">{item.title} <span class="muted">· {item.subreddit}</span></a>)}</div></article>)}</div>
+        </section>
+
+        <section class="section" id="patterns">
+          <div class="section__head"><div><h2>Patterns</h2><p>The engine’s synthesis of recurring and directional signals.</p></div><span class="section__count">{trend.patterns.length} patterns</span></div>
+          <div class="detail-grid">{trend.patterns.map((pattern) => <article class="detail-block"><span class:list={['pill', pattern.direction === 'rising' ? 'pill--ok' : pattern.direction === 'falling' ? 'pill--failed' : '']}>{pattern.direction}</span><h3>{pattern.pattern}</h3><p>{pattern.evidence}</p></article>)}</div>
+        </section>
+
+        <section class="section" id="movement">
+          <div class="section__head"><div><h2>Page movement</h2><p>Observed search movement and the engine’s qualified explanation.</p></div><span class="section__count">{trend.pages.rising.length} rising · {trend.pages.decaying.length} decaying</span></div>
+          <div class="detail-grid">
+            <div><h3>Rising pages</h3><div class="suggestion-list">{trend.pages.rising.map((page) => <article class="detail-block"><span class="pill pill--ok">Rising</span><h3><a href={page.url}>{page.url}</a></h3><p>{page.evidence}</p><p><strong>Likely reason:</strong> {page.likelyReason}</p></article>)}</div></div>
+            <div><h3>Decaying pages</h3><div class="suggestion-list">{trend.pages.decaying.map((page) => <article class="detail-block"><span class="pill pill--failed">Decaying</span><h3><a href={page.url}>{page.url}</a></h3><p>{page.evidence}</p><p><strong>Likely reason:</strong> {page.likelyReason}</p></article>)}</div></div>
+          </div>
+        </section>
+
+        <section class="section" id="gaps">
+          <div class="section__head"><div><h2>Content gaps</h2><p>Ranked article opportunities, including why the site can compete and the proposed scope.</p></div><span class="section__count">{trend.contentGaps.length} proposals</span></div>
+          <div class="suggestion-list">{[...trend.contentGaps].sort((a, b) => a.rank - b.rank).map((gap) => <article class="detail-block"><span class="pill pill--proposed">Rank {gap.rank}</span><h3>{gap.title}</h3><p><code>/posts/{gap.suggestedSlug}/</code> · {gap.targetKeyword} · {gap.category}</p><p><strong>Demand:</strong> {gap.demandEvidence}</p><p><strong>Why we can win:</strong> {gap.whyWeCanWin}</p><ol>{gap.outline.map((item) => <li>{item}</li>)}</ol></article>)}</div>
+        </section>
+
+        <section class="section" id="tool">
+          <div class="section__head"><div><h2>Interactive tool</h2><p>The week’s productized search opportunity.</p></div></div>
+          <article class="detail-block"><span class="pill pill--proposed">Proposed</span><h3>{trend.interactiveTool.name}</h3><p><code>/tools/{trend.interactiveTool.slug}/</code></p><p><strong>Problem solved:</strong> {trend.interactiveTool.problemSolved}</p><p><strong>Evidence:</strong> {trend.interactiveTool.evidence}</p><p><strong>Reasoning:</strong> {trend.interactiveTool.reasoning}</p></article>
+        </section>
+
+        <section class="section" id="ctr">
+          <div class="section__head"><div><h2>CTR rewrites</h2><p>Proposed search snippets for high-impression, under-clicked pages.</p></div><span class="section__count">{trend.ctrRewrites.length} proposals</span></div>
+          <div class="table-scroll"><table><thead><tr><th>Page</th><th>Current title</th><th>Proposed title</th><th>Proposed description</th><th class="num">Impressions</th><th class="num">CTR</th><th class="num">Position</th><th>Rationale</th></tr></thead><tbody>{trend.ctrRewrites.map((rewrite) => <tr><td><a href={rewrite.url}>{rewrite.url}</a></td><td>{rewrite.currentTitle}</td><td class="primary-cell">{rewrite.proposedTitle}</td><td>{rewrite.proposedDescription}</td><td class="num">{formatNumber(rewrite.impressions)}</td><td class="num">{formatNumber(rewrite.ctr, 2)}%</td><td class="num">{formatNumber(rewrite.position, 2)}</td><td>{rewrite.rationale}</td></tr>)}</tbody></table></div>
+        </section>
+      </main>
+      <footer class="engine-footer">Static week record · generated from <code>data/trends/{trend.week}.json</code>.</footer>
+    </div>
+  </body>
+</html>

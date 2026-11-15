@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "wordpress-plugin-conflict-review",
+      "service": "wordpress-rescue",
+      "targetKeyword": "WordPress plugin conflict troubleshooting",
+      "audience": "A small service business owner whose WordPress site began behaving unexpectedly after a plugin or theme change.",
+      "purpose": "Explain a safe first review, how to preserve access and backups, what information helps scope a repair, and when to request WordPress rescue help.",
+      "sources": [
+        { "label": "WordPress common errors and troubleshooting", "url": "https://developer.wordpress.org/advanced-administration/wordpress/common-errors/", "use": "Official reference for common site errors and cautious troubleshooting." },
+        { "label": "WordPress Recovery Mode", "url": "https://wordpress.org/documentation/article/recovery-mode/", "use": "Official description of recovery mode for certain plugin and theme failures." }
+      ],
+      "status": "queued"
+    },
+    {
+      "id": "small-business-website-redesign-scope",
+      "service": "website-redesign",
+      "targetKeyword": "small business website redesign project scope",
+      "audience": "A service business owner deciding what an existing website redesign should include before asking for a quote.",
+      "purpose": "Help the reader identify audience, page, content, and technical decisions that make a redesign scope concrete without promising a result.",
+      "sources": [
+        { "label": "Google Search Central SEO Starter Guide", "url": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide", "use": "Primary source for crawlable structure, page titles, links, and search visibility guidance." },
+        { "label": "Google people-first content guidance", "url": "https://developers.google.com/search/docs/fundamentals/creating-helpful-content?hl=en", "use": "Primary source for planning useful content for people rather than search engines." }
+      ],
+      "status": "queued"
+    },
+    {
+      "id": "wordpress-site-recovery-first-steps",
+      "service": "wordpress-rescue",
+      "targetKeyword": "what to do when a WordPress website is hacked",
+      "audience": "A service business owner who suspects an unauthorized change or malware on a WordPress site.",
+      "purpose": "Summarize conservative first steps, when to contact a host, and what details to gather for a scoped recovery review.",
+      "sources": [
+        { "label": "WordPress hacked site FAQ", "url": "https://wordpress.org/documentation/article/faq-my-site-was-hacked/", "use": "Official recovery and security reference; do not present this page as a substitute for incident response." },
+        { "label": "WordPress site maintenance", "url": "https://wordpress.org/documentation/article/wordpress-site-maintenance/", "use": "Official reference for maintenance and backup practices." }
+      ],
+      "status": "queued"
+    },
+    {
+      "id": "local-search-indexing-review",
+      "service": "seo-for-service-businesses",
+      "targetKeyword": "how to check whether a service business website is indexed",
+      "audience": "A service business owner who wants to understand whether their pages can appear in Google Search.",
+      "purpose": "Explain the difference between crawling, indexing, and ranking, and how a one-time website review can identify basic page and indexing questions.",
+      "sources": [
+        { "label": "Google Search Central: SEO Starter Guide", "url": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide", "use": "Primary source for how search works and the limits of SEO guarantees." },
+        { "label": "Google Search Console Help", "url": "https://support.google.com/webmasters/", "use": "Primary source for Search Console reports and URL inspection workflows." }
+      ],
+      "status": "queued"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+# ═══════════════════════════════════════════════════════════════
+# ROBOTS.TXT — Reads from niche.config.ts at build time
+# NOTE: This is a template. The actual sitemap URL should match
+# your niche.config.ts url setting.
+# ═══════════════════════════════════════════════════════════════
+
+# Standard web crawlers — full access
+User-agent: *
+Allow: /
+Disallow: /go/
+Disallow: /api/
+Disallow: /search/
+
+# Google — full access
+User-agent: Googlebot
+Allow: /
+
+# Bing — full access
+User-agent: Bingbot
+Allow: /
+
+# ── AI Agent Policies ────────────────────────────────────────
+
+# GPTBot (ChatGPT) — Allow citation, block training
+User-agent: GPTBot
+Allow: /
+Allow: /api/agent-content
+Disallow: /go/
+
+# Google Extended (Gemini AI training) — Block training
+User-agent: Google-Extended
+Disallow: /
+
+# CCBot (Common Crawl / training data) — Block
+User-agent: CCBot
+Disallow: /
+
+# Anthropic (Claude training) — Block training
+User-agent: anthropic-ai
+Disallow: /
+
+# Perplexity — Allow citation
+User-agent: PerplexityBot
+Allow: /
+Allow: /api/agent-content
+Disallow: /go/
+
+# Cohere — Block training
+User-agent: cohere-ai
+Disallow: /
+
+# ByteDance (training) — Block
+User-agent: Bytespider
+Disallow: /

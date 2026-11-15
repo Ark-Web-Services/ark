@@ -1,46 +1,46 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Dependencies
+node_modules/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Build output
+dist/
+.output/
 
-# testing
-/coverage
+# Astro
+.astro/
 
-# database
-/prisma/db.sqlite
-/prisma/db.sqlite-journal
-db.sqlite
+# Wrangler / Cloudflare local state
+.wrangler/
 
-# next.js
-/.next/
-/out/
-next-env.d.ts
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-# do not commit any .env files to git, except for the .env.example file. https://create.t3.gg/en/usage/env-variables#using-environment-variables
+# Environment variables
 .env
-.env*.local
+.env.*
+!.env.example
 
-# vercel
-.vercel
+# macOS
+.DS_Store
 
-# typescript
+# Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# TypeScript
 *.tsbuildinfo
 
-# idea files
-.idea
+# Godfather SEO Engine — Local state
+data/serp-intelligence.json
+data/competitor-intel.json
+data/execution-plan.json
+data/outreach-plan.json
+data/audit-report.json
+data/gsc-url-inspection.json
+secrets/
+
+# Credentials written by scripts/setup-niche.sh — NEVER commit these.
+# setup-niche.sh writes the GCP service-account private key here.
+data/gsc-service-account.json
+data/*-service-account.json
+*.pem

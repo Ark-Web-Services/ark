@@ -1,29 +1,32 @@
-# Create T3 App
+# ARK Web Services
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+ARK Web Services is a service-business website built with Astro 5 and the Godfather SEO Engine. It carries forward Ark's WordPress rescue, custom development, one-time SEO foundations, and free site review services.
 
-## What's next? How do I make an app with this?
+## Development
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+Use Node.js 22.13 or newer.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+```sh
+npm ci
+npm run dev
+```
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+Before proposing changes, run the available source checks:
 
-## Learn More
+```sh
+npm run check
+npm test
+npm run build
+```
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## Hosting
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+The site builds as a static Astro site for Cloudflare Pages. `wrangler.toml` names the Pages project `arkwebservices-com` and sets `dist` as the build output. Cloudflare resources, DNS, and deployment credentials are configured separately and are not provisioned by this repository.
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## Inquiries
 
-## How do I deploy this?
+Inquiry capture remains disabled until production storage, spam protection, and email delivery are configured. The site provides working email and phone links and never reports an unsent form as successful.
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+## Engine updates
+
+Review Godfather SEO Engine updates before applying them. Client facts, brand assets, service copy, and deployment configuration belong to this Ark site.

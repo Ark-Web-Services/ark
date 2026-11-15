@@ -1,0 +1,13 @@
+/* TEAM */
+  Site        : TEMPLATE_SITE_NAME
+  Contact     : TEMPLATE_CONTACT_EMAIL
+  Location    : Internet
+
+/* THANKS */
+  Astro 5, Cloudflare Pages, Drone CI
+
+/* SITE */
+  Last update : auto-generated each deploy
+  Language    : English
+  Doctype     : HTML5
+  Components  : Astro, TailwindCSS, Partytown

@@ -1,0 +1,282 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://godfather-seo-engine.com/schemas/distribution-plan.schema.json",
+  "title": "Godfather Multi-Channel Visual Distribution Plan",
+  "description": "Standardized JSON Schema for orchestrating asset distribution across Pinterest, Imgur, and Tumblr in a single coordinated 'plan'. Used by the DistributionEngine.",
+  "type": "object",
+  "required": ["plan_id", "version", "asset_package", "platform_routes"],
+  "additionalProperties": false,
+  "properties": {
+    "plan_id": {
+      "type": "string",
+      "description": "Unique identifier for this plan. Generated as `plan_<timestamp>_<slug>` if omitted.",
+      "pattern": "^[a-zA-Z0-9_\\-]+$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Schema version this plan adheres to.",
+      "enum": ["1.0.0"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "niche_id": {
+      "type": "string",
+      "description": "Identifier of the niche this plan belongs to (mirrors niche.config.ts id)."
+    },
+    "execution_mode": {
+      "type": "string",
+      "enum": ["dry_run", "live", "queue"],
+      "default": "live",
+      "description": "dry_run: validate & log, no API calls. queue: stage on platform queues. live: publish immediately."
+    },
+    "asset_package": {
+      "type": "object",
+      "required": ["title", "primary_image"],
+      "description": "The raw photo/poster + metadata that will be distributed.",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200,
+          "description": "Master title — used as fallback for platform-specific titles."
+        },
+        "guide_content": {
+          "type": "string",
+          "description": "Long-form how-to/guide body content, used for Tumblr NPF + descriptions."
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Short marketing description, used as fallback for Pinterest/Imgur descriptions."
+        },
+        "primary_image": {
+          "type": "object",
+          "required": ["source"],
+          "properties": {
+            "source": {
+              "type": "string",
+              "description": "Path or URL of the local image. Local paths must exist on disk; URLs are downloaded."
+            },
+            "source_type": {
+              "type": "string",
+              "enum": ["local", "url", "base64"],
+              "default": "local"
+            },
+            "alt_text": { "type": "string" },
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "additional_images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source"],
+            "properties": {
+              "source": { "type": "string" },
+              "source_type": { "type": "string", "enum": ["local", "url", "base64"], "default": "local" },
+              "alt_text": { "type": "string" }
+            }
+          },
+          "default": []
+        },
+        "canonical_source_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "The authoritative URL on YOUR site. Used for backlinks and SEO attribution."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Master tag list — platforms will subset/transform as needed."
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "SEO target keywords — fed into auto-tag generation."
+        }
+      }
+    },
+    "platform_routes": {
+      "type": "object",
+      "description": "Per-platform routing instructions. Omit a platform key to skip it.",
+      "additionalProperties": false,
+      "properties": {
+        "pinterest": {
+          "type": "object",
+          "required": ["board_id"],
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "board_id": {
+              "type": "string",
+              "description": "Pinterest Board ID (NOT the board name). Use board lookup helper to resolve."
+            },
+            "board_section_id": {
+              "type": ["string", "null"],
+              "description": "Optional section within board.",
+              "default": null
+            },
+            "pin_title": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Pinterest pin title. Falls back to asset_package.title."
+            },
+            "pin_description": {
+              "type": "string",
+              "maxLength": 800,
+              "description": "Pin description. Falls back to asset_package.summary."
+            },
+            "destination_link": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL the pin links to when clicked. Falls back to canonical_source_url."
+            },
+            "alt_text": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "media_source_override": {
+              "type": "string",
+              "enum": ["asset_package", "imgur"],
+              "default": "asset_package",
+              "description": "If 'imgur', uses the Imgur upload result URL as media source (interlinking)."
+            },
+            "dominant_color": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "publish_state": {
+              "type": "string",
+              "enum": ["published", "draft"],
+              "default": "published"
+            }
+          }
+        },
+        "imgur": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "album_id": {
+              "type": ["string", "null"],
+              "description": "Existing Imgur album to upload into. If null and create_album_if_missing is true, a new album is created.",
+              "default": null
+            },
+            "create_album_if_missing": { "type": "boolean", "default": true },
+            "album_title": { "type": "string" },
+            "album_description": { "type": "string" },
+            "image_title": { "type": "string", "maxLength": 128 },
+            "description": { "type": "string", "maxLength": 1024 },
+            "privacy": {
+              "type": "string",
+              "enum": ["public", "hidden", "secret"],
+              "default": "public"
+            },
+            "include_source_attribution": {
+              "type": "boolean",
+              "default": true,
+              "description": "Append canonical_source_url to image description for cross-platform reference."
+            }
+          }
+        },
+        "tumblr": {
+          "type": "object",
+          "required": ["blog_name"],
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "blog_name": {
+              "type": "string",
+              "description": "Tumblr blog identifier (e.g., 'mynicheguide' for mynicheguide.tumblr.com)."
+            },
+            "post_format": {
+              "type": "string",
+              "enum": ["photo", "npf", "text"],
+              "default": "npf",
+              "description": "photo: legacy photo post. npf: Newton Post Format (recommended). text: text-only with embedded image."
+            },
+            "post_title": {
+              "type": "string",
+              "description": "Title for NPF/text posts (Tumblr photo posts have no title)."
+            },
+            "caption_html": {
+              "type": "string",
+              "description": "Rich HTML caption for legacy photo posts. NPF auto-generates from guide_content."
+            },
+            "click_through_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL the IMAGE itself links to when clicked. Critical for 'how-to' posters acting as CTA buttons."
+            },
+            "source_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Tumblr's official 'source' attribution field — appears at bottom of post for SEO backlink."
+            },
+            "tags": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 139 },
+              "maxItems": 30,
+              "description": "Tumblr tags (no '#' prefix). SEO-optimized; max 30 — first 5 are most important."
+            },
+            "custom_url_slug": {
+              "type": "string",
+              "description": "Custom slug for the post URL (lowercase, hyphenated)."
+            },
+            "post_state": {
+              "type": "string",
+              "enum": ["published", "queue", "draft", "private"],
+              "default": "published"
+            },
+            "publish_on": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Schedule post for future date (state must be 'queue')."
+            },
+            "media_source_override": {
+              "type": "string",
+              "enum": ["asset_package", "imgur"],
+              "default": "asset_package"
+            }
+          }
+        }
+      }
+    },
+    "interlinking_logic": {
+      "type": "object",
+      "description": "Defines how the three platforms reference each other after upload.",
+      "properties": {
+        "primary_host": {
+          "type": "string",
+          "enum": ["asset_package", "imgur"],
+          "default": "imgur",
+          "description": "Which upload result becomes the canonical image URL referenced by the other platforms."
+        },
+        "use_imgur_url_for_pinterest": { "type": "boolean", "default": false },
+        "use_imgur_url_for_tumblr": { "type": "boolean", "default": false },
+        "cross_reference_in_descriptions": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, each platform's description includes a 'See also on [other platforms]' line."
+        }
+      }
+    },
+    "execution_order": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["imgur", "pinterest", "tumblr"] },
+      "default": ["imgur", "pinterest", "tumblr"],
+      "description": "Order of platform execution. Imgur first by default so its URL is available for interlinking."
+    },
+    "retry_policy": {
+      "type": "object",
+      "properties": {
+        "max_attempts": { "type": "integer", "minimum": 1, "maximum": 5, "default": 3 },
+        "backoff_ms": { "type": "integer", "minimum": 100, "default": 2000 },
+        "fail_fast": { "type": "boolean", "default": false, "description": "If true, abort entire plan on first platform failure." }
+      },
+      "default": { "max_attempts": 3, "backoff_ms": 2000, "fail_fast": false }
+    }
+  }
+}

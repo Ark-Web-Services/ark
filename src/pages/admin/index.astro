@@ -1,0 +1,84 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// /admin/ — index for the operations area
+//
+// The only dashboard lives at /admin/engine/. Without this page a
+// bare /admin/ visit passes Cloudflare Access and then hits the
+// Pages 404, which reads as "the dashboard is broken" rather than
+// "you want the next path segment". Land people somewhere useful.
+// ═══════════════════════════════════════════════════════════════
+
+import nicheConfig from "../../../niche.config";
+
+const dashboards = [
+  {
+    href: "/admin/engine/",
+    title: "Engine Dashboard",
+    description:
+      "Search Console performance, job health for the daily and weekly automations, the self-resolving suggestion ledger and the latest audit findings.",
+  },
+];
+---
+
+<!doctype html>
+<html lang={nicheConfig.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <title>Operations — {nicheConfig.siteName}</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        margin: 0;
+        padding: 3rem 1.25rem;
+        font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #f6f7f9;
+        color: #111827;
+      }
+      main { max-width: 42rem; margin: 0 auto; }
+      /* Four type steps, each at least a 1.23 ratio apart:
+         1.75 → 1.25 → 1 → 0.8125rem. */
+      h1 { font-size: 1.75rem; line-height: 1.2; margin: 0 0 0.4rem; }
+      .sub { color: #6b7280; margin: 0 0 2rem; }
+      a.card {
+        display: block;
+        padding: 1.25rem 1.35rem;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.6rem;
+        text-decoration: none;
+        color: inherit;
+      }
+      a.card:hover { border-color: #2563eb; }
+      a.card h2 { font-size: 1.25rem; margin: 0 0 0.4rem; color: #2563eb; }
+      a.card p { margin: 0; color: #4b5563; }
+      footer { margin-top: 2rem; font-size: 0.8125rem; color: #6b7280; }
+      @media (prefers-color-scheme: dark) {
+        body { background: #0f1115; color: #e5e7eb; }
+        a.card { background: #171a21; border-color: #2b303b; }
+        a.card p { color: #9ca3af; }
+        a.card h2 { color: #60a5fa; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Operations</h1>
+      <p class="sub">Internal dashboards for {nicheConfig.siteName}. Gated by Cloudflare Access.</p>
+
+      {dashboards.map((d) => (
+        <a class="card" href={d.href}>
+          <h2>{d.title} →</h2>
+          <p>{d.description}</p>
+        </a>
+      ))}
+
+      <footer>
+        Not indexed. Also available in the repo: <code>docs/reviews/latest.md</code> and
+        <code>docs/audits/latest.md</code>.
+      </footer>
+    </main>
+  </body>
+</html>

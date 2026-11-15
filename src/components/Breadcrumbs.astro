@@ -1,0 +1,85 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// BREADCRUMBS — Accessible + JSON-LD BreadcrumbList
+// Lighthouse-perfect: correct aria, current-page marker, schema
+// ═══════════════════════════════════════════════════════════════
+
+import { generateBreadcrumbSchema } from "@lib/seo";
+
+interface Crumb {
+  name: string;
+  url: string;
+}
+
+interface Props {
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+
+// Prepend Home only if the caller didn't already include it
+// (generateBreadcrumbs() does) — a doubled Home crumb produces
+// invalid BreadcrumbList structured data.
+const fullCrumbs: Crumb[] =
+  crumbs[0]?.url === "/" ? crumbs : [{ name: "Home", url: "/" }, ...crumbs];
+
+const schema = generateBreadcrumbSchema(fullCrumbs);
+---
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <div class="container">
+    <ol class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+      {
+        fullCrumbs.map((crumb, i) => {
+          const isLast = i === fullCrumbs.length - 1;
+          return (
+            <li
+              class="breadcrumbs__item"
+              itemprop="itemListElement"
+              itemscope
+              itemtype="https://schema.org/ListItem"
+            >
+              {isLast ? (
+                <span class="breadcrumbs__current" aria-current="page" itemprop="name">
+                  {crumb.name}
+                </span>
+              ) : (
+                <a href={crumb.url} class="breadcrumbs__link" itemprop="item">
+                  <span itemprop="name">{crumb.name}</span>
+                </a>
+              )}
+              <meta itemprop="position" content={String(i + 1)} />
+              {!isLast && (
+                <span class="breadcrumbs__sep" aria-hidden="true">›</span>
+              )}
+            </li>
+          );
+        })
+      }
+    </ol>
+  </div>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+<style>
+  .breadcrumbs {
+    padding: var(--space-3) 0;
+    font-size: var(--text-sm);
+    border-bottom: 1px solid var(--color-neutral-200);
+    background: var(--color-neutral-50);
+  }
+  .breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .breadcrumbs__item { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs__link { color: var(--color-neutral-600); }
+  .breadcrumbs__link:hover { color: var(--color-primary); text-decoration: underline; }
+  .breadcrumbs__current { color: var(--color-neutral-900); font-weight: 500; }
+  .breadcrumbs__sep { color: var(--color-neutral-400); }
+</style>

@@ -1,0 +1,108 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// SILO INDEX — Dynamic category page for each configured content silo.
+// Reads silos from niche.config.ts and filters posts by category.
+// ═══════════════════════════════════════════════════════════════
+
+import BusinessLayout from "@layouts/BusinessLayout.astro";
+import ArticleCard from "@components/ArticleCard.astro";
+import { generateBreadcrumbs } from "@lib/internal-links";
+import { generateFaqSchema } from "@lib/seo";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const { default: config } = await import("../../../niche.config");
+  const { default: business } = await import("../../../business.config");
+  if (business.enabled && !business.contentEnabled) return [];
+  return config.silos.map((silo) => ({
+    params: { silo: silo.id },
+    props: { silo },
+  }));
+}
+
+const { silo } = Astro.props;
+
+const allPosts = await getCollection("posts", ({ data }) => data.status === "published");
+const siloPosts = allPosts
+  .filter((p) => p.data.category === silo.id)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const breadcrumbs = generateBreadcrumbs(`/${silo.id}/`, silo.label);
+
+const pageTitle = silo.seoTitle ?? silo.label;
+const pageDescription = silo.seoDescription ?? silo.description;
+const faqSchema = generateFaqSchema(silo.faq ?? []);
+---
+
+<BusinessLayout
+  title={pageTitle}
+  description={pageDescription}
+>
+  {faqSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  )}
+  <section class="articles-page">
+    <div class="container">
+      <header class="articles-page__header">
+        <div class="silo-badge" style={`--silo-color: ${silo.color}`}>
+          <span class="badge" style={`--badge-color: ${silo.color}`}>{silo.label}</span>
+        </div>
+        <h1 class="articles-page__title">{pageTitle}</h1>
+        <p class="articles-page__subtitle">
+          {silo.description} — {siloPosts.length} articles
+        </p>
+      </header>
+
+      {silo.intro && silo.intro.length > 0 && (
+        <div class="silo-intro">
+          {silo.intro.map((para) => <p>{para}</p>)}
+        </div>
+      )}
+
+      {silo.startHere && silo.startHere.length > 0 && (
+        <nav class="silo-start" aria-labelledby="silo-start-heading">
+          <h2 id="silo-start-heading">Start here</h2>
+          <ol>
+            {silo.startHere.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+                <span>{item.note}</span>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
+      <div class="article-grid" id="article-grid">
+        {siloPosts.map((post) => (
+          <ArticleCard post={post} headingLevel={2} />
+        ))}
+      </div>
+
+      {silo.faq && silo.faq.length > 0 && (
+        <section class="silo-faq" aria-labelledby="silo-faq-heading">
+          <h2 id="silo-faq-heading">Common questions</h2>
+          <dl>
+            {silo.faq.map((qa) => (
+              <div class="silo-faq__item">
+                <dt>{qa.question}</dt>
+                <dd>{qa.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
+
+      {siloPosts.length === 0 && (
+        <div style="text-align: center; padding: var(--space-16) 0;">
+          <p style="color: var(--color-text-muted); font-size: var(--text-lg);">
+            No articles in this category yet. Check back soon!
+          </p>
+          <a href="/articles/" class="btn btn--outline" style="margin-top: var(--space-4);">
+            Browse All Articles →
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+</BusinessLayout>

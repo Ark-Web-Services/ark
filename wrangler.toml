@@ -1,0 +1,6 @@
+name = "arkwebservices-com"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+# Inquiry capture is disabled until the production D1, Turnstile, and email
+# resources are ready. Add the binding here only when that backend is enabled.

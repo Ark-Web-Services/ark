@@ -1,0 +1,520 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// ADMIN DASHBOARD — The War Map
+// SSR page that reads from D1 to show the SEO intelligence overview
+// Route: /admin/
+// ═══════════════════════════════════════════════════════════════
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+export const prerender = false; // Force SSR — needs D1
+
+const db = Astro.locals?.runtime?.env?.DB;
+
+// ── Fetch data from D1 ───────────────────────────────────────
+let keywords: any[] = [];
+let strikingDistance: any[] = [];
+let competitors: any[] = [];
+let recentRanks: any[] = [];
+let contentGaps: any[] = [];
+let latestPlan: any = null;
+let auditLogs: any[] = [];
+let outreachTargets: any[] = [];
+
+if (db) {
+  try {
+    // Total keywords tracked
+    const kwResult = await db
+      .prepare("SELECT * FROM keywords ORDER BY priority DESC LIMIT 50")
+      .all();
+    keywords = kwResult.results || [];
+
+    // Striking distance (rank 11-20)
+    const sdResult = await db
+      .prepare("SELECT * FROM keywords WHERE status = 'striking-distance' ORDER BY priority DESC LIMIT 10")
+      .all();
+    strikingDistance = sdResult.results || [];
+
+    // Competitors
+    const compResult = await db
+      .prepare("SELECT * FROM competitors ORDER BY content_count DESC LIMIT 10")
+      .all();
+    competitors = compResult.results || [];
+
+    // Recent rank changes
+    const rankResult = await db
+      .prepare(`
+        SELECT k.term, r.position, r.url, r.timestamp
+        FROM rank_logs r
+        JOIN keywords k ON r.keyword_id = k.id
+        ORDER BY r.timestamp DESC LIMIT 20
+      `)
+      .all();
+    recentRanks = rankResult.results || [];
+
+    // Content gaps
+    const gapResult = await db
+      .prepare("SELECT * FROM content_gaps WHERE status != 'published' ORDER BY priority DESC LIMIT 15")
+      .all();
+    contentGaps = gapResult.results || [];
+
+    // Latest execution plan
+    const planResult = await db
+      .prepare("SELECT * FROM execution_plans ORDER BY created_at DESC LIMIT 1")
+      .first();
+    latestPlan = planResult;
+
+    // Audit logs
+    const auditResult = await db
+      .prepare("SELECT * FROM audit_logs ORDER BY timestamp DESC LIMIT 5")
+      .all();
+    auditLogs = auditResult.results || [];
+
+    // Outreach targets
+    const outreachResult = await db
+      .prepare("SELECT * FROM outreach_targets ORDER BY relevance_score DESC LIMIT 10")
+      .all();
+    outreachTargets = outreachResult.results || [];
+  } catch (err) {
+    console.error("[Admin] D1 query failed:", err);
+  }
+}
+
+// ── Compute stats ────────────────────────────────────────────
+const totalKeywords = keywords.length;
+const rankedKeywords = keywords.filter((k: any) => k.status === 'ranked').length;
+const strikingCount = strikingDistance.length;
+const totalCompetitors = competitors.length;
+const openGaps = contentGaps.filter((g: any) => g.status === 'identified').length;
+---
+
+<BaseLayout title="Admin Dashboard — The War Map" description="SEO Authority Engine command center" noindex>
+  <section class="admin-dashboard">
+    <div class="container">
+
+      <!-- Header -->
+      <header class="admin-header">
+        <h1 class="admin-title">🎯 The War Map</h1>
+        <p class="admin-subtitle">Godfather SEO Engine — Intelligence Dashboard</p>
+        {latestPlan && (
+          <p class="admin-updated">
+            Last strategy run: {new Date(latestPlan.created_at).toLocaleDateString('en-US', {
+              year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            })}
+          </p>
+        )}
+      </header>
+
+      <!-- KPI Cards -->
+      <div class="admin-kpis">
+        <div class="kpi-card">
+          <span class="kpi-card__number">{totalKeywords}</span>
+          <span class="kpi-card__label">Keywords Tracked</span>
+        </div>
+        <div class="kpi-card kpi-card--success">
+          <span class="kpi-card__number">{rankedKeywords}</span>
+          <span class="kpi-card__label">Top 10 Rankings</span>
+        </div>
+        <div class="kpi-card kpi-card--warning">
+          <span class="kpi-card__number">{strikingCount}</span>
+          <span class="kpi-card__label">Striking Distance</span>
+        </div>
+        <div class="kpi-card kpi-card--info">
+          <span class="kpi-card__number">{totalCompetitors}</span>
+          <span class="kpi-card__label">Competitors Tracked</span>
+        </div>
+        <div class="kpi-card kpi-card--danger">
+          <span class="kpi-card__number">{openGaps}</span>
+          <span class="kpi-card__label">Content Gaps</span>
+        </div>
+      </div>
+
+      <!-- Striking Distance Keywords -->
+      <section class="admin-section">
+        <h2 class="admin-section__title">⚡ Striking Distance Keywords (Rank 11-20)</h2>
+        <p class="admin-section__desc">These keywords are close to page 1 — optimize content to push them over.</p>
+        {strikingDistance.length > 0 ? (
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Keyword</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Last Checked</th>
+                </tr>
+              </thead>
+              <tbody>
+                {strikingDistance.map((kw: any) => (
+                  <tr>
+                    <td class="admin-table__keyword">{kw.term}</td>
+                    <td><span class="badge badge--warning">{kw.status}</span></td>
+                    <td class="admin-table__priority">{kw.priority}/10</td>
+                    <td class="admin-table__date">{kw.last_checked ? new Date(kw.last_checked).toLocaleDateString() : '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p class="admin-empty">No striking distance keywords found. Run the scraper to populate data.</p>
+        )}
+      </section>
+
+      <!-- Recent Rank Changes -->
+      <section class="admin-section">
+        <h2 class="admin-section__title">📈 Recent Rank Logs</h2>
+        {recentRanks.length > 0 ? (
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Keyword</th>
+                  <th>Position</th>
+                  <th>URL</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentRanks.map((r: any) => (
+                  <tr>
+                    <td>{r.term}</td>
+                    <td>
+                      <span class:list={[
+                        "rank-badge",
+                        r.position <= 3 && "rank-badge--gold",
+                        r.position > 3 && r.position <= 10 && "rank-badge--green",
+                        r.position > 10 && r.position <= 20 && "rank-badge--yellow",
+                        r.position > 20 && "rank-badge--red",
+                      ]}>
+                        #{r.position || '—'}
+                      </span>
+                    </td>
+                    <td class="admin-table__url">{r.url ? r.url.substring(0, 50) : '—'}</td>
+                    <td class="admin-table__date">{new Date(r.timestamp).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p class="admin-empty">No rank data yet. Run the scraper pipeline to start tracking.</p>
+        )}
+      </section>
+
+      <!-- Content Gaps -->
+      <section class="admin-section">
+        <h2 class="admin-section__title">🕳️ Content Gaps</h2>
+        <p class="admin-section__desc">Topics competitors cover that we don't — opportunities for new content.</p>
+        {contentGaps.length > 0 ? (
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Topic</th>
+                  <th>Our Coverage</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                </tr>
+              </thead>
+              <tbody>
+                {contentGaps.map((gap: any) => (
+                  <tr>
+                    <td>{gap.topic}</td>
+                    <td><span class={`badge badge--${gap.our_coverage === 'none' ? 'danger' : 'info'}`}>{gap.our_coverage}</span></td>
+                    <td>{gap.status}</td>
+                    <td>{gap.priority}/10</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p class="admin-empty">No content gaps identified yet. Run the sitemap heist to find them.</p>
+        )}
+      </section>
+
+      <!-- Competitors -->
+      <section class="admin-section">
+        <h2 class="admin-section__title">🕵️ Competitor Intelligence</h2>
+        {competitors.length > 0 ? (
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Domain</th>
+                  <th>Pages</th>
+                  <th>DA Est.</th>
+                  <th>Last Scraped</th>
+                </tr>
+              </thead>
+              <tbody>
+                {competitors.map((comp: any) => (
+                  <tr>
+                    <td class="admin-table__domain">
+                      <a href={`https://${comp.domain}`} target="_blank" rel="noopener">{comp.domain}</a>
+                    </td>
+                    <td>{comp.content_count}</td>
+                    <td>{comp.da_estimate || '—'}</td>
+                    <td class="admin-table__date">{comp.last_scraped ? new Date(comp.last_scraped).toLocaleDateString() : '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p class="admin-empty">No competitor data yet.</p>
+        )}
+      </section>
+
+      <!-- Latest Audit -->
+      <section class="admin-section">
+        <h2 class="admin-section__title">🏥 Technical Health</h2>
+        {auditLogs.length > 0 ? (
+          <div class="admin-audit-cards">
+            {auditLogs.map((log: any) => {
+              const scores = typeof log.scores === 'string' ? JSON.parse(log.scores) : log.scores;
+              return (
+                <div class="audit-card">
+                  <h3 class="audit-card__type">{log.audit_type}</h3>
+                  <pre class="audit-card__data">{JSON.stringify(scores, null, 2)}</pre>
+                  <time class="audit-card__time">{new Date(log.timestamp).toLocaleDateString()}</time>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p class="admin-empty">No audit data yet. Run the audit script to populate.</p>
+        )}
+      </section>
+
+      <!-- Latest Execution Plan -->
+      {latestPlan && (
+        <section class="admin-section">
+          <h2 class="admin-section__title">📋 Latest Execution Plan</h2>
+          <div class="admin-plan">
+            <pre class="admin-plan__json">{
+              JSON.stringify(
+                typeof latestPlan.plan_data === 'string'
+                  ? JSON.parse(latestPlan.plan_data)
+                  : latestPlan.plan_data,
+                null, 2
+              )
+            }</pre>
+            <div class="admin-plan__meta">
+              <span class={`badge badge--${latestPlan.status === 'completed' ? 'success' : 'warning'}`}>
+                {latestPlan.status}
+              </span>
+              <time>{new Date(latestPlan.created_at).toLocaleDateString()}</time>
+            </div>
+          </div>
+        </section>
+      )}
+
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .admin-dashboard {
+    padding: 2rem 0 4rem;
+    min-height: 100vh;
+  }
+
+  .admin-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-neutral-200, #e5e7eb);
+  }
+
+  .admin-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 0.25rem;
+  }
+
+  .admin-subtitle {
+    color: var(--color-neutral-500, #6b7280);
+    margin: 0 0 0.5rem;
+  }
+
+  .admin-updated {
+    font-size: 0.8rem;
+    color: var(--color-neutral-400, #9ca3af);
+  }
+
+  /* KPI Cards */
+  .admin-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .kpi-card {
+    background: var(--color-neutral-50, #f9fafb);
+    border: 1px solid var(--color-neutral-200, #e5e7eb);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .kpi-card__number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .kpi-card__label {
+    font-size: 0.75rem;
+    color: var(--color-neutral-500, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .kpi-card--success .kpi-card__number { color: #10b981; }
+  .kpi-card--warning .kpi-card__number { color: #f59e0b; }
+  .kpi-card--danger .kpi-card__number { color: #ef4444; }
+  .kpi-card--info .kpi-card__number { color: #3b82f6; }
+
+  /* Sections */
+  .admin-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-neutral-100, #f3f4f6);
+  }
+
+  .admin-section__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+  }
+
+  .admin-section__desc {
+    font-size: 0.85rem;
+    color: var(--color-neutral-500, #6b7280);
+    margin: 0 0 1rem;
+  }
+
+  /* Tables */
+  .admin-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .admin-table th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    color: var(--color-neutral-500, #6b7280);
+    border-bottom: 2px solid var(--color-neutral-200, #e5e7eb);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .admin-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--color-neutral-100, #f3f4f6);
+  }
+
+  .admin-table__keyword { font-weight: 600; }
+  .admin-table__url { font-size: 0.75rem; color: var(--color-neutral-500, #6b7280); }
+  .admin-table__date { font-size: 0.75rem; color: var(--color-neutral-400, #9ca3af); }
+
+  /* Rank badges */
+  .rank-badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+  .rank-badge--gold { background: #fef3c7; color: #92400e; }
+  .rank-badge--green { background: #d1fae5; color: #065f46; }
+  .rank-badge--yellow { background: #fef9c3; color: #854d0e; }
+  .rank-badge--red { background: #fee2e2; color: #991b1b; }
+
+  /* Status badges */
+  .badge { padding: 0.125rem 0.5rem; border-radius: 999px; font-size: 0.7rem; font-weight: 600; }
+  .badge--warning { background: #fef3c7; color: #92400e; }
+  .badge--danger { background: #fee2e2; color: #991b1b; }
+  .badge--success { background: #d1fae5; color: #065f46; }
+  .badge--info { background: #dbeafe; color: #1e40af; }
+
+  .admin-empty {
+    color: var(--color-neutral-400, #9ca3af);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  /* Audit cards */
+  .admin-audit-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .audit-card {
+    background: var(--color-neutral-50, #f9fafb);
+    border: 1px solid var(--color-neutral-200, #e5e7eb);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .audit-card__type {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    text-transform: capitalize;
+  }
+
+  .audit-card__data {
+    font-size: 0.7rem;
+    background: white;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+    margin: 0 0 0.5rem;
+  }
+
+  .audit-card__time {
+    font-size: 0.7rem;
+    color: var(--color-neutral-400, #9ca3af);
+  }
+
+  /* Plan display */
+  .admin-plan__json {
+    font-size: 0.7rem;
+    background: var(--color-neutral-50, #f9fafb);
+    border: 1px solid var(--color-neutral-200, #e5e7eb);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .admin-plan__meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .admin-table__domain a {
+    color: var(--color-primary, #3b82f6);
+    text-decoration: none;
+  }
+  .admin-table__domain a:hover {
+    text-decoration: underline;
+  }
+</style>

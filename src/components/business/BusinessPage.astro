@@ -1,0 +1,43 @@
+---
+import business from '../../../business.config';
+import BusinessLayout from '../../layouts/BusinessLayout.astro';
+import ServiceList from './ServiceList.astro';
+import ProcessSteps from './ProcessSteps.astro';
+import Testimonials from './Testimonials.astro';
+import InquiryForm from './InquiryForm.astro';
+const { slug } = Astro.props;
+const titles: Record<string, string> = { services: 'Services', about: `About ${business.name}`, contact: 'Get a free site review', privacy: 'Privacy', process: 'How it works', pricing: 'Project pricing' };
+const summaries: Record<string, string> = {
+  services: 'WordPress rescue, website redesign, custom development, and SEO foundations for service businesses.',
+  about: 'A Charlotte-based web studio working with service businesses in Charlotte and across the United States.',
+  contact: 'Tell us what is not working on your site. We will review the details and reply by email.',
+  privacy: 'How this website handles analytics, site requests, and information you send by email.',
+  process: 'A straightforward project from the first site review to the final handoff.',
+  pricing: 'Project scope and a clear price are shared before work begins.',
+};
+const title = titles[slug] ?? business.name;
+---
+<BusinessLayout title={title} description={summaries[slug] ?? business.description}>
+  <div class="business-home business-page">
+    <header class="business-page-heading"><h1>{title}</h1><p>{summaries[slug]}</p></header>
+    {slug === 'services' && <><ServiceList services={business.services} /><ProcessSteps steps={business.process} /><p class="business-page-action"><a class="business-button" href="/contact/">Get a free site review</a></p></>}
+    {slug === 'process' && <><section class="business-section business-prose"><p>Every project starts with a clear picture of the issue and the result you need. We agree on the work and price before building begins.</p></section><ProcessSteps steps={business.process} /><p class="business-page-action"><a class="business-button" href="/contact/">Get a free site review</a></p></>}
+    {slug === 'pricing' && <section class="business-section business-prose"><p>ARK scopes and prices projects individually. The cost depends on the current site, the work required, and the agreed deliverables.</p><p>Before work begins, you receive a written scope and project price. The SEO foundations service is offered as a focused project; ongoing rankings and traffic are not guaranteed.</p><a class="business-button" href="/contact/">Request a site review</a></section>}
+    {slug === 'about' && <><section class="business-section business-prose"><h2>Practical web work for service businesses</h2><p>{business.about || business.description}</p><p>ARK is based in Charlotte, North Carolina, and works with service businesses locally and nationwide.</p><p>We focus on the agreed scope, explain the work in plain language, and price each project before it begins.</p><a class="business-button" href="/contact/">Get a free site review</a></section><Testimonials testimonials={business.testimonials} /></>}
+    {slug === 'contact' && <><section class="business-section business-prose"><p>Send your current website address and a short description of what you need. We will follow up by email.</p><p><a href={`mailto:${business.email}?subject=${encodeURIComponent("Free website review")}`}>{business.email}</a></p>{business.phone && <p><a href={`tel:${business.phone.replace(/[^+\d]/g, "")}`}>{business.phone}</a></p>}</section><InquiryForm /></>}
+    {slug === 'privacy' && <article class="business-section business-prose">
+      <p>This page describes the information processed when you visit this website or contact ARK Web Services.</p>
+      <h2>Website requests</h2><p>The site is hosted on Cloudflare. The hosting service may process connection details, such as an IP address, browser information, and request time, to deliver and protect the site. ARK does not currently collect inquiries through a website form.</p>
+      <h2>Google Analytics</h2>{business.ga4Id ? <><p>Google Analytics 4 is used to understand visits to this website and count whether visitors use the email, phone, or contact links. It is off unless you choose “Allow analytics” in the site notice. If you reject analytics, the Google Analytics script is not loaded. If allowed, Google may receive technical visit information and use cookies under its own terms. The measurement events contain the page path and type of link used, not the contents of a message, your name, or your email address. Your choice is saved in this browser’s local storage. You can change it from the footer.</p><a class="analytics-settings-button" href="#analytics-preferences">Change analytics choice</a></> : <p>Google Analytics is not currently enabled on this website.</p>}
+      <h2>Email and phone contact</h2><p>If you email or call ARK, the information you share is handled through the email or phone services you use and our communication with you. Please do not send sensitive personal information.</p>
+      <h2>Questions</h2><p>Contact <a href={`mailto:${business.email}`}>{business.email}</a> with questions about this notice or to ask about information you have sent us.</p>
+    </article>}
+  </div>
+</BusinessLayout>
+<style>
+  .business-page-heading { padding: clamp(3rem, 8vw, 7rem) 0 2rem; }
+  .business-page-heading h1 { max-width: 20ch; margin: 0; font: 500 clamp(2.7rem, 6vw, 5.2rem)/1.06 var(--business-heading); letter-spacing: -.025em; text-wrap: balance; }
+  .business-prose { max-width: 70ch; }
+  .business-prose h2 { margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.7rem; max-width: none; }
+  .business-page-action { padding: 0 0 5rem; }
+</style>

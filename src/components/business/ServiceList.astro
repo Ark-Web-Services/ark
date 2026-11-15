@@ -1,0 +1,8 @@
+---
+const { services = [] } = Astro.props;
+const onServicesPage = Astro.url.pathname === "/services/";
+---
+{services.length > 0 && <section class="business-section" id="services" aria-labelledby="services-title">
+  <div class="business-section__heading"><h2 id="services-title">What we can help with</h2>{!onServicesPage && <a class="business-text-link" href="/services/">Explore services</a>}</div>
+  <ul class="business-service-list">{services.map((service) => <li><div><h3>{service.title}</h3><a href={`/services/${service.id}/`}>See what’s included</a></div><p>{service.description}</p></li>)}</ul>
+</section>}

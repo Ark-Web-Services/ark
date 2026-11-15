@@ -1,0 +1,115 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// PRODUCT BOX — Affiliate card (replaces _includes/product-box.html)
+// Used both as Astro component and importable in MDX
+// ═══════════════════════════════════════════════════════════════
+
+import type { Product } from "@data/affiliates";
+import { generateProductSchema } from "@lib/seo";
+
+interface Props {
+  product: Product;
+}
+
+const { product: p } = Astro.props;
+const schema = generateProductSchema(p);
+const fullStars = Math.floor(p.rating);
+const hasHalf = p.rating % 1 >= 0.3;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+<div class="product-box" itemscope itemtype="https://schema.org/Product">
+  {p.badge && (
+    <span class:list={["product-box__badge", `product-box__badge--${p.badge.toLowerCase().replace(/[^a-z]+/g, "-")}`]}>
+      {p.badge}
+    </span>
+  )}
+
+  <div class="product-box__image">
+    <img
+      src={p.image}
+      alt={p.name}
+      width="200"
+      height="200"
+      loading="lazy"
+      itemprop="image"
+    />
+  </div>
+
+  <div class="product-box__content">
+    <h3 class="product-box__name" itemprop="name">{p.name}</h3>
+
+    <!-- Star Rating -->
+    <div class="product-box__rating" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+      <div class="stars" aria-label={`${p.rating} out of 5 stars`}>
+        {[1, 2, 3, 4, 5].map((i) => i <= fullStars ? (
+          <svg class="star star--full" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M8 1l2.2 4.5 5 .7-3.6 3.5.8 5L8 12.4 3.6 14.7l.8-5L.8 6.2l5-.7z" fill="currentColor" />
+          </svg>
+        ) : hasHalf && i === fullStars + 1 ? (
+          <svg class="star star--half" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M8 1l2.2 4.5 5 .7-3.6 3.5.8 5L8 12.4 3.6 14.7l.8-5L.8 6.2l5-.7z" fill="currentColor" opacity="0.3" />
+            <path d="M8 1v11.4L3.6 14.7l.8-5L.8 6.2l5-.7z" fill="currentColor" />
+          </svg>
+        ) : (
+          <svg class="star star--empty" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M8 1l2.2 4.5 5 .7-3.6 3.5.8 5L8 12.4 3.6 14.7l.8-5L.8 6.2l5-.7z" fill="currentColor" opacity="0.2" />
+          </svg>
+        ))}
+      </div>
+      <span class="product-box__rating-text">
+        <span itemprop="ratingValue">{p.rating}</span>/5
+        (<span itemprop="reviewCount">{p.ratingCount}</span> reviews)
+      </span>
+    </div>
+
+    <!-- Pros & Cons -->
+    {(p.pros.length > 0 || p.cons.length > 0) && (
+      <div class="product-box__features">
+        {p.pros.length > 0 && (
+          <ul class="product-box__pros" aria-label="Pros">
+            {p.pros.map((pro) => (
+              <li>
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                  <path d="M3 7l3 3 5-5" stroke="#10B981" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {pro}
+              </li>
+            ))}
+          </ul>
+        )}
+        {p.cons.length > 0 && (
+          <ul class="product-box__cons" aria-label="Cons">
+            {p.cons.map((con) => (
+              <li>
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                  <path d="M4 4l6 6M10 4l-6 6" stroke="#EF4444" stroke-width="2" fill="none" stroke-linecap="round" />
+                </svg>
+                {con}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    )}
+
+    <!-- Price & CTA -->
+    <div class="product-box__footer">
+      <span class="product-box__price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+        <span itemprop="price">{p.price}</span>
+        <meta itemprop="priceCurrency" content="USD" />
+      </span>
+      <a
+        href={`/go/${p.shortName.toLowerCase().replace(/\s+/g, "-")}/`}
+        class="btn btn--primary product-box__cta"
+        target="_blank"
+        rel="nofollow noopener sponsored"
+        data-product-id={p.id}
+        aria-label={`Check price for ${p.name} on Amazon`}
+      >
+        Check Price →
+      </a>
+    </div>
+  </div>
+</div>

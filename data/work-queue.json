@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-11-15T03:23:13.129Z",
+  "site": "https://arkwebservices.com",
+  "sources": {
+    "audit": null,
+    "trend": "data/trends/2026-W46.json",
+    "observation": null,
+    "ledgerEntries": 0,
+    "prospects": 0
+  },
+  "counts": {
+    "total": 0,
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 0
+  },
+  "policy": {
+    "autoImplementable": [
+      "seo-issue",
+      "content-gap",
+      "interactive-tool",
+      "ctr-rewrite"
+    ],
+    "humanOnly": [
+      "outreach"
+    ],
+    "notes": [
+      "Never post to Reddit, forums or email from an agent. Outreach items are for a human.",
+      "Content must follow docs/seo/house-style.md: no invented experience, no invented statistics, a number with every claim.",
+      "Niche-specific technical figures and safety claims are load-bearing. Follow the configured context: ARK Web Services is based in Charlotte, North Carolina and offers WordPress rescue, website redesign, custom development, and one-time SEO foundations for service businesses. Do not imply a verified case study, ranking, performance result, certification, or customer outcome unless supported by the actual source material.",
+      "Open a branch and a pull request. Do not push to main.",
+      "Run npm run build before proposing any change."
+    ]
+  },
+  "items": []
+}

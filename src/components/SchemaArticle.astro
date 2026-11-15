@@ -1,0 +1,40 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// SCHEMA ARTICLE — JSON-LD for Article + FAQ
+// ═══════════════════════════════════════════════════════════════
+
+import { generateArticleSchema, generateFaqSchema } from "@lib/seo";
+import { siteConfig } from "@data/navigation";
+
+interface Props {
+  title: string;
+  description: string;
+  url: string;
+  image?: string;
+  date: Date;
+  lastModified?: Date;
+  author?: string;
+  wordCount: number;
+  faq?: { question: string; answer: string }[];
+}
+
+const { title, description, url, image, date, lastModified, author, wordCount, faq = [] } = Astro.props;
+
+const articleSchema = generateArticleSchema({
+  title, description, url, image, date, lastModified, author, wordCount,
+});
+articleSchema.author = {
+  "@type": "Organization",
+  "@id": `${siteConfig.url}/#organization`,
+  name: siteConfig.title,
+  url: siteConfig.url,
+};
+articleSchema.publisher = { "@id": `${siteConfig.url}/#organization` };
+
+const faqSchema = generateFaqSchema(faq);
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+{faqSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+)}

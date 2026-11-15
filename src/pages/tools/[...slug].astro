@@ -1,0 +1,79 @@
+---
+// ═══════════════════════════════════════════════════════════════
+// /tools/ — Conditional free-tools index
+// ═══════════════════════════════════════════════════════════════
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { generateBreadcrumbs } from "@lib/internal-links";
+import nicheConfig from "../../../niche.config";
+
+export function getStaticPaths() {
+  if (nicheConfig.tools.length === 0) return [];
+  return [{ params: { slug: undefined } }];
+}
+
+const breadcrumbs = generateBreadcrumbs("/tools/", "Free Tools");
+const pageTitle = `Free Tools for ${nicheConfig.nicheNoun}`;
+const pageDescription = `Use free tools from ${nicheConfig.siteName} to answer common questions about ${nicheConfig.nicheNoun}, with no signup required.`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbs={breadcrumbs}
+>
+  <section class="static-page">
+    <div class="container">
+      <article class="article">
+        <header class="article__header">
+          <h1 class="article__title">{pageTitle}</h1>
+          <p class="tools-index__intro">
+            Practical, no-signup tools for common {nicheConfig.nicheNoun} questions. Every tool is
+            free to use and share.
+          </p>
+        </header>
+
+        <div class="article__body">
+          <div class="tools-index__grid">
+            {nicheConfig.tools.map((tool) => (
+              <a href={`/tools/${tool.id}/`} class="tools-index__card">
+                <span class="tools-index__icon" aria-hidden="true">{tool.icon}</span>
+                <h2 class="tools-index__title">{tool.title}</h2>
+                <p class="tools-index__desc">{tool.description}</p>
+                <span class="tools-index__cta">Open tool →</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <style>
+    .tools-index__intro { color: var(--color-neutral-600); max-width: 65ch; }
+    .tools-index__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-5);
+      margin-top: var(--space-6);
+    }
+    .tools-index__card {
+      display: block;
+      border: 1px solid var(--color-neutral-200);
+      border-radius: 12px;
+      padding: var(--space-6);
+      text-decoration: none;
+      color: inherit;
+      background: var(--color-neutral-50);
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .tools-index__card:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+    .tools-index__icon { font-size: 2rem; }
+    .tools-index__title { margin: var(--space-3) 0 var(--space-2); font-size: 1.15rem; }
+    .tools-index__desc { color: var(--color-neutral-600); font-size: var(--text-sm); margin: 0 0 var(--space-3); }
+    .tools-index__cta { color: var(--color-primary); font-weight: 600; font-size: var(--text-sm); }
+  </style>
+</BaseLayout>

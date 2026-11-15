@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from "astro:content";
+import BusinessLayout from "@layouts/BusinessLayout.astro";
+import business from "../../../business.config";
+
+const businessRouting = business as typeof business & { landingPageOnly?: boolean; customHomeContactHref?: string };
+const contactHref = business.customHome || businessRouting.landingPageOnly ? businessRouting.customHomeContactHref || "/#contact" : "/contact/";
+
+export async function getStaticPaths() {
+  if (!business.enabled || !business.contentEnabled) return [];
+  const serviceIds = new Set(business.services.map((service) => service.id));
+  const pages = await getCollection("leadPages", ({ data }) => data.status === "published" && serviceIds.has(data.service));
+  return pages.map((page) => ({ params: { slug: page.id }, props: { page } }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+const service = business.services.find((item) => item.id === page.data.service);
+---
+
+<BusinessLayout title={page.data.title} description={page.data.description}>
+  <article class="business-home business-page solution-page">
+    <header class="business-page-heading">
+      <p class="solution-page__eyebrow">{service?.title}</p>
+      <h1>{page.data.title}</h1>
+      <p>{page.data.description}</p>
+    </header>
+    <div class="business-section business-prose"><Content /></div>
+    <section class="business-section solution-page__cta" aria-labelledby="solution-cta-title">
+      <h2 id="solution-cta-title">Talk through the work you need.</h2>
+      <p>Share your current site and the issue you want to solve. {business.name} can review the details and outline a project scope.</p>
+      <a class="business-button" href={contactHref}>{page.data.ctaLabel}</a>
+      <p><a href={`mailto:${business.email}?subject=${encodeURIComponent(page.data.title)}`}>Or email {business.email}</a></p>
+    </section>
+  </article>
+</BusinessLayout>
+
+<style>
+  .solution-page__eyebrow { margin: 0 0 .75rem; color: #555; font-size: .85rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .solution-page__cta { max-width: 70ch; padding-bottom: 5rem; }
+</style>

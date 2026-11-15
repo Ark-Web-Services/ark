@@ -1,0 +1,107 @@
+---
+import type { BusinessConfig } from "../../business.config";
+import businessConfig from "../../business.config";
+import "../styles/global.css";
+import "../styles/business.css";
+import AnalyticsConsent from "../components/business/AnalyticsConsent.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  canonicalUrl?: string;
+  noindex?: boolean;
+  ogType?: "website" | "article";
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+const { title, description = businessConfig.description, image, imageAlt, canonicalUrl, noindex = false, ogType = "website", publishedTime, modifiedTime } = Astro.props;
+const config: BusinessConfig = businessConfig;
+const canonical = canonicalUrl ?? new URL(Astro.url.pathname, config.website || Astro.site || Astro.url).toString();
+const pageTitle = title ? `${title} | ${config.name}` : `${config.name} | Web Design & SEO in Charlotte, NC`;
+const previewDomain = (() => {
+  try {
+    const host = new URL(config.website || Astro.url).hostname.toLowerCase();
+    return host === "localhost" || host === "127.0.0.1" || host === "example.com" || host.endsWith(".example.com") || host.endsWith(".example") || host === "invalid" || host.endsWith(".invalid");
+  }
+  catch { return true; }
+})();
+const robots = noindex || previewDomain ? "noindex, nofollow" : "index, follow";
+const absoluteImage = image ? new URL(image, config.website || Astro.site || Astro.url).toString() : undefined;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: config.name,
+  description: config.description,
+  ...(config.website && !previewDomain ? { url: config.website } : {}),
+  ...(config.email && !config.email.endsWith("@example.com") ? { email: config.email } : {}),
+  ...(config.phone ? { telephone: config.phone } : {}),
+  ...(config.location && !config.location.toLowerCase().includes("your ") ? { areaServed: [config.location, ...config.serviceAreas] } : {}),
+  ...(config.logo ? { logo: new URL(config.logo, config.website || Astro.url).toString() } : {}),
+  ...(config.services.length ? { hasOfferCatalog: { "@type": "OfferCatalog", itemListElement: config.services.map((service) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: service.title, description: service.description } })) } } : {}),
+};
+const customHome = config.customHome === true || (config as BusinessConfig & { landingPageOnly?: boolean }).landingPageOnly === true;
+const contactHref = customHome ? config.customHomeContactHref || "/#contact" : "/contact/";
+const nav: [string, string][] = customHome
+  ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["Contact", contactHref]]
+  : [["Services", "/services/"], ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["How it works", "/process/"]];
+const validGa4Id = config.ga4Id && /^G-[A-Z0-9]+$/.test(config.ga4Id) ? config.ga4Id : undefined;
+const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
+---
+
+<!doctype html>
+<html lang="en" style={`--business-bg:${config.brand.background};--business-fg:${config.brand.foreground};--business-accent:${config.brand.accent};--business-muted:${config.brand.muted};--business-heading:${config.brand.headingFont};--business-body:${config.brand.bodyFont}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {absoluteImage && <><meta property="og:image" content={absoluteImage} /><meta property="og:image:alt" content={imageAlt || config.name} /><meta name="twitter:card" content="summary_large_image" /></>}
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {!absoluteImage && <meta name="twitter:card" content="summary" />}
+    <meta name="theme-color" content={config.brand.background} />
+    <script type="application/ld+json" set:html={safeSchemaJson} />
+  </head>
+  <body class="business-site">
+    <a class="business-skip" href="#main-content">Skip to content</a>
+    <header class="business-header">
+      <a class="business-brand" href="/" aria-label={`${config.name} home`}>
+        {config.logo ? <img src={config.logo} alt="" /> : <span>{config.name}</span>}
+      </a>
+      <nav aria-label="Main navigation"><ul>{nav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul></nav>
+      <a class="business-header__contact" href={contactHref}>{customHome ? "Start a conversation" : "Get a free site review"}</a>
+    </header>
+    <main id="main-content"><slot /></main>
+    <footer class="business-footer">
+      <a class="business-brand" href="/">{config.name}</a>
+      <p>{config.location ? `${config.location} · Serving businesses nationwide` : "White-label fulfillment for agency partners"}</p>
+      {config.contentEnabled && <p><a href="/articles/">Guides</a> · <a href="/solutions/">Solutions</a></p>}
+      {config.email && <a href={`mailto:${config.email}`}>{config.email}</a>}
+      {config.phone && <a href={`tel:${config.phone.replace(/[^+\d]/g, "")}`}>{config.phone}</a>}
+      {config.socials.length > 0 && <ul class="business-socials">{config.socials.map((social) => <li><a href={social.url} rel="me noopener noreferrer">{social.label}</a></li>)}</ul>}
+      <p>© {new Date().getFullYear()} {config.name}. <a href="/privacy/">Privacy</a> · <a href="#analytics-preferences">Privacy settings</a></p>
+    </footer>
+    <script is:inline>
+    (() => {
+      document.addEventListener("click", (event) => {
+        const link = event.target.closest("a[href]");
+        if (!link || typeof window.gtag !== "function") return;
+        const href = link.getAttribute("href") || "";
+        const method = href.startsWith("mailto:") ? "email" : href.startsWith("tel:") ? "phone" : href === "/contact/" || href.endsWith("#contact") ? "contact_page" : "";
+        if (method) window.gtag("event", "contact_click", { method });
+      });
+    })();
+    </script>
+    {validGa4Id && <AnalyticsConsent ga4Id={validGa4Id} />}
+  </body>
+</html>

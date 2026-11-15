@@ -1,0 +1,18 @@
+# Preserve established Ark URLs while moving to the service-business structure.
+/services/branding /services/ 301
+/services/branding/ /services/ 301
+/services/webflow-development /services/custom-website-development/ 301
+/services/webflow-development/ /services/custom-website-development/ 301
+/case-studies /about/ 301
+/case-studies/ /about/ 301
+/case-studies/* /about/ 301
+/industries /services/ 301
+/industries/ /services/ 301
+/industries/* /services/ 301
+/insights /services/seo-for-service-businesses/ 301
+/insights/ /services/seo-for-service-businesses/ 301
+/insights/* /services/seo-for-service-businesses/ 301
+/privacy-policy /privacy/ 301
+/terms-and-conditions /privacy/ 301
+/sitemap.xml /sitemap-index.xml 301
+/sitemap_index.xml /sitemap-index.xml 301

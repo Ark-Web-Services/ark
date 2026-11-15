@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-11-15T03:02:18.999Z",
+  "week": "2026-W46",
+  "slug": "wordpress-database-connection-error",
+  "title": "WordPress Database Connection Error",
+  "targetKeyword": "WordPress database connection error",
+  "category": "wordpress-recovery",
+  "demandEvidence": "Research-backed editorial queue topic from official WordPress troubleshooting documentation. Search demand, impressions, and community volume have not been measured for this brief.",
+  "whyWeCanWin": "Focus the guide on distinguishing configuration issues from host/database availability problems, preserving sensitive credentials, and knowing when to contact the host. This narrower troubleshooting intent complements the existing general site-down and plugin-conflict checklists.",
+  "outline": [
+    "What the database-connection error indicates and what it does not diagnose by itself",
+    "Record the exact message, affected URLs, recent changes, and provider alerts before changing files",
+    "Check whether the host reports a database or resource issue before editing configuration",
+    "Protect credentials and backups; avoid publishing or copying wp-config.php contents",
+    "When to involve the hosting provider or a WordPress technician"
+  ],
+  "internalLinkCandidates": [
+    "wordpress-site-down-first-checks",
+    "prepare-for-wordpress-rescue",
+    "wordpress-backup-restore-basics",
+    "wordpress-plugin-conflict-checklist"
+  ],
+  "hub": "/wordpress-recovery/",
+  "image": {
+    "image": "",
+    "imageAlt": ""
+  },
+  "factCheck": {
+    "passed": true,
+    "issues": []
+  },
+  "review": {
+    "passed": true,
+    "score": 8.3,
+    "iteration": 1,
+    "maxIterations": 3,
+    "feedback": "The draft offers credible, evidence-led troubleshooting guidance with strong internal linking and authoritative citations. It passes the numerical threshold, but the missing FAQ blocks compliance with the required delivery format. A concrete diagnostic example and tighter handling of repeated cautions would improve usefulness.",
+    "suggestions": [
+      "End with an FAQ containing 3–5 questions covering data loss, intermittent failures, database credentials, hosting support, and when a restore is appropriate.",
+      "Add a clearly labeled hypothetical migration example showing how a technician distinguishes an incorrect DB_HOST value from an unavailable database service.",
+      "Consolidate repeated security and backup cautions to make room for the FAQ while keeping the final article within 1,800–2,200 words.",
+      "Verify all four internal destinations and confirm the final word count before publication."
+    ],
+    "flaggedForHuman": false,
+    "reviewedAt": "2026-11-15T03:02:18.998Z"
+  }
+}
