@@ -1,7 +1,7 @@
 import { rmSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import business from '../business.config';
 if (business.enabled && !business.contentEnabled) {
-  for (const path of ['articles', 'search', 'posts', 'tools', 'go']) rmSync(`dist/${path}`, { recursive: true, force: true });
+  for (const path of ['articles', 'search', 'posts', 'go']) rmSync(`dist/${path}`, { recursive: true, force: true });
   console.log('Service-business build: unused guide routes omitted.');
 }
 

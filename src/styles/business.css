@@ -225,3 +225,8 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .business-site .business-page-heading .solution-page__eyebrow { font-size: .85rem; margin: 0 0 1rem; }
 .business-site .business-prose.business-section { padding-top: 1rem; border-top: 0; }
 .business-site .business-prose.business-section h2 { max-width: 36ch; }
+
+/* Tool navigation */
+.business-header nav{min-width:0}
+.business-header nav ul{flex-wrap:wrap}
+.business-header .business-brand{flex-shrink:0}

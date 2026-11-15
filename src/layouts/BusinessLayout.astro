@@ -1,4 +1,5 @@
 ---
+import { businessTools } from "../lib/business-tools";
 import type { BusinessConfig } from "../../business.config";
 import businessConfig from "../../business.config";
 import "../styles/global.css";
@@ -51,6 +52,9 @@ const footerNav: [string, string][] = customHome
   ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["Contact", contactHref], ["Privacy", "/privacy/"]]
   : [["Services", "/services/"], ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["How it works", "/process/"], ["Pricing", "/pricing/"], ["Contact", "/contact/"], ["Privacy", "/privacy/"]];
 const validGa4Id = config.ga4Id && /^G-[A-Z0-9]+$/.test(config.ga4Id) ? config.ga4Id : undefined;
+
+if (businessTools.length) nav.splice(Math.max(0, nav.findIndex(([label]) => label === "Solutions") + 1), 0, ["Tools", "/tools/"]);
+if (businessTools.length) footerNav.splice(3, 0, ["Tools", "/tools/"]);
 const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
 ---
 

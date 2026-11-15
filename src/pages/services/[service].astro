@@ -1,4 +1,5 @@
 ---
+import ToolSuggestions from "@components/business/ToolSuggestions.astro";
 import BusinessLayout from "@layouts/BusinessLayout.astro";
 import business from "../../../business.config";
 
@@ -29,6 +30,7 @@ const contactHref = business.customHome || businessRouting.landingPageOnly ? bus
       <p><a href={`mailto:${business.email}?subject=${encodeURIComponent(service.title)}`}>Or email {business.email}</a></p>
     </section>
   </article>
+<ToolSuggestions context={service.title} />
 </BusinessLayout>
 
 <style>

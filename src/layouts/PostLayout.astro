@@ -1,4 +1,5 @@
 ---
+import ToolSuggestions from "@components/business/ToolSuggestions.astro";
 // ═══════════════════════════════════════════════════════════════
 // POST LAYOUT — Article template (replaces _layouts/post.html)
 // Includes: Schema, TOC, Affiliate Grid, Related Posts, Author Box
@@ -364,4 +365,5 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
   </article>
 
 <script src="../scripts/article-toc.ts"></script>
+<ToolSuggestions context={data.title} />
 </BusinessLayout>

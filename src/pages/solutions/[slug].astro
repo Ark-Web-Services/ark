@@ -1,4 +1,5 @@
 ---
+import ToolSuggestions from "@components/business/ToolSuggestions.astro";
 import { getCollection, render } from "astro:content";
 import BusinessLayout from "@layouts/BusinessLayout.astro";
 import business from "../../../business.config";
@@ -34,6 +35,7 @@ const service = business.services.find((item) => item.id === page.data.service);
       <p><a href={`mailto:${business.email}?subject=${encodeURIComponent(page.data.title)}`}>Or email {business.email}</a></p>
     </section>
   </article>
+<ToolSuggestions context={page.data.title} />
 </BusinessLayout>
 
 <style>

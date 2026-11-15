@@ -1,3 +1,4 @@
+import { businessTools } from './src/lib/business-tools';
 // ═══════════════════════════════════════════════════════════════
 // NICHE.CONFIG.TS — Single Source of Truth for the Entire System
 // ═══════════════════════════════════════════════════════════════
@@ -350,7 +351,7 @@ const config: NicheConfig = {
   // Interactive tools earn links and rank for "calculator"/"chart"
   // queries the article silos cannot reach. Start empty; the niche
   // customizer proposes the first two or three.
-  tools: [],
+  tools: businessTools.map(({ id, title, description }) => ({ id, title, description, icon: "" })),
 
   redditSubreddits: [
     // Agents will discover relevant subreddits
@@ -508,7 +509,7 @@ Object.assign(config, {
     { title: "Services", url: "/services/" },
     { title: "Contact", url: "/contact/" },
   ],
-  tools: [],
+  tools: businessTools.map(({ id, title, description }) => ({ id, title, description, icon: "" })),
   defaultProducts: [],
   pageProductMap: {},
   affiliateDisclaimer: "",

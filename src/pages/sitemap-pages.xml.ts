@@ -67,7 +67,7 @@ export const GET: APIRoute = async () => {
   // Discovered from the filesystem rather than listed by hand — a hardcoded
   // list silently drops any tool added later, which is how the stocking
   // calculator shipped without a sitemap entry.
-  const toolPages = !editorialEnabled || nicheConfig.tools.length === 0 ? [] : [
+  const toolPages = nicheConfig.tools.length === 0 ? [] : [
     "/tools/", ...nicheConfig.tools.map(tool => `/tools/${tool.id}/`),
   ];
   for (const path of toolPages) {
