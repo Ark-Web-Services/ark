@@ -10,14 +10,12 @@
 //   ✅ Image service → Cloudflare (already present, kept)
 //   ✅ trailingSlash: "always" — matches our canonical strategy
 //   ✅ build.format: "directory" — matches sitemap trailing slashes
-//   ✅ Configured Partytown to forward GA4 events
 // ═══════════════════════════════════════════════════════════════
 
 import { defineConfig } from "astro/config";
 import cloudflare from "@astrojs/cloudflare";
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
-import partytown from "@astrojs/partytown";
 
 import nicheConfig from "./niche.config";
 import rehypeExternalLinks from "./src/lib/rehype-external-links";
@@ -46,11 +44,6 @@ export default defineConfig({
 
   integrations: [
     mdx(),
-    partytown({
-      config: {
-        forward: ["dataLayer.push"],
-      },
-    }),
     // NOTE: @astrojs/sitemap removed intentionally — see
     // src/pages/sitemap-index.xml.ts, sitemap-pages.xml.ts,
     // sitemap-posts.xml.ts, and sitemap-images.xml.ts
