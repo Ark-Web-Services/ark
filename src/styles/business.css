@@ -306,30 +306,20 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .studio-opening__action .studio-review-button { flex: 0 0 auto; min-height: 3.5rem; padding-inline: 1.75rem; gap: 1.25rem; font-size: 1.375rem; }
 .studio-review-button svg { flex: 0 0 24px; }
 .studio-opening__action > p { margin: 0; color: var(--studio-ink); font-size: 1.05rem; line-height: 1.5; }
-.studio-work { position: relative; padding-bottom: 1.3rem; isolation: isolate; }
-.studio-work::before { content: ""; position: absolute; z-index: -1; inset: 35% 0 0; background: var(--studio-forest); }
-.studio-work__figure { position: relative; width: min(80.6%, 76rem); margin: 0 auto; }
-.studio-work__image-link { display: block; overflow: hidden; border-radius: var(--studio-radius); background: var(--studio-forest); }
-.studio-work__image-link:focus-visible { outline-offset: 6px; }
-.studio-work img { display: block; width: 100%; height: auto; aspect-ratio: 2.1623; object-fit: cover; object-position: center 15%; }
-.studio-work__caption { position: relative; z-index: 1; width: min(29rem, 35%); margin: -3.3rem -2.25rem 0 auto; padding: .85rem 1.3rem; background: var(--studio-paper); color: var(--studio-ink); border-radius: var(--studio-radius); font-size: .8rem; line-height: 1.45; }
-.studio-work__caption strong { display: block; margin-bottom: .2rem; font-size: 1rem; font-weight: 700; }
-.studio-work__caption > span { display: block; }
-.studio-work__caption a { display: inline-flex; align-items: center; gap: .35rem; min-height: 32px; margin-top: .15rem; font-weight: 700; }
-.studio-services { background: var(--studio-sage); padding: 2.4rem 0 3rem; }
+.studio-services { background: var(--studio-forest); color: var(--studio-paper); padding: 3rem 0; }
 .studio-services__overview { display: grid; grid-template-columns: 1.35fr repeat(3, minmax(0, 1fr)); gap: 2.5rem; }
-.studio-services h2 { margin: 0; color: var(--studio-forest); font: 700 clamp(2.5rem, 4vw, 3.5rem)/1.05 var(--business-heading); letter-spacing: -.035em; }
+.studio-services h2 { margin: 0; color: var(--studio-paper); font: 700 clamp(2.5rem, 4vw, 3.5rem)/1.05 var(--business-heading); letter-spacing: -.035em; }
 .studio-service-path { min-width: 0; }
-.studio-service-path h3 { position: relative; margin: 0 0 .65rem; color: var(--studio-ink); font: 700 clamp(1.1rem, 1.6vw, 1.35rem)/1.2 var(--business-heading); }
-.studio-service-path h3::before { content: ""; position: absolute; left: -.9rem; top: .1em; width: 1px; height: .95em; border-radius: 1px; background: var(--studio-clay); }
+.studio-service-path h3 { position: relative; margin: 0 0 .65rem; color: var(--studio-paper); font: 700 clamp(1.1rem, 1.6vw, 1.35rem)/1.2 var(--business-heading); }
+.studio-service-path h3::before { content: ""; position: absolute; left: -.9rem; top: .1em; width: 1px; height: .95em; border-radius: 1px; background: var(--studio-sage); }
 .studio-service-path h3 a { text-decoration: none; }
 .studio-service-path h3 a:hover { text-decoration: underline; }
-.studio-service-path p { margin: 0; color: var(--studio-ink); font-size: .95rem; line-height: 1.45; }
+.studio-service-path p { margin: 0; color: var(--studio-on-forest); font-size: .95rem; line-height: 1.45; }
 .studio-service-path__link { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; margin-top: .5rem; font-size: .8rem; font-weight: 700; }
 .studio-service-path__link svg { flex: 0 0 18px; }
-.studio-services__seo { display: grid; grid-template-columns: 1fr 1.1fr auto; align-items: center; gap: 1.5rem 2.5rem; margin-top: 2rem; padding-top: 1.6rem; border-top: 1px solid color-mix(in srgb, var(--studio-forest) 25%, var(--studio-sage)); }
+.studio-services__seo { display: grid; grid-template-columns: 1fr 1.1fr auto; align-items: center; gap: 1.5rem 2.5rem; margin-top: 2rem; padding-top: 1.6rem; border-top: 1px solid color-mix(in srgb, var(--studio-paper) 35%, var(--studio-forest)); }
 .studio-services__seo h3 { margin: 0; font: 700 1.25rem/1.3 var(--business-heading); }
-.studio-services__seo p { max-width: 55ch; margin: 0; color: var(--studio-ink); font-size: .95rem; }
+.studio-services__seo p { max-width: 55ch; margin: 0; color: var(--studio-on-forest); font-size: .95rem; }
 .studio-services__seo a { display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; font-size: .85rem; font-weight: 700; }
 .studio-process { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); gap: clamp(3rem, 9vw, 8rem); padding-block: clamp(3.5rem, 7vw, 6rem); }
 .studio-process h2, .studio-resources h2, .studio-faq h2, .studio-contact h2 { margin: 0; font: 700 clamp(2.125rem, 4vw, 3.5rem)/1.08 var(--business-heading); letter-spacing: -.035em; text-wrap: balance; }
@@ -385,8 +375,6 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .business-site .article-filters__btn.is-active { background: var(--studio-forest); color: var(--studio-paper); }
 .business-site .business-page .business-service-list { border-top-color: var(--business-rule); }
 .business-site .business-page .business-service-list li { padding-block: 2rem; }
-@keyframes studio-work-arrive { from { transform: translateY(10px); } to { transform: translateY(0); } }
-@media (prefers-reduced-motion: no-preference) { .studio-work__figure { animation: studio-work-arrive .5s cubic-bezier(.16, 1, .3, 1) both; } }
 @media (min-width: 1600px) { .studio-opening { padding-top: 1.5rem; } .studio-opening__top { grid-template-columns: 1.72fr 1fr; } }
 @media (max-width: 1100px) {
   .studio-opening__top { grid-template-columns: 1.5fr 1fr; gap: 2rem; }
@@ -400,7 +388,6 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
   .studio-services__overview > h2 br { display: none; }
   .studio-services__seo { grid-template-columns: 1fr 1.2fr; gap: 1rem 2rem; }
   .studio-services__seo a { grid-column: 2; }
-  .studio-work__caption { width: min(31rem, 58%); }
 }
 @media (max-width: 850px) {
   .business-header { flex-wrap: nowrap; justify-content: space-between; gap: 1rem; padding-block: 1rem; min-height: 4.5rem; }
@@ -421,8 +408,6 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
   .studio-opening__intro > p { max-width: 60ch; font-size: 1.15rem; }
   .studio-opening__intro .studio-location { font-size: .95rem; }
   .studio-opening__action { margin-top: 1.5rem; }
-  .studio-work__figure { width: 85.2%; }
-  .studio-work__caption { width: min(32rem, 80%); margin-right: 0; margin-top: -1.5rem; }
   .studio-process, .studio-resources__inner, .studio-faq, .studio-contact .business-inquiry { grid-template-columns: 1fr; gap: 2.5rem; }
   .studio-process__intro { max-width: 38rem; }
   .studio-process__intro > p { max-width: 60ch; }
@@ -445,13 +430,6 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
   .studio-opening__action { display: grid; gap: .85rem; margin-top: 1.3rem; }
   .studio-opening__action .studio-review-button { width: 100%; justify-content: space-between; min-height: 3.5rem; font-size: 1.05rem; }
   .studio-opening__action > p { max-width: none; font-size: .8rem; }
-  .studio-work { padding-bottom: 1.75rem; }
-  .studio-work::before { top: 28%; }
-  .studio-work__figure { width: calc(100% - 2.5rem); }
-  .studio-work img { aspect-ratio: 1.6; object-position: center top; }
-  .studio-work__caption { width: calc(100% - 1rem); margin: -.65rem 0 0 auto; padding: .85rem 1rem; font-size: .75rem; }
-  .studio-work__caption strong { font-size: .85rem; }
-  .studio-work__caption a { min-height: 44px; }
   .studio-services { padding-block: 2.5rem; }
   .studio-services__overview { grid-template-columns: 1fr; gap: 1.75rem; }
   .studio-services h2 { font-size: 2.5rem; }
@@ -478,7 +456,9 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
   .business-footer__inner { padding-block: 2rem; }
   .business-footer__navigation { margin-top: 1rem; }
 }
-@media (prefers-reduced-motion: reduce) { .studio-work__figure { animation: none; transform: none; } }
 
 @media (min-width: 1101px) { .studio-services__overview > h2 { white-space: nowrap; } }
 .business-site .tool-primary { color: var(--studio-on-accent) !important; }
+
+.studio-services a:hover { color: var(--studio-paper); text-decoration-thickness: 2px; }
+.studio-services :focus-visible { outline-color: var(--studio-sage); }
