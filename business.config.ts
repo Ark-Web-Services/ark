@@ -40,7 +40,7 @@ export interface BusinessConfig {
     credit?: string;
     demo?: boolean;
   }[];
-  testimonials: { quote: string; name: string; detail?: string; image?: string }[];
+  testimonials: { quote: string; name: string; detail?: string; image?: string; publicationApproved?: boolean; imageApproved?: boolean }[];
   process: { title: string; description: string }[];
   faqs: { question: string; answer: string }[];
   inquiries: {
@@ -87,18 +87,23 @@ const businessConfig: BusinessConfig = {
     { id: "custom-website-development", title: "Custom development", description: "Build a tailored website feature or web application when an off-the-shelf setup does not fit.", details: ["Define the user need and technical scope before work begins.", "Build and review the agreed feature or application.", "Document the delivered work and handoff requirements."] },
   ],
   projects: [],
+  // Preserved legacy records. Set approval flags only after confirming permission.
   testimonials: [
     {
       quote: "Ark Web Services is the best web design service I've ever used. Not only was my website delivered on time, it was better than I was expecting. They were able to enhance my vision and bring my dream to a reality.",
       name: "Cedric P.",
       detail: "CEO, Presidential Consulting",
       image: "/assets/client/cedric-p.webp",
+      publicationApproved: false,
+      imageApproved: false,
     },
     {
       quote: "The team has exceeded our expectations, from their attention to detail to their competitive analysis. Their communication is excellent, with flexible scheduling and timely meetings. Their reliability and quality of work are highly recommendable.",
       name: "Dominic S.",
       detail: "CMO, Pick A Pro",
       image: "/assets/client/dominic-s.webp",
+      publicationApproved: false,
+      imageApproved: false,
     },
   ],
   process: [

@@ -9,11 +9,17 @@
   font-family: "Montserrat Alternates";
   src: url("/assets/client/fonts/MontserratAlternates-SemiBold.ttf") format("truetype");
   font-style: normal;
-  font-weight: 600 900;
+  font-weight: 600;
   font-display: swap;
 }
 
 :root { color-scheme: light; }
+.business-site {
+  --business-page-title-size: clamp(2.125rem, 4vw, 3.25rem);
+  --business-page-title-leading: 1.14;
+  --business-section-title-size: clamp(1.85rem, 3.5vw, 3rem);
+  --business-rule: color-mix(in srgb, var(--business-fg) 24%, var(--business-bg));
+}
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 6rem; background: var(--business-bg, #f7f7f6); }
 body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: var(--business-fg, #111111); font-family: var(--business-body, "DM Sans", sans-serif); line-height: 1.65; }
@@ -23,7 +29,7 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .business-site ::selection { color: var(--business-bg); background: var(--business-accent); }
 .business-skip { position: absolute; left: 1rem; top: -5rem; z-index: 10; padding: .6rem 1rem; background: var(--business-fg); color: var(--business-bg) !important; }
 .business-skip:focus { top: 1rem; }
-.business-header { min-height: 5.5rem; padding: 1.25rem clamp(1.25rem, 6vw, 6.5rem); display: flex; align-items: center; justify-content: space-between; gap: 2rem; border-bottom: 1px solid color-mix(in srgb, var(--business-fg), transparent 78%); }
+.business-header { min-height: 5.5rem; padding: 1.25rem max(clamp(1.25rem, 6vw, 6.5rem), calc((100% - 90rem) / 2 + clamp(1.25rem, 6vw, 6.5rem))); display: flex; align-items: center; justify-content: space-between; gap: 2rem; border-bottom: 1px solid color-mix(in srgb, var(--business-fg), transparent 78%); }
 .business-brand { font-family: var(--business-heading); font-size: 1.25rem; line-height: 1.1; text-decoration: none; }
 .business-brand img { max-height: 2.75rem; max-width: 12rem; object-fit: contain; }
 .business-header nav ul { display: flex; gap: clamp(.8rem, 2vw, 1.8rem); list-style: none; margin: 0; padding: 0; }
@@ -31,7 +37,7 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .business-header nav a[aria-current="page"] { text-decoration: underline; text-decoration-color: var(--business-accent); text-decoration-thickness: 1px; text-underline-offset: .45rem; }
 .business-header__contact { font-size: .85rem; text-decoration-thickness: 1px; white-space: nowrap; }
 .business-home { max-width: 90rem; margin: 0 auto; padding: 0 clamp(1.25rem, 6vw, 6.5rem); }
-.business-hero { min-height: min(47rem, calc(100svh - 5.5rem)); display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(3rem, 8vw, 9rem); padding: clamp(4rem, 10vw, 9rem) 0; }
+.business-hero { min-height: auto; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(3rem, 8vw, 9rem); padding: clamp(3.5rem, 7vw, 6rem) 0; }
 .business-hero__copy { max-width: 38rem; }
 .business-hero--text-only { grid-template-columns: 1fr; }
 .business-hero--text-only .business-hero__copy { max-width: 60rem; }
@@ -47,14 +53,14 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .business-button--secondary { background: transparent; color: var(--business-fg) !important; }
 .business-button--secondary:hover { background: var(--business-fg); color: var(--business-bg) !important; }
 .business-button:disabled { opacity: .65; cursor: wait; }
-.business-section { padding: clamp(4rem, 8vw, 7rem) 0; border-top: 1px solid color-mix(in srgb, var(--business-fg), transparent 78%); }
-.business-section h2 { max-width: 16ch; margin: 0 0 2.6rem; font: 500 clamp(2.3rem, 5vw, 4.1rem)/1.04 var(--business-heading); letter-spacing: -.025em; text-wrap: balance; }
-.business-section__heading { display: flex; justify-content: space-between; align-items: end; gap: 2rem; padding-bottom: .75rem; }
+.business-section { padding: clamp(3rem, 6vw, 5rem) 0; border-top: 1px solid color-mix(in srgb, var(--business-fg), transparent 78%); }
+.business-section h2 { max-width: 24ch; margin: 0 0 2rem; font: 400 var(--business-section-title-size)/1.15 var(--business-heading); letter-spacing: -.025em; text-wrap: balance; }
+.business-section__heading { display: flex; justify-content: space-between; align-items: end; gap: 2rem; padding-bottom: 1.25rem; }
 .business-section__heading h2 { margin-bottom: 2rem; }
 .business-text-link { white-space: nowrap; font-size: .9rem; }
 .business-service-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid color-mix(in srgb, var(--business-fg), transparent 70%); }
 .business-service-list li { display: grid; grid-template-columns: minmax(12rem, .7fr) 1fr; gap: 2rem; padding: 1.5rem 0; border-bottom: 1px solid color-mix(in srgb, var(--business-fg), transparent 78%); }
-.business-service-list h3, .business-process-list h3, .business-project-list h3 { margin: 0; font: 500 1.45rem/1.2 var(--business-heading); }
+.business-service-list h3, .business-process-list h3, .business-project-list h3 { margin: 0; font: 600 1.25rem/1.35 var(--business-heading); }
 .business-service-list p, .business-process-list p { max-width: 62ch; margin: 0; color: var(--business-muted); }
 .business-project-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.5rem, 4vw, 4rem); padding: 0; margin: 0; list-style: none; }
 .business-project-list li:nth-child(even) { padding-top: 5rem; }
@@ -66,10 +72,10 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .business-process-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
 .business-process-list li { padding-top: 1rem; border-top: 1px solid color-mix(in srgb, var(--business-fg), transparent 65%); }
 .business-process-list p { margin-top: .75rem; }
-.business-testimonials { background: color-mix(in srgb, var(--business-accent), transparent 94%); padding-inline: clamp(1.25rem, 6vw, 6.5rem); }
+.business-testimonials { background: color-mix(in srgb, var(--business-accent), transparent 94%); padding-inline: 0; }
 .business-quote-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem; }
 .business-quote-list blockquote { margin: 0; }
-.business-quote-list blockquote > p { max-width: 35ch; font: 500 clamp(1.5rem, 3vw, 2.4rem)/1.25 var(--business-heading); }
+.business-quote-list blockquote > p { max-width: 35ch; font: 400 clamp(1.125rem, 2vw, 1.5rem)/1.55 var(--business-body); }
 .business-quote-list footer { display: flex; gap: .6rem; flex-wrap: wrap; color: var(--business-muted); font-size: .9rem; }
 .business-quote-list cite { color: var(--business-fg); font-style: normal; }
 .business-faq dl { max-width: 58rem; margin: 0; border-top: 1px solid color-mix(in srgb, var(--business-fg), transparent 70%); }
@@ -139,8 +145,8 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
   .business-header nav ul { column-gap: .75rem; }
   .business-header__contact { order: 0; width: 100%; }
   .business-home { padding-inline: 1.25rem; }
-  .business-hero { padding-block: 4rem; }
-  .business-hero h1 { font-size: clamp(2.6rem, 10vw, 3.5rem); }
+  .business-hero { padding-block: 2.5rem; }
+  .business-hero h1 { font-size: clamp(2.125rem, 8.5vw, 3.5rem); }
   .business-hero__actions { align-items: stretch; flex-direction: column; }
   .business-hero__actions .business-button { width: 100%; }
   .business-section__heading { display: block; }
@@ -185,15 +191,16 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
   --color-info-bg: color-mix(in srgb, var(--business-accent) 6%, var(--business-bg));
 }
 .business-site .articles-page { padding-block: clamp(3rem, 6vw, 5rem); }
-.business-site .articles-page > .container { max-width: 80rem; margin-inline: auto; padding-inline: clamp(1.25rem, 6vw, 5rem); }
+.business-site .articles-page > .container { max-width: 90rem; margin-inline: auto; padding-inline: clamp(1.25rem, 6vw, 6.5rem); }
 .business-site .articles-page__header { max-width: none; margin-bottom: 2rem; text-align: left; }
-.business-site .articles-page__title { max-width: 24ch; margin: 0 0 1rem; font: 600 clamp(2.4rem, 5vw, 3.6rem)/1.12 var(--business-heading); letter-spacing: -.025em; }
+.business-site .articles-page__title { max-width: 24ch; margin: 0 0 1rem; font: 600 var(--business-page-title-size)/var(--business-page-title-leading) var(--business-heading); letter-spacing: -.025em; }
 .business-site .articles-page__subtitle { max-width: 65ch; margin-inline: 0; color: var(--business-muted); text-align: left; }
 .business-site .article-filters { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: .6rem; margin: 2rem 0; }
-.business-site .article-filters__btn { min-height: 44px; padding: .55rem .85rem; border: 1px solid var(--color-neutral-300); border-radius: 2px; background: transparent; color: var(--business-fg); font: inherit; font-size: .85rem; cursor: pointer; }
+.business-site .article-filters__btn { min-height: 44px; padding: .55rem .85rem; border: 1px solid var(--color-neutral-300); border-radius: 0; background: transparent; color: var(--business-fg); font: inherit; font-size: .85rem; cursor: pointer; }
 .business-site .article-filters__btn.is-active { background: var(--business-fg); color: var(--business-bg); }
 .business-site .article-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
-.business-site .card { border-radius: 0; box-shadow: none; }
+.business-site .card { border: 1px solid var(--business-rule); border-radius: 0; box-shadow: none; }
+.business-site .card:hover { box-shadow: none; transform: none; }
 .business-site .card__title { font-family: var(--business-heading); font-size: 1.35rem; line-height: 1.35; }
 .business-site .card__link { text-decoration: none; }
 .business-site .card__link:hover { text-decoration: underline; }
@@ -211,16 +218,21 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 
 /* Reading column and functional contents list for the business article layout. */
 .business-site .article { max-width: 52rem; margin-inline: auto; padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 3rem); }
-.business-site .article__title { max-width: 26ch; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.2; }
+.business-site .article__title { max-width: 26ch; font: 600 var(--business-page-title-size)/var(--business-page-title-leading) var(--business-heading); letter-spacing: -.025em; text-wrap: balance; }
 .business-site .article__subtitle { max-width: none; }
 .business-site .article__body { max-width: none; }
 .business-site .article__body h2, .business-site .article__body h3 { font-family: var(--business-heading); }
+.business-site .callout, .business-site .toc { border: 1px solid var(--business-rule); border-radius: 0; background: transparent; box-shadow: none; }
 .business-site .callout { display: block; }
+.business-site .callout__list, .business-site .toc__list { margin: 0; }
+.business-site .toc__list { padding: 0; }
+.business-site .toc__toggle, .business-site .toc__link { min-height: 44px; }
+.business-contact-options a, .business-form-setup p > a:not(.business-button) { display: inline-flex; align-items: center; min-height: 44px; }
 .business-site .article-review-cta { margin: 1rem 0 1.5rem; }
 
 /* Preserve readable page hierarchy after the shared CSS reset. */
 .business-site .business-page-heading { padding-block: clamp(2.75rem, 6vw, 4.5rem) 2rem; }
-.business-site .business-page-heading h1 { max-width: 24ch; margin: 0 0 1.25rem; font: 600 clamp(2.4rem, 5.5vw, 4rem)/1.12 var(--business-heading); letter-spacing: -.025em; text-wrap: balance; }
+.business-site .business-page-heading h1 { max-width: 24ch; margin: 0 0 1.25rem; font: 600 var(--business-page-title-size)/var(--business-page-title-leading) var(--business-heading); letter-spacing: -.025em; text-wrap: balance; }
 .business-site .business-page-heading p { max-width: 65ch; margin-block: .75rem 0; color: var(--business-muted); font-size: 1.1rem; }
 .business-site .business-page-heading .solution-page__eyebrow { font-size: .85rem; margin: 0 0 1rem; }
 .business-site .business-prose.business-section { padding-top: 1rem; border-top: 0; }
@@ -230,3 +242,7 @@ body.business-site { margin: 0; background: var(--business-bg, #f7f7f6); color: 
 .business-header nav{min-width:0}
 .business-header nav ul{flex-wrap:wrap}
 .business-header .business-brand{flex-shrink:0}
+
+@media (max-width: 600px) {
+  .business-site .articles-page > .container { padding-inline: 1.25rem; }
+}

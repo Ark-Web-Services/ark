@@ -1,43 +1,46 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-23T00:00:00Z",
+  "generatedAt": "2026-11-16T00:40:39Z",
   "title": "Design System: ARK Web Services",
   "extensions": {
     "colorMeta": {
       "paper": {
         "role": "neutral",
-        "displayName": "Soft white",
+        "displayName": "Soft paper",
         "canonical": "#f7f7f6"
       },
       "ink": {
         "role": "neutral",
-        "displayName": "Near black",
+        "displayName": "Near-black ink",
         "canonical": "#111111"
       },
       "accent": {
         "role": "primary",
-        "displayName": "Black",
+        "displayName": "Near-black accent",
         "canonical": "#111111"
       },
       "muted": {
         "role": "neutral",
         "displayName": "Readable gray",
         "canonical": "#555555"
-      },
-      "white": {
-        "role": "neutral",
-        "displayName": "White",
-        "canonical": "#ffffff"
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Montserrat Alternates",
-        "purpose": "Headings; self-hosted licensed font files from the Ark source."
+        "purpose": "Large homepage hero headings; licensed self-hosted 400 and 600 faces are present."
+      },
+      "headline": {
+        "displayName": "Montserrat Alternates",
+        "purpose": "Shared inner-page, article, and tool page H1 scale."
+      },
+      "title": {
+        "displayName": "Montserrat Alternates",
+        "purpose": "Regular-weight homepage section H2 scale."
       },
       "body": {
-        "displayName": "DM Sans",
-        "purpose": "Body copy and controls, with a sans-serif fallback."
+        "displayName": "DM Sans / sans-serif",
+        "purpose": "Configured business-site body stack; no self-hosted DM Sans font file is present."
       }
     },
     "shadows": [],
@@ -45,7 +48,7 @@
       {
         "name": "button-color",
         "value": "background-color .2s ease, color .2s ease",
-        "purpose": "Primary button hover transition."
+        "purpose": "Primary and secondary business button color transition."
       },
       {
         "name": "reduced-motion",
@@ -61,6 +64,10 @@
       {
         "name": "mobile-layout",
         "value": "600px"
+      },
+      {
+        "name": "article-grid-mobile",
+        "value": "650px"
       }
     ]
   },
@@ -69,47 +76,60 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Square wine button used for primary actions; hover clears the fill.",
+      "description": "Square, dark-filled business action that clears its fill on hover.",
       "html": "<button class=\"ds-button\" type=\"button\">Get a free site review</button>",
-      "css": ".ds-button { min-height: 3.25rem; padding: .75rem 1.3rem; border: 1px solid var(--business-accent, #111111); border-radius: 0; background: var(--business-accent, #111111); color: #fff; font: 600 .9rem 'DM Sans', sans-serif; transition: background-color .2s ease, color .2s ease; } .ds-button:hover { background: transparent; color: var(--business-fg, #111111); } .ds-button:focus-visible { outline: 3px solid var(--business-accent, #111111); outline-offset: 4px; border-radius: 2px; }"
+      "css": ".ds-button { min-height: 3.25rem; padding: .75rem 1.3rem; border: 1px solid var(--business-accent); border-radius: 0; background: var(--business-accent); color: var(--business-bg); font: 600 .9rem/1.4 var(--business-body); transition: background-color .2s ease, color .2s ease; } .ds-button:hover { background: transparent; color: var(--business-fg); } .ds-button:focus-visible { outline: 3px solid var(--business-accent); outline-offset: 4px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "description": "Transparent, outlined secondary action that inverts on hover.",
+      "html": "<a class=\"ds-button-secondary\" href=\"#contact\">Contact</a>",
+      "css": ".ds-button-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 3.25rem; padding: .75rem 1.3rem; border: 1px solid var(--business-accent); border-radius: 0; background: transparent; color: var(--business-fg); font: 600 .9rem/1.4 var(--business-body); text-decoration: none; transition: background-color .2s ease, color .2s ease; } .ds-button-secondary:hover { background: var(--business-fg); color: var(--business-bg); } .ds-button-secondary:focus-visible { outline: 3px solid var(--business-accent); outline-offset: 4px; }"
     },
     {
       "name": "Text Field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Square, transparent field with a mixed-foreground border and visible focus.",
+      "description": "Transparent square field with a mixed-foreground border and visible focus.",
       "html": "<label class=\"ds-field\">Email address<input type=\"email\" placeholder=\"you@example.com\"></label>",
-      "css": ".ds-field { display: grid; gap: .45rem; color: var(--business-fg, #111111); font: 600 .9rem 'DM Sans', sans-serif; } .ds-field input { width: 100%; min-height: 3rem; padding: .75rem; border: 1px solid color-mix(in srgb, var(--business-fg, #111111), transparent 55%); border-radius: 0; background: transparent; color: var(--business-fg, #111111); font: 400 1rem/1.65 'DM Sans', sans-serif; } .ds-field input:focus-visible { outline: 3px solid var(--business-accent, #111111); outline-offset: 4px; border-radius: 2px; } .ds-field input::placeholder { color: var(--business-muted, #555555); }"
+      "css": ".ds-field { display: grid; gap: .45rem; color: var(--business-fg); font: 600 .9rem/1.4 var(--business-body); } .ds-field input { width: 100%; min-height: 3rem; padding: .75rem; border: 1px solid color-mix(in srgb, var(--business-fg), transparent 55%); border-radius: 0; background: transparent; color: var(--business-fg); font: 400 1rem/1.65 var(--business-body); } .ds-field input:focus-visible { outline: 3px solid var(--business-accent); outline-offset: 4px; } .ds-field input::placeholder { color: var(--business-muted); opacity: 1; }"
     },
     {
       "name": "Current Navigation Link",
       "kind": "nav",
-      "description": "Text navigation with an accent underline for the current page.",
+      "description": "Text navigation with a fine underline for the current page.",
       "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\">Services</a></nav>",
-      "css": ".ds-nav a { color: var(--business-fg, #111111); font: 400 .88rem/1.65 'DM Sans', sans-serif; text-underline-offset: .2em; } .ds-nav a:hover { color: var(--business-accent, #111111); } .ds-nav a[aria-current='page'] { text-decoration-color: var(--business-accent, #111111); text-decoration-thickness: 1px; text-underline-offset: .45rem; } .ds-nav a:focus-visible { outline: 3px solid var(--business-accent, #111111); outline-offset: 4px; border-radius: 2px; }"
+      "css": ".ds-nav a { color: var(--business-fg); font: 400 .88rem/1.65 var(--business-body); text-underline-offset: .2em; } .ds-nav a:hover { color: var(--business-muted); } .ds-nav a[aria-current='page'] { text-decoration-color: var(--business-accent); text-decoration-thickness: 1px; text-underline-offset: .45rem; } .ds-nav a:focus-visible { outline: 3px solid var(--business-accent); outline-offset: 4px; }"
+    },
+    {
+      "name": "Article Contents Panel",
+      "kind": "custom",
+      "description": "Square, transparent contents panel with fine border and comfortable link targets.",
+      "html": "<nav class=\"ds-toc\" aria-label=\"On this page\"><strong>On this page</strong><a href=\"#overview\">Overview</a></nav>",
+      "css": ".ds-toc { display: grid; gap: .5rem; padding: 1rem; border: 1px solid var(--business-rule); border-radius: 0; background: transparent; box-shadow: none; color: var(--business-fg); font: 400 1rem/1.65 var(--business-body); } .ds-toc a { display: inline-flex; align-items: center; min-height: 44px; color: inherit; text-underline-offset: .2em; } .ds-toc a:focus-visible { outline: 3px solid var(--business-accent); outline-offset: 3px; }"
     }
   ],
   "narrative": {
-    "northStar": "Clear service information and direct contact",
-    "overview": "ARK Web Services uses a restrained black, white, and gray visual system. Headings use its self-hosted Montserrat Alternates font, while open space, readable copy, and fine rules organize the service pages. Client proof appears only when it is present in the source and approved. Contact uses a truthful email and phone fallback until inquiry delivery is configured.",
+    "overview": "ARK keeps its understated black, paper, and gray identity. Typography, open space, and fine rules organize service information. Montserrat Alternates supplies the heading character; the body stack is configured as DM Sans with a sans-serif fallback. The source includes licensed self-hosted Montserrat Alternates Regular and SemiBold files; it does not include a self-hosted DM Sans file.\n\nThe design serves direct service discovery and contact. Responsive navigation and content layouts keep the site usable on narrow screens, with visible keyboard focus and reduced-motion behavior.",
     "keyCharacteristics": [
-      "Soft white surfaces with near-black text and readable gray support copy.",
-      "Self-hosted Montserrat Alternates headings with DM Sans body text.",
-      "Open space, thin rules, and direct service links.",
-      "Responsive layouts and visible keyboard focus."
+      "Paper, near-black, and readable gray from the existing business configuration.",
+      "Montserrat Alternates headings and a configured DM Sans/sans-serif body stack.",
+      "Open spacing, fine rules, square controls, and centered article reading width.",
+      "Client quotes and portraits appear only with their respective approval flags."
     ],
     "rules": [],
     "dos": [
-      "Do keep values tied to business.config.ts.",
+      "Do keep business colors and fonts tied to the business configuration.",
       "Do preserve visible keyboard focus and reduced-motion behavior.",
-      "Do use direct email and phone contact while inquiry delivery is disabled.",
-      "Do use approved client quotes and supplied Ark assets only."
+      "Do use the configured direct email and phone fallback while inquiry delivery is disabled.",
+      "Do show client quotes and portraits only with their respective approvals."
     ],
     "donts": [
-      "Do not invent client proof, ratings, prices, credentials, or portfolio photography.",
-      "Do not promise rankings, traffic, leads, or delivery timelines without approved evidence.",
-      "Do not send names, email addresses, or message contents to analytics.",
-      "Do not enable inquiry success states until storage and message delivery are working."
+      "Don't invent client proof, ratings, prices, credentials, or portfolio photography.",
+      "Don't promise rankings, traffic, leads, or delivery timelines without approved evidence.",
+      "Don't send names, email addresses, or message contents to analytics.",
+      "Don't show inquiry success until storage and message delivery are working."
     ]
   }
 }

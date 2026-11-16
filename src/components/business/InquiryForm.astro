@@ -16,9 +16,9 @@ const fallbackHref = `mailto:${config.email}?subject=${encodeURIComponent("Free 
 ---
 <section class="business-section business-inquiry" id="inquiry" aria-labelledby="inquiry-title">
   <div class="business-inquiry__intro">
-    <h2 id="inquiry-title">Tell us about your website.</h2>
+    <h2 id="inquiry-title">Get a free site review.</h2>
     <p>Share the issue you want to solve and the work you have in mind.</p>
-    <p><a class="business-text-link" href={`mailto:${config.email}`}>Or email {config.email}</a></p>
+    {formReady && <p><a class="business-text-link" href={`mailto:${config.email}`}>Or email {config.email}</a></p>}
   </div>
   {formReady ? <form class="business-form" action={config.inquiries.endpoint} method="post" data-success-message={config.inquiries.successMessage}>
     <div class="business-form__grid">
@@ -50,7 +50,8 @@ const fallbackHref = `mailto:${config.email}?subject=${encodeURIComponent("Free 
     <button class="business-button" type="submit">Send inquiry</button>
     <p class="business-form__note">Your details are used only to respond to this inquiry.</p>
   </form> : <div class="business-form-setup">
-    <p><a href={fallbackHref}>Email ARK about your website</a> with the details you choose to share. We’ll reply by email.</p>
+    <p><a class="business-button" href={fallbackHref}>Email ARK about your website</a></p>
+    <p>Include the details you choose to share. We’ll reply by email.</p>
     {config.phone && <p>Or call <a href={`tel:${config.phone.replace(/[^+\d]/g, "")}`}>{config.phone}</a>.</p>}
   </div>}
 </section>

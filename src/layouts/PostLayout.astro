@@ -22,9 +22,11 @@ import type { CollectionEntry } from "astro:content";
 interface Props {
   post: CollectionEntry<"posts">;
   content: string; // Raw content for word count
+  headings?: { depth: number; slug: string; text: string }[];
 }
 
-const { post, content } = Astro.props;
+const { post, content, headings = [] } = Astro.props;
+const contentsHeadings = headings.filter(heading => heading.depth === 2 || heading.depth === 3);
 const { data } = post;
 
 const readTime = estimateReadingTime(content);
@@ -316,7 +318,7 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
     <p class="article-review-cta"><a class="business-button" href="/contact/">Get a free site review</a></p>
 
     <!-- Table of Contents (collapsible) -->
-    {data.toc && (
+    {data.toc && contentsHeadings.length > 0 && (
       <nav class="toc" aria-label="Table of contents">
         <details class="toc__wrapper" open>
           <summary class="toc__toggle">
@@ -326,7 +328,7 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
             </svg>
           </summary>
           <div class="toc__content" id="toc-list">
-            <!-- Populated by client-side JS from article headings -->
+            <ol class="toc__list">{contentsHeadings.map(heading => <li class={`toc__item toc__item--h${heading.depth}`}><a class="toc__link" href={`#${heading.slug}`}>{heading.text}</a></li>)}</ol>
           </div>
         </details>
       </nav>
@@ -364,6 +366,5 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
     )}
   </article>
 
-<script src="../scripts/article-toc.ts"></script>
 <ToolSuggestions context={data.title} />
 </BusinessLayout>

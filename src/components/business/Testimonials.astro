@@ -1,7 +1,8 @@
 ---
 const { testimonials = [], preview = false } = Astro.props;
+const published = testimonials.filter((item) => item.publicationApproved === true);
 ---
-{(testimonials.length > 0 || preview) && <section class="business-section business-testimonials" aria-labelledby="testimonials-title">
+{(published.length > 0 || preview) && <section class="business-section business-testimonials" aria-labelledby="testimonials-title">
   <h2 id="testimonials-title">What clients say</h2>
-  {testimonials.length > 0 ? <div class="business-quote-list">{testimonials.map((item) => <blockquote>{item.image && <img src={item.image} alt="" loading="lazy" />}<p>“{item.quote}”</p><footer><cite>{item.name}</cite>{item.detail && <span>{item.detail}</span>}</footer></blockquote>)}</div> : <p class="business-empty">Client feedback can be added here with permission from the people quoted.</p>}
+  {published.length > 0 ? <div class="business-quote-list">{published.map((item) => <blockquote>{item.image && item.imageApproved === true && <img src={item.image} alt="" loading="lazy" />}<p>“{item.quote}”</p><footer><cite>{item.name}</cite>{item.detail && <span>{item.detail}</span>}</footer></blockquote>)}</div> : <p class="business-empty">Client feedback can be added here with permission from the people quoted.</p>}
 </section>}

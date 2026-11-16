@@ -3,7 +3,7 @@
 .tool-breadcrumbs{display:flex;flex-wrap:wrap;gap:.45rem 1rem;font-size:.85rem;margin-bottom:2rem;color:var(--business-muted)}
 .tool-breadcrumbs a{min-height:2.75rem;display:inline-flex;align-items:center}
 .tool-page-heading{max-width:65rem;margin-bottom:2.5rem}
-.tool-page-heading h1{font:500 clamp(2rem,4.8vw,4rem)/1.12 var(--business-heading);letter-spacing:-.025em;margin:0 0 1rem;text-wrap:balance;overflow-wrap:anywhere}
+.tool-page-heading h1{font:600 var(--business-page-title-size)/var(--business-page-title-leading) var(--business-heading);letter-spacing:-.025em;margin:0 0 1rem;text-wrap:balance;overflow-wrap:anywhere}
 .tool-page-heading p{font-size:clamp(1.05rem,1.5vw,1.2rem);max-width:68ch;color:var(--business-muted);margin:.75rem 0}
 .tool-workspace{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(2rem,5vw,5rem);align-items:start;border-top:1px solid color-mix(in srgb,var(--business-fg),transparent 75%);padding-top:2rem}
 .tool-form,.tool-result{min-width:0}
@@ -66,5 +66,5 @@
 .tool-hub-close{padding-top:1.5rem;border-top:1px solid color-mix(in srgb,var(--business-fg),transparent 75%);max-width:70ch}
 .tools-page button:focus-visible,.tools-page input:focus-visible,.tools-page select:focus-visible,.tools-page textarea:focus-visible,.tools-page summary:focus-visible{outline:3px solid var(--business-accent);outline-offset:3px}
 @media(max-width:1000px){.tool-workspace{grid-template-columns:1fr;gap:2rem}.tool-directory li{grid-template-columns:1fr 1.2fr}.tool-directory .tool-open{grid-column:2}.tool-reference{gap:2rem}}
-@media(max-width:600px){.tool-fields,.tool-reference{grid-template-columns:1fr}.tool-directory li{grid-template-columns:1fr;gap:.3rem}.tool-directory .tool-open{grid-column:1}.tool-result{padding:1.25rem}.tool-field--wide{grid-column:auto}.tool-page-heading h1{font-size:2.05rem}.tool-actions{gap:.6rem}.tool-actions button{flex:1 1 auto}.tool-breadcrumbs{margin-bottom:1.25rem}.tool-related{display:grid;gap:.2rem}}
+@media(max-width:600px){.tool-fields,.tool-reference{grid-template-columns:1fr}.tool-directory li{grid-template-columns:1fr;gap:.3rem}.tool-directory .tool-open{grid-column:1}.tool-result{padding:1.25rem}.tool-field--wide{grid-column:auto}.tool-actions{gap:.6rem}.tool-actions button{flex:1 1 auto}.tool-breadcrumbs{margin-bottom:1.25rem}.tool-related{display:grid;gap:.2rem}}
 @media print{.business-header,.business-footer,.analytics-consent,.analytics-preferences,.tool-form,.tool-breadcrumbs,.tool-result-actions,.tool-next-step,.tool-related,.tool-status,.tool-copy-fallback{display:none!important}.business-site,.tool-result{background:white!important;color:black!important}.tool-workspace{display:block;border:0;padding:0}.tools-page{padding:0}.tool-result{padding:0;border:0}.tool-reference,.tool-faq{break-before:auto}.tool-result li{break-inside:avoid}}
