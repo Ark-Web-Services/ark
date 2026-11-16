@@ -1,31 +1,75 @@
 ---
 import businessConfig from "../../../business.config";
-import ServiceList from "./ServiceList.astro";
-import PortfolioGallery from "./PortfolioGallery.astro";
-import Testimonials from "./Testimonials.astro";
-import ProcessSteps from "./ProcessSteps.astro";
-import FaqList from "./FaqList.astro";
 import InquiryForm from "./InquiryForm.astro";
+import Testimonials from "./Testimonials.astro";
 
 const { config = businessConfig, preview = false } = Astro.props;
+const reviewHref = `mailto:${config.email}?subject=${encodeURIComponent("Free website review")}&body=${encodeURIComponent("Website URL:\nWhat would you like to improve?\n")}`;
+const servicePaths = [
+  { title: "Fix what’s broken.", name: "WordPress rescue", description: "Resolve errors, restore stability, and get your site working the way it should.", href: "/services/wordpress-rescue/" },
+  { title: "Rethink what’s there.", name: "Website redesign", description: "Refresh your design and content so it’s clearer, more useful, and better for your business.", href: "/services/website-redesign/" },
+  { title: "Build what’s missing.", name: "Custom development", description: "Add the features, integrations, and functionality your website needs.", href: "/services/custom-website-development/" },
+];
+const tools = [
+  { name: "Repair or Redesign Decision Guide", description: "Make a first pass at what to keep, improve, or review.", href: "/tools/repair-or-redesign/" },
+  { name: "WordPress Repair Helper", description: "Organize the symptoms and prepare a useful first-response checklist.", href: "/tools/wordpress-repair-helper/" },
+  { name: "Service Page Planner", description: "Turn your services and customer questions into a page outline.", href: "/tools/service-page-planner/" },
+];
 ---
-<div class="business-home">
-  <section class:list={["business-hero", !config.hero.image && "business-hero--text-only"]} aria-labelledby="business-title">
-    <div class="business-hero__copy">
-      {config.hero.eyebrow && <p class="business-hero__eyebrow">{config.hero.eyebrow}</p>}
-      <h1 id="business-title">{config.hero.heading}</h1>
-      <p>{config.hero.body}</p>
-      <div class="business-hero__actions">
-        <a class="business-button" href="/contact/">Get a free site review</a>
-        <a class="business-button business-button--secondary" href="/pricing/">See pricing &amp; services</a>
+
+<div class="business-home studio-home">
+  <section class="studio-opening studio-shell" aria-labelledby="business-title">
+    <div class="studio-opening__top">
+      <h1 id="business-title">Get your website<br />back on track.</h1>
+      <div class="studio-opening__intro">
+        <p>WordPress repairs, redesigns, custom development and one-time SEO foundations for service businesses.</p>
+        <p class="studio-location"><svg width="20" height="24" viewBox="0 0 20 24" fill="none" aria-hidden="true"><path d="M10 22s7-8.1 7-14a7 7 0 1 0-14 0c0 5.9 7 14 7 14Z" fill="currentColor"/><circle cx="10" cy="8" r="2.5" fill="var(--business-bg)"/></svg><span>Charlotte, NC · Working nationwide</span></p>
       </div>
     </div>
-    {config.hero.image && <figure class="business-hero__image"><img src={config.hero.image} alt={config.hero.imageAlt || ""} fetchpriority="high" /></figure>}
+    <div class="studio-opening__action">
+      <a class="business-button studio-review-button" href={reviewHref} aria-label="Get a free site review by email">Get a free site review<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-7 7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <p>Written scope and project price before work begins.</p>
+    </div>
   </section>
-  <ServiceList services={config.services} />
-  <PortfolioGallery projects={config.projects} preview={preview} />
-  <ProcessSteps steps={config.process} />
-  <Testimonials testimonials={config.testimonials} preview={preview} />
-  <FaqList faqs={config.faqs} />
-  <InquiryForm config={config} />
+
+  <section class="studio-work" id="work" aria-label="Related owned work">
+    <figure class="studio-work__figure">
+      <a class="studio-work__image-link" href="https://overflowsites.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit Overflow Sites, a related owned product (opens in a new tab)">
+        <img src="/assets/client/overflow-sites-owned-product.jpg" width="1920" height="1080" alt="The Overflow Sites agency partnership homepage, with its dark teal and lime design and illustrative website handoff graphic." fetchpriority="high" decoding="async" />
+      </a>
+      <figcaption class="studio-work__caption"><strong>Overflow Sites · related owned product</strong><span>Illustrative handoff graphic, not a client result.</span></figcaption>
+    </figure>
+  </section>
+
+  <section class="studio-services" id="services" aria-labelledby="services-title">
+    <div class="studio-shell">
+      <div class="studio-services__overview">
+        <h2 id="services-title">A clear<br />way forward.</h2>
+        {servicePaths.map((service) => <article class="studio-service-path"><h3><a href={service.href}>{service.title}</a></h3><p>{service.description}</p><a class="studio-service-path__link" href={service.href}>{service.name}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-7 7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a></article>)}
+      </div>
+      <div class="studio-services__seo"><h3>Put the search foundations in place.</h3><p>Clear service pages, relevant local signals, and technical basics, scoped as a one-time project.</p><a href="/services/seo-for-service-businesses/">Explore SEO foundations<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-7 7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+    </div>
+  </section>
+
+  <section class="studio-process studio-shell" aria-labelledby="process-title">
+    <div class="studio-process__intro"><h2 id="process-title">Good work starts with the right questions.</h2><p>Tell us what’s getting in the way. We’ll help define the work before you commit to a project.</p><a href="/process/">How working with ARK works<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-7 7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+    <ol class="studio-process__steps">{config.process.map((step, index) => <li><span class="studio-process__number" aria-hidden="true">{index + 1}</span><div><h3>{step.title}</h3><p>{step.description}</p></div></li>)}</ol>
+  </section>
+
+  <section class="studio-resources" aria-labelledby="resources-title">
+    <div class="studio-shell studio-resources__inner">
+      <div><h2 id="resources-title">Useful before<br />we speak.</h2><p>Free planning tools to help you organize the problem and prepare for a website conversation.</p><p class="studio-resources__note">Based on the information you enter. These tools do not scan or diagnose your website.</p><a class="studio-resources__all" href="/tools/">Explore all six tools<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-7 7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+      <ul class="studio-tool-list">{tools.map((tool) => <li><a href={tool.href}><span>{tool.name}</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-7 7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a><p>{tool.description}</p></li>)}</ul>
+    </div>
+    <div class="studio-shell studio-resource-links"><p>Prefer to read first?</p><a href="/articles/">Practical website guides</a><a href="/solutions/">Find your starting point</a></div>
+  </section>
+
+  <div class="studio-shell"><Testimonials testimonials={config.testimonials} preview={preview} /></div>
+
+  <section class="studio-faq studio-shell" aria-labelledby="faq-title">
+    <div><h2 id="faq-title">A few useful details.</h2><p>Clear scope. Straight answers. A practical next step.</p></div>
+    <div class="studio-faq__list">{config.faqs.map((faq) => <details><summary>{faq.question}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></summary><p>{faq.answer}</p></details>)}</div>
+  </section>
+
+  <div class="studio-contact"><div class="studio-shell"><InquiryForm config={config} /></div></div>
 </div>

@@ -1,0 +1,37 @@
+{
+  "fonts": [
+    {
+      "family": "Pliant",
+      "role": "display",
+      "style": "normal",
+      "weight": "700",
+      "format": "woff2",
+      "subset": "latin",
+      "file": "public/assets/client/fonts/Pliant-latin-700.woff2",
+      "license": "public/assets/client/fonts/Pliant-OFL.txt",
+      "sha256": "e975218178e2f1beb7efa2ecca0b621ed4863ab88d072000b452a409bb680494",
+      "source": "https://fonts.gstatic.com/s/pliant/v1/R70xjyYdl_WLNKb6P3NQcLsvUCb5T137p26TBozFA2e_cZt6pZN3VXs.woff2",
+      "source_css": "https://fonts.googleapis.com/css2?family=Pliant:wght@700&display=swap"
+    },
+    {
+      "family": "Manrope",
+      "role": "body",
+      "style": "normal",
+      "weight": "400 700",
+      "format": "woff2",
+      "subset": "latin",
+      "file": "public/assets/client/fonts/Manrope-latin-variable.woff2",
+      "license": "public/assets/client/fonts/Manrope-OFL.txt",
+      "sha256": "8c2def024c1bf31aacf3624ae3c4d701269b4ec3dc765c04830839f0d36b2d9e",
+      "source": "https://fonts.gstatic.com/s/manrope/v23/xn7gYHE41ni1AdIRggexSg.woff2",
+      "source_css": "https://fonts.googleapis.com/css2?family=Manrope:wght@400..700&display=swap"
+    }
+  ],
+  "license_provenance": {
+    "provider": "Google Fonts",
+    "licenses_source": "https://github.com/google/fonts/tree/main/ofl",
+    "retrieved": "2026-11-16",
+    "license": "SIL Open Font License 1.1; full upstream license texts are bundled beside the font files."
+  },
+  "css_recommendation": "@font-face {\n  font-family: 'Pliant';\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url('/assets/client/fonts/Pliant-latin-700.woff2') format('woff2');\n}\n@font-face {\n  font-family: 'Manrope';\n  font-style: normal;\n  font-weight: 400 700;\n  font-display: swap;\n  src: url('/assets/client/fonts/Manrope-latin-variable.woff2') format('woff2');\n}"
+}

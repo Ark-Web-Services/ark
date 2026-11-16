@@ -65,18 +65,17 @@ const businessConfig: BusinessConfig = {
   ga4Id: "G-5QLHJDZ3ZH",
   socials: [],
   brand: {
-    background: "#f7f7f6",
-    foreground: "#111111",
-    accent: "#111111",
-    muted: "#555555",
-    headingFont: "'Montserrat Alternates', sans-serif",
-    bodyFont: "'DM Sans', sans-serif",
+    background: "#F3EDE2",
+    foreground: "#163D36",
+    accent: "#BD4E2F",
+    muted: "#435B52",
+    headingFont: "'Pliant', sans-serif",
+    bodyFont: "'Manrope', sans-serif",
   },
   hero: {
-    eyebrow: "WordPress Rescue · Custom Development · SEO Foundations",
-    heading: "Your website should be bringing in customers — not collecting dust.",
+    heading: "Get your website back on track.",
     body:
-      "Based in Charlotte, North Carolina, we help service businesses fix underperforming websites with WordPress rescue, custom development, and clear SEO foundations.",
+      "Based in Charlotte, we help service businesses nationwide with WordPress rescue, website redesign, custom development, and SEO foundations.",
   },
   about:
     "ARK Web Services is a Charlotte-based web studio helping service businesses improve how their sites work and how clearly they explain their services. We scope each project around the problem at hand, with practical recommendations and straightforward project work.",

@@ -46,15 +46,13 @@ const schema = {
 const customHome = config.customHome === true || (config as BusinessConfig & { landingPageOnly?: boolean }).landingPageOnly === true;
 const contactHref = customHome ? config.customHomeContactHref || "/#contact" : "/contact/";
 const nav: [string, string][] = customHome
-  ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["Contact", contactHref]]
-  : [["Services", "/services/"], ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["How it works", "/process/"]];
+  ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ["Contact", contactHref]]
+  : [["Services", "/services/"], ["Work", "/#work"], ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ["About", "/about/"]];
 const footerNav: [string, string][] = customHome
-  ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["Contact", contactHref], ["Privacy", "/privacy/"]]
-  : [["Services", "/services/"], ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["How it works", "/process/"], ["Pricing", "/pricing/"], ["Contact", "/contact/"], ["Privacy", "/privacy/"]];
+  ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ["Contact", contactHref], ["Privacy", "/privacy/"]]
+  : [["Services", "/services/"], ["Work", "/#work"], ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["How it works", "/process/"], ["Pricing", "/pricing/"], ["Contact", "/contact/"], ["Privacy", "/privacy/"]];
 const validGa4Id = config.ga4Id && /^G-[A-Z0-9]+$/.test(config.ga4Id) ? config.ga4Id : undefined;
 
-if (businessTools.length) nav.splice(Math.max(0, nav.findIndex(([label]) => label === "Solutions") + 1), 0, ["Tools", "/tools/"]);
-if (businessTools.length) footerNav.splice(3, 0, ["Tools", "/tools/"]);
 const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
 ---
 
@@ -66,6 +64,8 @@ const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
+    <link rel="preload" href="/assets/client/fonts/Pliant-latin-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/client/fonts/Manrope-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content={ogType} />
@@ -83,10 +83,13 @@ const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
     <a class="business-skip" href="#main-content">Skip to content</a>
     <header class="business-header">
       <a class="business-brand" href="/" aria-label={`${config.name} home`}>
-        {config.logo ? <img src={config.logo} alt="" /> : <span>{config.name}</span>}
+        {config.name === "ARK Web Services" ? <><span class="business-brand__mark" aria-hidden="true">ARK</span><span class="business-brand__name" aria-hidden="true">Web Services</span></> : config.logo ? <img src={config.logo} alt="" /> : <span>{config.name}</span>}
       </a>
-      <nav aria-label="Main navigation"><ul>{nav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul></nav>
-      <a class="business-header__contact" href={contactHref}>{customHome ? "Start a conversation" : "Get a free site review"}</a>
+      <nav class="business-desktop-nav" aria-label="Main navigation"><ul>{nav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul></nav>
+      <details class="business-mobile-menu">
+        <summary>Menu <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></summary>
+        <nav aria-label="Mobile navigation"><ul>{footerNav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul></nav>
+      </details>
     </header>
     <main id="main-content"><slot /></main>
     <footer class="business-footer">
