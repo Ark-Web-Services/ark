@@ -1,59 +1,58 @@
 ---
 import businessConfig from "../../../business.config";
+import Arrow from "./Arrow.astro";
+import SectionHeading from "./SectionHeading.astro";
 
-const { config = businessConfig } = Astro.props;
+const { config = businessConfig, reviewHref } = Astro.props;
 const formReady = config.inquiries.enabled && Boolean(config.inquiries.turnstileSiteKey);
-const fallbackMessage = [
-  "Name:",
-  "Email address:",
-  "Business name:",
-  "Current website:",
-  "Service of interest:",
-  "Budget range:",
-  "Message:",
-].join("\n");
-const fallbackHref = `mailto:${config.email}?subject=${encodeURIComponent("Free website review")}&body=${encodeURIComponent(fallbackMessage)}`;
 ---
-<section class="business-section business-inquiry" id="inquiry" aria-labelledby="inquiry-title">
-  <div class="business-inquiry__intro">
-    <h2 id="inquiry-title">Get a free site review.</h2>
-    <p>Share the issue you want to solve and the work you have in mind.</p>
-    {formReady && <p><a class="business-text-link" href={`mailto:${config.email}`}>Or email {config.email}</a></p>}
-  </div>
-  {formReady ? <form class="business-form" action={config.inquiries.endpoint} method="post" data-success-message={config.inquiries.successMessage}>
-    <div class="business-form__grid">
-      <label>Your name<input name="name" autocomplete="name" required maxlength="120" /></label>
-      <label>Email address<input name="email" type="email" autocomplete="email" required maxlength="254" /></label>
-      <label>Phone <span>(optional)</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" /></label>
-      <label>Event date <span>(optional)</span><input name="eventDate" type="date" data-event-date /></label>
-      <label>Event location <span>(optional)</span><input name="location" autocomplete="address-level2" maxlength="160" /></label>
-      <label>Guest count <span>(optional)</span><input name="guestCount" inputmode="numeric" maxlength="20" /></label>
-      <label>Budget range <span>(optional)</span><input name="budget" maxlength="80" /></label>
-      <label>What kind of gathering are you planning?
-        <select name="service" required>
-          <option value="">Choose a service</option>
-          {config.services.map((service) => <option value={service.id}>{service.title}</option>)}
-          <option value="other">Other / not listed</option>
-        </select>
-      </label>
-      <label class="business-form__wide">Anything else we should know?<textarea name="message" rows="5" required maxlength="4000"></textarea></label>
+<section class="business-band business-band--ink" id="inquiry" aria-labelledby="inquiry-title">
+  <div class="business-shell business-inquiry">
+    <div class="business-inquiry__intro">
+      <SectionHeading id="inquiry-title" number="05" title="Start with your website" />
+      <p class="business-lead">Send us your website address and tell us what you’d like us to look at.</p>
+      {formReady && <p><a class="business-text-link" href={reviewHref || `mailto:${config.email}`}>{reviewHref ? "Or email a review request" : `Or email ${config.email}`}</a></p>}
     </div>
-    <label class="business-consent"><input name="consent" type="checkbox" value="yes" required /> <span>I agree to be contacted about this inquiry and have read the <a href="/privacy/">privacy notice</a>.</span></label>
-    <div class="business-trap" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off" /></label></div>
-    <input type="hidden" name="source" value="website-inquiry" />
-    <input type="hidden" name="utmSource" />
-    <input type="hidden" name="utmMedium" />
-    <input type="hidden" name="utmCampaign" />
-    <input type="hidden" name="idempotencyKey" />
-    <div class="cf-turnstile" data-sitekey={config.inquiries.turnstileSiteKey} data-action="inquiry"></div>
-    <p class="business-form__status" role="status" aria-live="polite"></p>
-    <button class="business-button" type="submit">Send inquiry</button>
-    <p class="business-form__note">Your details are used only to respond to this inquiry.</p>
-  </form> : <div class="business-form-setup">
-    <p><a class="business-button" href={fallbackHref}>Email ARK about your website</a></p>
-    <p>Include the details you choose to share. We’ll reply by email.</p>
-    {config.phone && <p>Or call <a href={`tel:${config.phone.replace(/[^+\d]/g, "")}`}>{config.phone}</a>.</p>}
-  </div>}
+    {formReady ? <form class="business-form" action={config.inquiries.endpoint} method="post" data-success-message={config.inquiries.successMessage}>
+      <div class="business-form__grid">
+        <label>Your name<input name="name" autocomplete="name" required maxlength="120" /></label>
+        <label>Email address<input name="email" type="email" autocomplete="email" required maxlength="254" /></label>
+        <label>Phone <span>(optional)</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" /></label>
+        <label>Event date <span>(optional)</span><input name="eventDate" type="date" data-event-date /></label>
+        <label>Event location <span>(optional)</span><input name="location" autocomplete="address-level2" maxlength="160" /></label>
+        <label>Guest count <span>(optional)</span><input name="guestCount" inputmode="numeric" maxlength="20" /></label>
+        <label>Budget range <span>(optional)</span><input name="budget" maxlength="80" /></label>
+        <label>What kind of gathering are you planning?
+          <select name="service" required>
+            <option value="">Choose a service</option>
+            {config.services.map((service) => <option value={service.id}>{service.title}</option>)}
+            <option value="other">Other / not listed</option>
+          </select>
+        </label>
+        <label class="business-form__wide">Anything else we should know?<textarea name="message" rows="5" required maxlength="4000"></textarea></label>
+      </div>
+      <label class="business-consent"><input name="consent" type="checkbox" value="yes" required /> <span>I agree to be contacted about this inquiry and have read the <a href="/privacy/">privacy notice</a>.</span></label>
+      <div class="business-trap" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off" /></label></div>
+      <input type="hidden" name="source" value="website-inquiry" />
+      <input type="hidden" name="utmSource" />
+      <input type="hidden" name="utmMedium" />
+      <input type="hidden" name="utmCampaign" />
+      <input type="hidden" name="idempotencyKey" />
+      <div class="cf-turnstile" data-sitekey={config.inquiries.turnstileSiteKey} data-action="inquiry"></div>
+      <p class="business-form__status" role="status" aria-live="polite"></p>
+      <button class="business-button" type="submit">Send inquiry</button>
+      <p class="business-form__note">Your details are used only to respond to this inquiry.</p>
+    </form> : <div class="business-inquiry__actions">
+      <div class="business-inquiry__review">
+        <a class="business-button" href="/contact/">Get a free site review <Arrow /></a>
+        {reviewHref && <a class="business-text-link" href={reviewHref}>Or email a review request</a>}
+      </div>
+      <div class="business-direct-contact">
+        <a href={`mailto:${config.email}`}>{config.email}</a>
+        {config.phone && <a href={`tel:${config.phone.replace(/[^+\d]/g, "")}`}>{config.phone}</a>}
+      </div>
+    </div>}
+  </div>
 </section>
 
 {formReady && <script is:inline define:vars={{ endpoint: config.inquiries.endpoint }}>

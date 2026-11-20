@@ -1,9 +1,12 @@
 ---
 import BusinessLayout from '../../layouts/BusinessLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Arrow from '../../components/business/Arrow.astro';
 import Tool from '../../components/business/BusinessTool.astro';
+import FaqList from '../../components/business/FaqList.astro';
+import SectionHeading from '../../components/business/SectionHeading.astro';
 import { businessTools } from '../../lib/business-tools';
 import business from '../../../business.config';
-import '../../styles/tools.css';
 
 export function getStaticPaths() {
   return [{ params: { slug: undefined }, props: { tool: undefined } }, ...businessTools.map(tool => ({ params: { slug: tool.id }, props: { tool } }))];
@@ -13,22 +16,67 @@ const isOverflow = business.website.includes('overflowsites.com');
 const title = tool?.title ?? (isOverflow ? 'Free tools for agency website projects' : 'Free website planning and WordPress tools');
 const description = tool?.description ?? (isOverflow ? 'Check starter-site scope, prepare white-label briefs, and work through agency project numbers with free, no-signup tools.' : 'Plan WordPress repairs, website redesigns, redirects, backups, service pages, and custom features with free, no-signup tools.');
 const consentKey = isOverflow ? 'overflow-sites:analytics-consent:v1' : 'arkwebservices:analytics-consent:v1';
+const crumbs = [{ name: 'Free tools', url: '/tools/' }, ...(tool ? [{ name: tool.title, url: `/tools/${tool.id}/` }] : [])];
 ---
 <BusinessLayout title={title} description={description}>
-  <div class="business-home tools-page">
-    <nav class="tool-breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a>{tool ? <a href="/tools/">Free tools</a> : <span aria-current="page">Free tools</span>}</nav>
-    <header class="tool-page-heading"><h1>{title}</h1><p>{tool?.intro ?? (isOverflow ? 'Make the next agency project easier to scope, hand off, and price. Each tool gives you a practical result you can keep. No signup required.' : 'Work through a website problem or prepare a clearer project brief. Choose a tool, enter what you know, and keep the result. No signup required.')}</p></header>
-    {tool ? <>
-      <Tool tool={tool} consentKey={consentKey} />
-      <div class="tool-reference">
-        <section><h2>How it works</h2><ol>{tool.method.map(item => <li>{item}</li>)}</ol><h3>A worked example</h3><p>{tool.example}</p></section>
-        <section><h2>What to keep in mind</h2><ul>{tool.limitations.map(item => <li>{item}</li>)}</ul>{tool.sources.length > 0 && <><h3>References</h3><ul>{tool.sources.map(source => <li><a href={source.url} rel="noopener noreferrer">{source.label}</a></li>)}</ul></>}</section>
+  <div class="business-inner-page tools-page">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="business-band business-page-heading">
+      <div class="business-shell">
+        <h1>{title}</h1>
+        <p class="business-lead">{tool?.intro ?? (isOverflow ? 'Make the next agency project easier to scope, hand off, and price. Each tool gives you a practical result you can keep. No signup required.' : 'Work through a website problem or prepare a clearer project brief. Choose a tool, enter what you know, and keep the result. No signup required.')}</p>
+        {!tool && <ul class="tool-directory" role="list">
+          {businessTools.map(item => <li>
+            <a href={`/tools/${item.id}/`} aria-labelledby={`tool-${item.id}`} aria-describedby={`description-${item.id}`}>
+              <h2 id={`tool-${item.id}`}>{item.title}</h2>
+              <p id={`description-${item.id}`}>{item.description}</p>
+              <span class="tool-open" aria-hidden="true">Open tool <Arrow /></span>
+            </a>
+          </li>)}
+        </ul>}
       </div>
-      <section class="tool-faq"><h2>Common questions</h2>{tool.faqs.map(faq => <details><summary>{faq.q}</summary><p>{faq.a}</p></details>)}</section>
-      <nav class="tool-related" aria-label="Related guidance"><a href="/tools/">Explore all tools</a>{tool.related.map(link => <a href={link.url}>{link.label}</a>)}</nav>
-    </> : <>
-      <ul class="tool-directory">{businessTools.map(item => <li><h2><a href={`/tools/${item.id}/`}>{item.title}</a></h2><p>{item.description}</p><a class="tool-open" href={`/tools/${item.id}/`}>Open tool<span class="sr-only">: {item.title}</span></a></li>)}</ul>
-      <section class="tool-hub-close"><h2>{isOverflow ? 'Have a project in mind?' : 'Ready to talk about your website?'}</h2><p>{isOverflow ? 'Keep your agency fee and client relationship. Discuss a scoped starter website and ask privately about partner hosting terms.' : 'Bring your questions or a result from one of these tools. We can review the next step with you.'}</p><a class="tool-primary" href={isOverflow ? '/#partner' : '/contact/'}>{isOverflow ? 'Discuss a partnership' : 'Get a free site review'}</a></section>
+    </header>
+
+    {tool && <>
+      <Tool tool={tool} consentKey={consentKey} />
+      <div class="business-band business-band--gray">
+        <div class="business-shell tool-reference">
+          <section>
+            <SectionHeading id="tool-method" number="02" title="How it works" />
+            <ol>{tool.method.map(item => <li>{item}</li>)}</ol>
+            <h3>A worked example</h3>
+            <p>{tool.example}</p>
+          </section>
+          <section>
+            <h2>What to keep in mind</h2>
+            <ul>{tool.limitations.map(item => <li>{item}</li>)}</ul>
+            {tool.sources.length > 0 && <>
+              <h3>References</h3>
+              <ul>{tool.sources.map(source => <li><a href={source.url} rel="noopener noreferrer">{source.label}</a></li>)}</ul>
+            </>}
+          </section>
+        </div>
+      </div>
+      <FaqList title="Common questions" number="03" faqs={tool.faqs.map(({ q, a }) => ({ question: q, answer: a }))} />
     </>}
+
+    <section class="business-band business-band--ink business-inner-close" aria-labelledby="tools-review">
+      <div class="business-shell">
+        <h2 id="tools-review">{isOverflow ? 'Have a project in mind?' : 'Ready to talk about your website?'}</h2>
+        <p class="business-lead">{isOverflow ? 'Keep your agency fee and client relationship. Discuss a scoped starter website and ask privately about partner hosting terms.' : 'Bring your questions or a result from one of these tools. We can review the next step with you.'}</p>
+        <a class="business-button" href={isOverflow ? '/#partner' : '/contact/'}>{isOverflow ? 'Discuss a partnership' : 'Get a free site review'} <Arrow /></a>
+        <div class="business-direct-contact">
+          {business.email && <a href={`mailto:${business.email}`}>{business.email}</a>}
+          {business.phone && <a href={`tel:${business.phone.replace(/[^+\d]/g, '')}`}>{business.phone}</a>}
+        </div>
+        {tool && <nav class="tool-related" aria-labelledby="tool-related-title">
+          <h3 id="tool-related-title">Related</h3>
+          <ul role="list">
+            <li><a class="business-text-link" href="/tools/">Explore all tools <Arrow /></a></li>
+            {tool.related.map(link => <li><a class="business-text-link" href={link.url}>{link.label} <Arrow /></a></li>)}
+          </ul>
+        </nav>}
+      </div>
+    </section>
   </div>
 </BusinessLayout>

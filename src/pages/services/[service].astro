@@ -1,4 +1,7 @@
 ---
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import Arrow from "@components/business/Arrow.astro";
+import SectionHeading from "@components/business/SectionHeading.astro";
 import ToolSuggestions from "@components/business/ToolSuggestions.astro";
 import BusinessLayout from "@layouts/BusinessLayout.astro";
 import business from "../../../business.config";
@@ -14,25 +17,37 @@ const contactHref = business.customHome || businessRouting.landingPageOnly ? bus
 ---
 
 <BusinessLayout title={service.title} description={service.description}>
-  <article class="business-home business-page service-page">
-    <header class="business-page-heading">
-      <h1>{service.title}</h1>
-      <p>{service.description}</p>
+  <article class="business-inner-page service-page">
+    <Breadcrumbs crumbs={[{ name: "Services", url: "/services/" }, { name: service.title, url: Astro.url.pathname }]} />
+    <header class="business-band business-page-heading">
+      <div class="business-shell">
+        <h1>{service.title}</h1>
+        <p class="business-lead">{service.description}</p>
+      </div>
     </header>
-    {service.details?.length > 0 && <section class="business-section business-prose">
-      <h2>Project scope</h2>
-      <ul>{service.details.map((detail) => <li>{detail}</li>)}</ul>
+
+    {service.details?.length > 0 && <section class="business-band business-band--gray" aria-labelledby="service-scope">
+      <div class="business-shell">
+        <SectionHeading id="service-scope" number="01" title="Project scope" />
+        <ol class="service-scope-list" role="list">
+          {service.details.map((detail, index) => <li><span class="business-label" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><p>{detail}</p></li>)}
+        </ol>
+        <a class="business-button business-button--secondary service-scope-review" href={contactHref}>Get a free site review <Arrow /></a>
+      </div>
     </section>}
-    <section class="business-section service-page__cta">
-      <h2>Discuss your project</h2>
-      <p>Share the current site and the specific work you have in mind. We can review the scope before deciding on next steps.</p>
-      <a class="business-button" href={contactHref}>Get a free site review</a>
-      <p><a href={`mailto:${business.email}?subject=${encodeURIComponent(service.title)}`}>Or email {business.email}</a></p>
+
+    <ToolSuggestions context={service.title} number={service.details?.length ? "02" : "01"} />
+
+    <section class="business-band business-band--ink business-inner-close" aria-labelledby="service-review">
+      <div class="business-shell">
+        <h2 id="service-review">Start with a site review</h2>
+        <p class="business-lead">Send us your website address and tell us what you’d like us to look at.</p>
+        <a class="business-button" href={contactHref}>Get a free site review <Arrow /></a>
+        <div class="business-direct-contact">
+          {business.email && <a href={`mailto:${business.email}?subject=${encodeURIComponent(service.title)}`}>{business.email}</a>}
+          {business.phone && <a href={`tel:${business.phone.replace(/[^+\d]/g, "")}`}>{business.phone}</a>}
+        </div>
+      </div>
     </section>
   </article>
-<ToolSuggestions context={service.title} />
 </BusinessLayout>
-
-<style>
-  .service-page__cta { max-width: 70ch; padding-bottom: 5rem; }
-</style>

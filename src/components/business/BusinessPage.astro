@@ -1,49 +1,125 @@
 ---
 import business from '../../../business.config';
+import Arrow from './Arrow.astro';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import SectionHeading from './SectionHeading.astro';
 import BusinessLayout from '../../layouts/BusinessLayout.astro';
 import ServiceList from './ServiceList.astro';
 import ProcessSteps from './ProcessSteps.astro';
 import Testimonials from './Testimonials.astro';
 const { slug } = Astro.props;
-const titles: Record<string, string> = { services: 'Services', about: `About ${business.name}`, contact: 'Get a free site review', privacy: 'Privacy', process: 'How it works', pricing: 'Project pricing' };
+const titles: Record<string, string> = { services: 'Services', about: `About ${business.name}`, contact: 'Request a free site review', privacy: 'Privacy', process: 'Process', pricing: 'Project pricing' };
 const summaries: Record<string, string> = {
   services: 'WordPress rescue, website redesign, custom development, and SEO foundations for service businesses.',
   about: 'A Charlotte-based web studio working with service businesses in Charlotte and across the United States.',
-  contact: 'Tell us what is not working on your site. We will review the details and reply by email.',
+  contact: 'Send your website address and tell us what you’d like us to look at. We’ll reply by email.',
   privacy: 'How this website handles analytics, site requests, and information you send by email.',
-  process: 'A straightforward project from the first site review to the final handoff.',
+  process: 'Before work begins, you’ll know what we’ll change and what it will cost.',
   pricing: 'Project scope and a clear price are shared before work begins.',
 };
 const title = titles[slug] ?? business.name;
+const reviewDraft = `mailto:${business.email}?subject=${encodeURIComponent("Free website review")}&body=${encodeURIComponent("Website URL:\r\nWhat isn’t working or what would you like to change?\r\nAny recent changes that may be relevant (optional):\r\n")}`;
 ---
 <BusinessLayout title={title} description={summaries[slug] ?? business.description}>
-  <div class="business-home business-page">
-    <header class="business-page-heading"><h1>{title}</h1><p>{summaries[slug]}</p></header>
-    {slug === 'services' && <><ServiceList services={business.services} /><ProcessSteps steps={business.process} /><p class="business-page-action"><a class="business-button" href="/contact/">Get a free site review</a></p></>}
-    {slug === 'process' && <><section class="business-section business-prose"><p>Every project starts with a clear picture of the issue and the result you need. We agree on the work and price before building begins.</p></section><ProcessSteps steps={business.process} /><p class="business-page-action"><a class="business-button" href="/contact/">Get a free site review</a></p></>}
-    {slug === 'pricing' && <section class="business-section business-prose"><p>ARK scopes and prices projects individually. The cost depends on the current site, the work required, and the agreed deliverables.</p><p>Before work begins, you receive a written scope and project price. The SEO foundations service is offered as a focused project; ongoing rankings and traffic are not guaranteed.</p><a class="business-button" href="/contact/">Get a free site review</a></section>}
-    {slug === 'about' && <><section class="business-section business-prose"><h2>Practical web work for service businesses</h2><p>{business.about || business.description}</p><p>ARK is based in Charlotte, North Carolina, and works with service businesses locally and nationwide.</p><p>We focus on the agreed scope, explain the work in plain language, and price each project before it begins.</p><a class="business-button" href="/contact/">Get a free site review</a></section><Testimonials testimonials={business.testimonials} /></>}
-    {slug === 'contact' && <section class="business-section business-prose business-contact-options" aria-label="Contact ARK Web Services">
-      <p>To request a site review, email your website address and a short note about what is not working. We will reply by email.</p>
-      <ul>
-        <li>Your current website address</li>
-        <li>What is not working or what you would like to improve</li>
-        <li>Any recent changes that may be relevant</li>
-      </ul>
-      <p><a href={`mailto:${business.email}?subject=${encodeURIComponent("Free website review")}`}>{business.email}</a></p>
-      {business.phone && <p><a href={`tel:${business.phone.replace(/[^+\d]/g, "")}`}>{business.phone}</a></p>}
+  <div class="business-inner-page">
+    <Breadcrumbs crumbs={[{ name: title, url: `/${slug}/` }]} />
+    <header class="business-band business-page-heading">
+      <div class="business-shell">
+        <h1>{title}</h1>
+        <p class="business-lead">{summaries[slug]}</p>
+      </div>
+    </header>
+
+    {slug === "services" && <ServiceList services={business.services} />}
+    {(slug === "services" || slug === "process") && (
+      <section class:list={["business-band", slug === "process" && "business-band--gray"]} aria-labelledby="project-steps-title">
+        <div class="business-shell">
+          <SectionHeading id="project-steps-title" number={slug === "services" ? "02" : "01"} title="Project steps" />
+          <ProcessSteps steps={business.process} />
+          <div class="business-process-note">
+            <p>Written scope and project price before work begins.</p>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {slug === "pricing" && <section class="business-band business-band--gray" aria-labelledby="pricing-details">
+      <div class="business-shell">
+        <SectionHeading id="pricing-details" number="01" title="How projects are priced" />
+        <div class="business-prose">
+          <p>ARK scopes and prices projects individually. The cost depends on the current site, the work required, and the agreed deliverables.</p>
+          <p>Before work begins, you receive a written scope and project price. The SEO foundations service is offered as a focused project; ongoing rankings and traffic are not guaranteed.</p>
+        </div>
+      </div>
     </section>}
-    {slug === 'privacy' && <article class="business-section business-prose">
-      <p>This page describes the information processed when you visit this website or contact ARK Web Services.</p>
-      <h2>Website requests</h2><p>The site is hosted on Cloudflare. The hosting service may process connection details, such as an IP address, browser information, and request time, to deliver and protect the site. ARK does not currently collect inquiries through a website form.</p>
-      <h2>Google Analytics</h2>{business.ga4Id ? <><p>Google Analytics 4 is used to understand visits to this website and count whether visitors use the email, phone, or contact links. It is off unless you choose “Allow analytics” in the site notice. If you reject analytics, the Google Analytics script is not loaded. If allowed, Google may receive technical visit information and use cookies under its own terms. The measurement events contain the page path and type of link used, not the contents of a message, your name, or your email address. Your choice is saved in this browser’s local storage. You can change it from the footer.</p><a class="analytics-settings-button" href="#analytics-preferences">Change analytics choice</a></> : <p>Google Analytics is not currently enabled on this website.</p>}
-      <h2>Email and phone contact</h2><p>If you email or call ARK, the information you share is handled through the email or phone services you use and our communication with you. Please do not send sensitive personal information.</p>
-      <h2>Questions</h2><p>Contact <a href={`mailto:${business.email}`}>{business.email}</a> with questions about this notice or to ask about information you have sent us.</p>
-    </article>}
+
+    {slug === "about" && <>
+      <section class="business-band" aria-labelledby="about-details">
+        <div class="business-shell">
+          <SectionHeading id="about-details" number="01" title="Practical web work for service businesses" />
+          <div class="business-prose">
+            <p>{business.about || business.description}</p>
+            <p>ARK is based in Charlotte, North Carolina, and works with service businesses locally and nationwide.</p>
+            <p>We focus on the agreed scope, explain the work in plain language, and price each project before it begins.</p>
+          </div>
+        </div>
+      </section>
+      <Testimonials testimonials={business.testimonials} />
+    </>}
+
+    {slug === "privacy" && <>
+      <section class="business-band business-band--gray" aria-labelledby="privacy-requests">
+        <div class="business-shell">
+          <SectionHeading id="privacy-requests" number="01" title="Website requests" />
+          <div class="business-prose">
+            <p>This page describes the information processed when you visit this website or contact ARK Web Services.</p>
+            <p>The site is hosted on Cloudflare. The hosting service may process connection details, such as an IP address, browser information, and request time, to deliver and protect the site. ARK does not currently collect inquiries through a website form.</p>
+          </div>
+        </div>
+      </section>
+      <section class="business-band" aria-labelledby="privacy-analytics">
+        <div class="business-shell">
+          <SectionHeading id="privacy-analytics" number="02" title="Google Analytics" />
+          <div class="business-prose">
+            {business.ga4Id ? <>
+              <p>Google Analytics 4 is used to understand visits to this website and count whether visitors use the email, phone, or contact links. It is off unless you choose “Allow” in the analytics notice. If you reject analytics, the Google Analytics script is not loaded. If allowed, Google may receive technical visit information and use cookies under its own terms. The measurement events contain the page path and type of link used, not the contents of a message, your name, or your email address. Your choice is saved in this browser’s local storage. You can change it from the footer.</p>
+              <a class="analytics-settings-button" href="#analytics-preferences">Change analytics choice</a>
+            </> : <p>Google Analytics is not currently enabled on this website.</p>}
+          </div>
+        </div>
+      </section>
+      <section class="business-band business-band--gray" aria-labelledby="privacy-contact">
+        <div class="business-shell">
+          <SectionHeading id="privacy-contact" number="03" title="Email and phone contact" />
+          <div class="business-prose">
+            <p>If you email or call ARK, the information you share is handled through the email or phone services you use and our communication with you. Please do not send sensitive personal information.</p>
+          </div>
+        </div>
+      </section>
+      <section class="business-band" aria-labelledby="privacy-questions">
+        <div class="business-shell">
+          <SectionHeading id="privacy-questions" number="04" title="Questions" />
+          <div class="business-prose">
+            <p>Contact <a href={`mailto:${business.email}`}>{business.email}</a> with questions about this notice or to ask about information you have sent us.</p>
+          </div>
+        </div>
+      </section>
+    </>}
+
+    <section class="business-band business-band--ink business-inner-close" aria-labelledby="page-review">
+      <div class="business-shell">
+        <h2 id="page-review">{slug === "contact" ? "Email or call ARK" : "Start with your website"}</h2>
+        <p class="business-lead" id={slug === "contact" ? "review-email-note" : undefined}>
+          {slug === "contact" ? "This button opens your email app with prompts for your review request." : "Send us your website address and tell us what you’d like us to look at."}
+        </p>
+        <a class="business-button" href={slug === "contact" ? reviewDraft : "/contact/"} aria-describedby={slug === "contact" ? "review-email-note" : undefined}>
+          {slug === "contact" ? "Open email draft" : "Get a free site review"} <Arrow />
+        </a>
+        <div class="business-direct-contact">
+          {business.email && <a href={`mailto:${business.email}`}>{business.email}</a>}
+          {business.phone && <a href={`tel:${business.phone.replace(/[^+\d]/g, "")}`}>{business.phone}</a>}
+        </div>
+      </div>
+    </section>
   </div>
 </BusinessLayout>
-<style>
-  .business-prose { max-width: 70ch; }
-  .business-prose h2 { margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.7rem; max-width: none; }
-  .business-page-action { padding: 0 0 5rem; }
-</style>

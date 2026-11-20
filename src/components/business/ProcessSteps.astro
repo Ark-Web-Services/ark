@@ -1,7 +1,22 @@
 ---
+import type { BusinessConfig } from "../../../business.config";
+
+interface Props {
+  steps?: BusinessConfig["process"];
+}
+
 const { steps = [] } = Astro.props;
 ---
-{steps.length > 0 && <section class="business-section" aria-labelledby="process-title">
-  <h2 id="process-title">A clear path from first review to launch</h2>
-  <ol class="business-process-list">{steps.map((step) => <li><h3>{step.title}</h3><p>{step.description}</p></li>)}</ol>
-</section>}
+{steps.length > 0 && (
+  <ol class="business-process-list" role="list">
+    {steps.map((step, index) => (
+      <li>
+        <span class="business-process-list__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <div>
+          <h3>{step.title}</h3>
+          <p>{step.description}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+)}

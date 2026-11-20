@@ -10,27 +10,27 @@ const configuredGa4Id = /^G-[A-Z0-9]{6,}$/i.test(ga4Id) ? ga4Id : "";
 <section
   class="analytics-preferences"
   id="analytics-preferences"
-  aria-label="Privacy and analytics choices"
+  aria-labelledby="analytics-preferences-title"
+  aria-describedby="analytics-preferences-status"
   hidden
 >
   <div class="analytics-preferences__copy">
-    <h2 tabindex="-1">Privacy &amp; cookies</h2>
-    <p>
-      Allow Google Analytics to measure visits using page paths and fixed contact-link labels.
-      Names, email addresses, and message contents are never sent to analytics. You can change this choice from the footer.
-    </p>
-    <p><a href="/privacy/">Read the privacy notice.</a></p>
-    <p class="analytics-preferences__status" data-analytics-status aria-live="polite"></p>
+    <div>
+      <h2 id="analytics-preferences-title" tabindex="-1">Analytics</h2>
+      <p id="analytics-preferences-status" data-analytics-status aria-live="polite">Off by default.</p>
+    </div>
+    <a href="/privacy/">Privacy policy</a>
   </div>
   <div class="analytics-preferences__actions">
-    <button type="button" data-analytics-allow>Allow analytics</button>
-    <button type="button" data-analytics-decline>Decline analytics</button>
+    <button type="button" data-analytics-allow>Allow</button>
+    <button type="button" data-analytics-decline>Decline</button>
   </div>
 </section>
 
 <script is:inline define:vars={{ ga4Id: configuredGa4Id }}>
   (() => {
     const consentKey = "arkwebservices:analytics-consent:v1";
+    const settingsHash = "#analytics-preferences";
     const panel = document.getElementById("analytics-preferences");
     const status = panel?.querySelector("[data-analytics-status]");
     const allowButton = panel?.querySelector("[data-analytics-allow]");
@@ -39,13 +39,15 @@ const configuredGa4Id = /^G-[A-Z0-9]{6,}$/i.test(ga4Id) ? ga4Id : "";
 
     let configured = false;
     let consent = "";
+    let preferencesTrigger = null;
+    const { history, location } = window;
 
     const safePageUrl = (value) => {
       try {
-        const url = new URL(value, window.location.origin);
+        const url = new URL(value, location.origin);
         return `${url.origin}${url.pathname}`;
       } catch {
-        return window.location.origin + window.location.pathname;
+        return location.origin + location.pathname;
       }
     };
 
@@ -69,6 +71,9 @@ const configuredGa4Id = /^G-[A-Z0-9]{6,}$/i.test(ga4Id) ? ga4Id : "";
       if (consent === "granted") enableAnalytics();
       else disableAnalytics();
       panel.hidden = true;
+      if (location.hash === settingsHash) history.replaceState(history.state, "", location.pathname + location.search);
+      preferencesTrigger?.focus();
+      preferencesTrigger = null;
     };
 
     const enableAnalytics = () => {
@@ -83,7 +88,7 @@ const configuredGa4Id = /^G-[A-Z0-9]{6,}$/i.test(ga4Id) ? ga4Id : "";
       window.gtag("js", new Date());
       window.gtag("config", ga4Id, {
         send_page_view: true,
-        page_location: safePageUrl(window.location.href),
+        page_location: safePageUrl(location.href),
         page_referrer: document.referrer ? safePageUrl(document.referrer) : "",
       });
 
@@ -101,31 +106,34 @@ const configuredGa4Id = /^G-[A-Z0-9]{6,}$/i.test(ga4Id) ? ga4Id : "";
 
     const showPreferences = (focus = false) => {
       const current = consent || storedConsent();
-      status.textContent = current === "granted"
-        ? "Analytics are on. You can turn them off here."
-        : current === "denied"
-          ? "Analytics are off. You can allow them here."
-          : "Analytics are off until you choose to allow them.";
-      allowButton.textContent = current === "granted" ? "Keep analytics on" : "Allow analytics";
-      declineButton.textContent = current === "denied" ? "Keep analytics off" : "Decline analytics";
+      status.textContent = current === "granted" ? "Tracking is on."
+        : current === "denied" ? "Tracking is off." : "Off by default.";
       panel.hidden = false;
-      if (focus) panel.querySelector("h2")?.focus();
+      if (focus) panel.querySelector("h2")?.focus({ preventScroll: true });
     };
+
+    panel.closest(".business-site")?.addEventListener("focusin", ({ target }) => {
+      if (panel.hidden || !(target instanceof HTMLElement) || panel.contains(target)) return;
+      const control = target.getBoundingClientRect();
+      const notice = panel.getBoundingClientRect();
+      if (control.bottom <= notice.top || control.top >= notice.bottom ||
+          control.right <= notice.left || control.left >= notice.right) return;
+      window.scrollBy({ top: control.bottom - notice.top + 8, behavior: "instant" });
+    });
 
     allowButton.addEventListener("click", () => saveConsent("granted"));
     declineButton.addEventListener("click", () => saveConsent("denied"));
     window.addEventListener("hashchange", () => {
-      if (window.location.hash === "#analytics-preferences") showPreferences(true);
+      if (location.hash === settingsHash) showPreferences(true);
     });
     document.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
-      const link = target.closest('a[href="#analytics-preferences"]');
+      const link = target.closest(`a[href="${settingsHash}"]`);
       if (!link) return;
       event.preventDefault();
-      if (window.location.hash !== "#analytics-preferences") {
-        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#analytics-preferences`);
-      }
+      preferencesTrigger = link;
+      if (location.hash !== settingsHash) history.replaceState(null, "", location.pathname + location.search + settingsHash);
       showPreferences(true);
     });
 
@@ -134,51 +142,108 @@ const configuredGa4Id = /^G-[A-Z0-9]{6,}$/i.test(ga4Id) ? ga4Id : "";
     else if (consent === "denied") disableAnalytics();
     else showPreferences();
 
-    if (window.location.hash === "#analytics-preferences") showPreferences(true);
+    if (location.hash === settingsHash) showPreferences(true);
   })();
 </script>
 
 <style>
   .analytics-preferences[hidden] { display: none; }
+
   .analytics-preferences {
+    --analytics-radius: var(--business-radius, 4px);
     position: fixed;
-    z-index: 10000;
-    inset: auto 1rem 1rem;
+    z-index: 6;
+    inset: auto 16px max(8px, env(safe-area-inset-bottom));
+    width: min(43rem, calc(100% - 32px));
+    max-height: calc(100dvh - 16px);
+    margin-inline: auto;
+    padding: 8px 16px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 24px;
+    overflow: auto;
+    color: var(--business-ink, #0d1117);
+    background: var(--business-white, #ffffff);
+    border: 1px solid var(--business-control, #677382);
+    border-radius: var(--analytics-radius);
+    font-family: var(--business-body, var(--font-family-sans, sans-serif));
+    font-size: var(--business-type-small, 1rem);
+    line-height: 1.25;
+  }
+
+  .analytics-preferences__copy {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 1.25rem;
-    width: min(920px, calc(100% - 2rem));
-    margin-inline: auto;
-    padding: 1.1rem 1.25rem;
-    color: #111;
-    background: #fff;
-    border: 1px solid #111;
-    box-shadow: 0 14px 36px rgb(0 0 0 / 16%);
-    font: 400 .9rem/1.45 "DM Sans", sans-serif;
+    gap: 0 16px;
   }
-  .analytics-preferences__copy { max-width: 62ch; }
-  .analytics-preferences h2 { margin: 0 0 .3rem; color: #111; font: 600 1rem/1.25 "Montserrat Alternates", sans-serif; letter-spacing: -.02em; }
-  .analytics-preferences p { margin: 0; color: #555; }
-  .analytics-preferences a { color: #111; text-underline-offset: .2em; }
-  .analytics-preferences__status { margin-top: .3rem !important; color: #333 !important; font-size: .78rem; }
-  .analytics-preferences__actions { display: flex; flex-shrink: 0; gap: .6rem; }
+
+  .analytics-preferences h2 {
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .analytics-preferences p {
+    margin: 0;
+    color: var(--business-muted, #47515e);
+  }
+
+  .analytics-preferences__copy a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: inherit;
+    font-size: var(--business-type-label, .875rem);
+  }
+
+  .analytics-preferences__copy a:is(:hover, :active) {
+    color: inherit;
+    text-decoration-thickness: 2px;
+  }
+
+  .analytics-preferences__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
   .analytics-preferences button {
-    min-height: 42px;
-    padding: .55rem .8rem;
-    color: #111;
-    background: #fff;
-    border: 1px solid #111;
-    border-radius: 2px;
+    min-height: 44px;
+    padding: 8px 16px;
+    color: var(--business-ink, #0d1117);
+    background: var(--business-white, #ffffff);
+    border: 1px solid var(--business-control, #677382);
+    border-radius: var(--analytics-radius);
     cursor: pointer;
-    font: 700 .78rem/1.2 "DM Sans", sans-serif;
+    font: inherit;
+    font-weight: 600;
+    transition: background-color 150ms ease;
   }
-  .analytics-preferences button:first-child { color: #fff; background: #111; border-color: #111; }
-  .analytics-preferences button:hover { filter: brightness(1.08); }
-  .analytics-preferences button:focus-visible, .analytics-preferences h2:focus-visible { outline: 3px solid #555; outline-offset: 3px; }
-  .analytics-preferences h2 { border-radius: 1px; }
-  @media (max-width: 700px) {
-    .analytics-preferences { align-items: stretch; flex-direction: column; gap: .85rem; padding: 1rem; }
-    .analytics-preferences__actions { display: grid; grid-template-columns: 1fr 1fr; }
+
+  .analytics-preferences :is(a, button, h2):focus-visible {
+    outline: 3px solid var(--business-accent, #ff5a1f);
+    outline-offset: 3px;
+  }
+
+  .analytics-preferences button:hover { background: var(--business-gray, #eef0f3); }
+  .analytics-preferences button:active { background: var(--business-rule, #b9c1cb); }
+
+  @media (max-width: 40rem) {
+    .analytics-preferences {
+      inset: auto 0 0;
+      width: 100%;
+      max-height: 40dvh;
+      padding: 8px 16px max(8px, env(safe-area-inset-bottom));
+      border-radius: 0;
+    }
+  }
+
+  @media (max-width: 24rem) {
+    .analytics-preferences { grid-template-columns: 1fr; }
   }
 </style>

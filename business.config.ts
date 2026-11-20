@@ -30,7 +30,15 @@ export interface BusinessConfig {
   };
   hero: { eyebrow?: string; heading: string; body: string; image?: string; imageAlt?: string };
   about?: string;
-  services: { id: string; title: string; description: string; details?: string[] }[];
+  services: {
+    id: string;
+    title: string;
+    description: string;
+    details?: string[];
+    symptom?: string;
+    summary?: string;
+    linkLabel?: string;
+  }[];
   projects: {
     id: string;
     title: string;
@@ -65,25 +73,57 @@ const businessConfig: BusinessConfig = {
   ga4Id: "G-5QLHJDZ3ZH",
   socials: [],
   brand: {
-    background: "#F3EDE2",
-    foreground: "#163D36",
-    accent: "#BD4E2F",
-    muted: "#435B52",
-    headingFont: "'Pliant', sans-serif",
-    bodyFont: "'Manrope', sans-serif",
+    background: "#ffffff",
+    foreground: "#0d1117",
+    accent: "#ff5a1f",
+    muted: "#47515e",
+    headingFont: "'Geist', sans-serif",
+    bodyFont: "'Geist', sans-serif",
   },
   hero: {
     heading: "Get your website back on track.",
     body:
-      "Based in Charlotte, we help service businesses nationwide with WordPress rescue, website redesign, custom development, and SEO foundations.",
+      "ARK repairs WordPress sites, redesigns websites that are hard to use, builds custom features, and takes on one-time SEO projects.",
   },
   about:
     "ARK Web Services is a Charlotte-based web studio helping service businesses improve how their sites work and how clearly they explain their services. We scope each project around the problem at hand, with practical recommendations and straightforward project work.",
   services: [
-    { id: "wordpress-rescue", title: "WordPress rescue", description: "Fix slow pages, broken layouts, and site issues that get in the way of using your website.", details: ["Review the current site and agree on the specific issues to address.", "Repair and refine the agreed WordPress pages and functionality.", "Walk through the completed changes and next steps."] },
-    { id: "website-redesign", title: "Website redesign", description: "Rework an outdated or unclear website around your services, customers, and next steps.", details: ["Clarify the audience, services, and actions each page should support.", "Restructure and redesign the agreed pages.", "Prepare the site for launch with the agreed content and technical setup."] },
-    { id: "seo-for-service-businesses", title: "SEO foundations", description: "Set up clear service-page structure and local search signals as a focused project.", details: ["Map priority services and locations to relevant pages.", "Improve page titles, headings, internal links, and technical basics.", "Provide a practical handoff for maintaining the site after the project."] },
-    { id: "custom-website-development", title: "Custom development", description: "Build a tailored website feature or web application when an off-the-shelf setup does not fit.", details: ["Define the user need and technical scope before work begins.", "Build and review the agreed feature or application.", "Document the delivered work and handoff requirements."] },
+    {
+      id: "wordpress-rescue",
+      title: "WordPress rescue",
+      description: "Fix slow pages, broken layouts, and site issues that get in the way of using your website.",
+      symptom: "WordPress errors or broken pages",
+      summary: "Your WordPress site shows errors or pages no longer display correctly.",
+      linkLabel: "See WordPress rescue",
+      details: ["Review the current site and agree on the specific issues to address.", "Repair and refine the agreed WordPress pages and functionality.", "Walk through the completed changes and next steps."],
+    },
+    {
+      id: "website-redesign",
+      title: "Website redesign",
+      description: "Rework an outdated or unclear website around your services, customers, and next steps.",
+      symptom: "Looks dated or customers can't find things",
+      summary: "Customers have trouble finding what you offer or how to contact you.",
+      linkLabel: "See website redesign",
+      details: ["Clarify the audience, services, and actions each page should support.", "Restructure and redesign the agreed pages.", "Prepare the site for launch with the agreed content and technical setup."],
+    },
+    {
+      id: "custom-website-development",
+      title: "Custom development",
+      description: "Build a tailored website feature or web application when an off-the-shelf setup does not fit.",
+      symptom: "Needs a feature or integration",
+      summary: "Your site needs a feature or integration that a theme or plugin can’t provide.",
+      linkLabel: "See custom development",
+      details: ["Define the user need and technical scope before work begins.", "Build and review the agreed feature or application.", "Document the delivered work and handoff requirements."],
+    },
+    {
+      id: "seo-for-service-businesses",
+      title: "SEO foundations",
+      description: "Set up clear service-page structure and local search signals as a focused project.",
+      symptom: "Customers can't find us on Google",
+      summary: "A one-time project for sites without clear pages for the services and locations they cover.",
+      linkLabel: "See SEO foundations",
+      details: ["Map priority services and locations to relevant pages.", "Improve page titles, headings, internal links, and technical basics.", "Provide a practical handoff for maintaining the site after the project."],
+    },
   ],
   projects: [],
   // Preserved legacy records. Set approval flags only after confirming permission.
@@ -106,15 +146,15 @@ const businessConfig: BusinessConfig = {
     },
   ],
   process: [
-    { title: "Review", description: "Tell us what is not working and share your website so we can understand the issue." },
+    { title: "Review", description: "Send us your website and tell us what’s getting in the way. We’ll look at the issue you describe." },
     { title: "Scope", description: "We outline the work, timeline, and project price before you decide whether to proceed." },
-    { title: "Build", description: "We complete the agreed work and walk you through the result." },
+    { title: "Build", description: "We make the agreed changes and walk you through the work at handoff." },
   ],
   faqs: [
-    { question: "What kind of website work do you take on?", answer: "ARK works on WordPress fixes, website redesigns, custom development, and one-time SEO foundation projects for service businesses." },
-    { question: "How does pricing work?", answer: "We review the project, define a written scope, and share the project price before work begins. Pricing depends on the work involved." },
-    { question: "Do you offer ongoing SEO retainers?", answer: "The SEO foundations service is scoped as a one-time project. It establishes site structure and targeting; it does not guarantee search rankings or traffic." },
-    { question: "Can you improve a site I already have?", answer: "Yes. Share your current website and the issues you want to address. We will review whether a focused fix, redesign, or custom work is the right fit." },
+    { question: "Can you work on my existing site?", answer: "Yes. Send us the address and explain the problem. We’ll look at whether it calls for a repair or a larger change." },
+    { question: "When will I know the price?", answer: "Pricing depends on the work involved. You’ll get a written scope and project price before work begins." },
+    { question: "Is SEO foundations an ongoing service?", answer: "It’s a one-time project focused on how your site is organized around your services and locations." },
+    { question: "Do you work with businesses outside Charlotte?", answer: "Yes. ARK is based in Charlotte and works with service businesses across the United States." },
   ],
   inquiries: {
     enabled: false,

@@ -1,4 +1,12 @@
 ---
+/*
+THESIS: The site is the proof. A precise, theme-free studio site whose first viewport sorts the visitor's website problem to the right fix; it refuses cream-serif-terracotta studio pages and metaphor themes.
+OWN-WORLD: White ground; full-bleed ink (#0d1117) bands alternating with white and cool-gray (#eef0f3) bands; one safety-orange (#ff5a1f) action color only; Geist for everything, Geist Mono only for small numerals/labels; 12-column grid, 8px spacing scale, 4px radii, 1px rules, large section numerals.
+STORY: The owner recognises their problem, sees the matching service, sees that scope and price come before work, and requests a free site review.
+FIRST VIEWPORT: Left 7 columns: headline 72-88px, one-sentence offer, orange review button with the scope line. Right 5 columns: "What's happening with your site?" panel with four symptom buttons linking to the four services.
+FORM: Theme-free sharp studio, user-delegated after research; seed a82b6432.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+*/
 import { businessTools } from "../lib/business-tools";
 import type { BusinessConfig } from "../../business.config";
 import businessConfig from "../../business.config";
@@ -47,10 +55,15 @@ const customHome = config.customHome === true || (config as BusinessConfig & { l
 const contactHref = customHome ? config.customHomeContactHref || "/#contact" : "/contact/";
 const nav: [string, string][] = customHome
   ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ["Contact", contactHref]]
-  : [["Services", "/services/"], ["Process", "/process/"], ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ["About", "/about/"]];
+  : [["Services", "/services/"], ["Process", "/process/"], ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ...(config.contentEnabled ? [["Guides", "/articles/"]] as [string, string][] : []), ["About", "/about/"], ["Contact", contactHref]];
+const mobileSecondaryNav: [string, string][] = customHome ? [] : [
+  ...(config.contentEnabled ? [["Solutions", "/solutions/"]] as [string, string][] : []),
+  ["Pricing", "/pricing/"],
+  ["Privacy", "/privacy/"],
+];
 const footerNav: [string, string][] = customHome
   ? [...(config.customHomeNav ?? []).map(({ label, href }) => [label, href] as [string, string]), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ["Contact", contactHref], ["Privacy", "/privacy/"]]
-  : [["Services", "/services/"], ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["How it works", "/process/"], ["Pricing", "/pricing/"], ["Contact", "/contact/"], ["Privacy", "/privacy/"]];
+  : [["Services", "/services/"], ...(businessTools.length ? [["Tools", "/tools/"]] as [string, string][] : []), ...(config.contentEnabled ? [["Guides", "/articles/"], ["Solutions", "/solutions/"]] as [string, string][] : []), ["About", "/about/"], ["Process", "/process/"], ["Pricing", "/pricing/"], ["Contact", "/contact/"], ["Privacy", "/privacy/"]];
 const validGa4Id = config.ga4Id && /^G-[A-Z0-9]+$/.test(config.ga4Id) ? config.ga4Id : undefined;
 
 const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
@@ -64,8 +77,7 @@ const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
-    <link rel="preload" href="/assets/client/fonts/Pliant-latin-700.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/assets/client/fonts/Manrope-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/geist/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content={ogType} />
@@ -82,18 +94,24 @@ const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
   <body class="business-site">
     <a class="business-skip" href="#main-content">Skip to content</a>
     <header class="business-header">
-      <a class="business-brand" href="/" aria-label={`${config.name} home`}>
-        {config.name === "ARK Web Services" ? <><span class="business-brand__mark" aria-hidden="true">ARK</span><span class="business-brand__name" aria-hidden="true">Web Services</span></> : config.logo ? <img src={config.logo} alt="" /> : <span>{config.name}</span>}
-      </a>
-      <nav class="business-desktop-nav" aria-label="Main navigation"><ul>{nav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul></nav>
-      <details class="business-mobile-menu">
-        <summary>Menu <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></summary>
-        <nav aria-label="Mobile navigation"><ul>{footerNav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul></nav>
-      </details>
+      <div class="business-shell business-header__inner">
+        <a class="business-brand" href="/" aria-label={`${config.name} home`}>
+          {config.name === "ARK Web Services" ? <><span class="business-brand__mark" aria-hidden="true">ARK</span><span class="business-brand__name" aria-hidden="true">Web Services</span></> : config.logo ? <img src={config.logo} alt="" /> : <span>{config.name}</span>}
+        </a>
+        <nav class="business-desktop-nav" aria-label="Main navigation"><ul>{nav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul></nav>
+        <a class="business-button business-header__review" href={contactHref}>Free site review</a>
+        <details class="business-mobile-menu">
+          <summary>Menu <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></summary>
+          <nav aria-label="Mobile navigation">
+            <ul>{nav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul>
+            {mobileSecondaryNav.length > 0 && <ul class="business-mobile-menu__secondary">{mobileSecondaryNav.map(([label, href]) => <li><a href={href} aria-current={Astro.url.pathname === href ? "page" : undefined}>{label}</a></li>)}</ul>}
+          </nav>
+        </details>
+      </div>
     </header>
-    <main id="main-content"><slot /></main>
+    <main id="main-content" tabindex="-1"><slot /></main>
     <footer class="business-footer">
-      <div class="business-footer__inner">
+      <div class="business-shell business-footer__inner">
         <a class="business-brand" href="/">{config.name}</a>
         <p class="business-footer__location">{config.location ? `${config.location} · Serving businesses nationwide` : "White-label fulfillment for agency partners"}</p>
         <nav class="business-footer__navigation" aria-label="Footer navigation">
@@ -107,6 +125,21 @@ const safeSchemaJson = JSON.stringify(schema).replace(/</g, "\\u003c");
         <p class="business-footer__legal">© {new Date().getFullYear()} {config.name}. <a href="#analytics-preferences">Privacy settings</a></p>
       </div>
     </footer>
+    <script is:inline>
+(() => {
+  const menu = document.querySelector(".business-mobile-menu");
+  const summary = menu.querySelector("summary");
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || event.defaultPrevented || !menu.open || !summary.getClientRects().length) return;
+    event.preventDefault();
+    menu.open = false;
+    summary.focus();
+  });
+  menu.addEventListener("click", ({ target }) => {
+    if (target instanceof Element && target.closest("a[href]")) menu.open = false;
+  });
+})();
+    </script>
     <script is:inline>
     (() => {
       document.addEventListener("click", (event) => {

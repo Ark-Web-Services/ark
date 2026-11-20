@@ -1,8 +1,29 @@
 ---
-const { services = [] } = Astro.props;
-const onServicesPage = Astro.url.pathname === "/services/";
+import type { BusinessConfig } from "../../../business.config";
+import Arrow from "./Arrow.astro";
+import SectionHeading from "./SectionHeading.astro";
+
+interface Props {
+  services?: BusinessConfig["services"];
+  home?: boolean;
+}
+
+const { services = [], home = false } = Astro.props;
 ---
-{services.length > 0 && <section class="business-section" id="services" aria-labelledby="services-title">
-  <div class="business-section__heading"><h2 id="services-title">What we can help with</h2>{!onServicesPage && <a class="business-text-link" href="/services/">Explore services</a>}</div>
-  <ul class="business-service-list">{services.map((service) => <li><div><h3>{service.title}</h3><a href={`/services/${service.id}/`}>See what’s included</a></div><p>{service.description}</p></li>)}</ul>
-</section>}
+{services.length > 0 && (
+  <section class="business-band business-band--ink" id="services" aria-labelledby="services-title">
+    <div class="business-shell">
+      <SectionHeading id="services-title" number="01" title={home ? "Services" : "What we can help with"} />
+      <ol class="business-service-list" role="list">
+        {services.map((service, index) => (
+          <li>
+            <span class="business-label" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+            <h3>{service.title}</h3>
+            <p>{home ? service.summary ?? service.description : service.description}</p>
+            <a class="business-text-link" href={`/services/${service.id}/`}>{service.linkLabel ?? `See ${service.title}`} <Arrow /></a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+)}

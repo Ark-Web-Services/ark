@@ -1,6 +1,10 @@
 ---
+import Arrow from './Arrow.astro';
+import InquiryForm from './InquiryForm.astro';
+import SectionHeading from './SectionHeading.astro';
 import { businessTools } from '../../lib/business-tools';
-const { context = '' } = Astro.props;
+const { context = '', number } = Astro.props;
+const isArticle = Astro.url.pathname.startsWith('/posts/');
 const signals: Record<string, RegExp> = {
   'wordpress-repair-helper': /wordpress|repair|broken|error|hack|recovery/i,
   'repair-or-redesign': /redesign|rebuild|planning|plan/i,
@@ -18,14 +22,14 @@ const signals: Record<string, RegExp> = {
 const ranked = businessTools.map(tool => ({ tool, score: (tool.related.some(link => link.url === Astro.url.pathname) ? 3 : 0) + (signals[tool.id]?.test(context) ? 2 : 0) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score);
 const suggestions = (ranked.length ? ranked.map(item => item.tool) : businessTools).slice(0, 2);
 ---
-{suggestions.length > 0 && <aside class="business-home tool-suggestions" aria-label="Related free tools"><h2>Put the guidance to work.</h2><p>Get a checklist, worksheet, or project brief you can keep. No signup needed.</p><ul>{suggestions.map(tool => <li><a href={`/tools/${tool.id}/`}>{tool.title}</a><p>{tool.description}</p></li>)}</ul><a href="/tools/">Explore all free tools</a></aside>}
-<style>
-  .tool-suggestions{padding-block:2.5rem 3.5rem;border-top:1px solid color-mix(in srgb,var(--business-fg),transparent 75%)}
-  .tool-suggestions h2{font:500 1.7rem/1.25 var(--business-heading);margin:0 0 .8rem}
-  .tool-suggestions p{max-width:65ch;color:var(--business-muted)}
-  .tool-suggestions ul{list-style:none;padding:0;margin:1.5rem 0}
-  .tool-suggestions li{padding:1rem 0;border-top:1px solid color-mix(in srgb,var(--business-fg),transparent 80%)}
-  .tool-suggestions li>a{font-weight:600;min-height:2.75rem;display:inline-flex;align-items:center}
-  .tool-suggestions li p{margin:.3rem 0;font-size:.95rem}
-  @media print{.tool-suggestions{display:none}}
-</style>
+{suggestions.length > 0 && <aside class:list={["business-band tool-suggestions", !number && "business-band--gray"]} aria-labelledby="tool-suggestions-title">
+  <div class="business-shell">
+    {number ? <SectionHeading id="tool-suggestions-title" number={number} title="Related planning tools" /> : <h2 id="tool-suggestions-title">Related planning tools</h2>}
+    <p>Get a checklist, worksheet, or project brief you can keep. No signup needed.</p>
+    <ul class="business-tool-list" role="list">
+      {suggestions.map(tool => <li><a class="business-row-link" href={`/tools/${tool.id}/`}>{tool.title}<Arrow /></a><p>{tool.description}</p></li>)}
+    </ul>
+    <a class="business-text-link" href="/tools/">Explore all free tools <Arrow /></a>
+  </div>
+</aside>}
+{isArticle && <InquiryForm />}

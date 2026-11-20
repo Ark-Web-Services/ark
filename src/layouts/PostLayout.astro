@@ -28,6 +28,7 @@ interface Props {
 const { post, content, headings = [] } = Astro.props;
 const contentsHeadings = headings.filter(heading => heading.depth === 2 || heading.depth === 3);
 const { data } = post;
+const { faq } = data;
 
 const readTime = estimateReadingTime(content);
 const words = wordCount(content);
@@ -205,7 +206,7 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
     lastModified={data.lastModified}
     author={data.author}
     wordCount={words}
-    faq={data.faq}
+    faq={faq}
   />
   {howToSteps.length > 1 && (
     <SchemaHowTo
@@ -337,6 +338,17 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
     <!-- Article Body (MDX renders here) -->
     <div class="article__body prose" itemprop="articleBody">
       <slot />
+      {faq.length > 0 && (
+        <section class="article__faq" aria-labelledby="post-faq-heading">
+          <h2 id="post-faq-heading">Frequently asked questions</h2>
+          {faq.map(({ question, answer }) => (
+            <>
+              <h3>{question}</h3>
+              <p>{answer}</p>
+            </>
+          ))}
+        </section>
+      )}
     </div>
 
     <!-- Affiliate Product Grid (Phase 2: D1-powered) -->
@@ -368,3 +380,14 @@ const resolvedImage = imagePath && images[imagePath] ? images[imagePath]() : dat
 
 <ToolSuggestions context={data.title} />
 </BusinessLayout>
+
+<style>
+  .article__faq {
+    font-size: max(16px, 1em);
+  }
+
+  .article__faq h3,
+  .article__faq p {
+    white-space: pre-wrap;
+  }
+</style>

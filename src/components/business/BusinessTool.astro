@@ -1,40 +1,43 @@
 ---
+import SectionHeading from './SectionHeading.astro';
 import type { BusinessTool } from '../../lib/tool-contract';
 interface Props { tool: BusinessTool; consentKey: string; }
 const { tool, consentKey } = Astro.props;
 ---
-<div class="tool-workspace" data-tool-root data-tool-id={tool.id} data-consent-key={consentKey}>
-  <form class="tool-form" data-tool-form autocomplete="off">
-    <h2>Your details</h2>
-    <p class="tool-privacy">This tool does not send your answers to our servers. They stay on this page unless you choose to copy, download, print, or send them. Exports include your entered details.</p>
-    <div class="tool-fields">
-      {tool.fields.map(field => <div class:list={['tool-field', { 'tool-field--wide': field.type === 'textarea' }]}>
-        <label for={`field-${field.id}`}>{field.label}{!field.required && <span> (optional)</span>}</label>
-        {field.hint && <p class="tool-hint" id={`hint-${field.id}`}>{field.hint}</p>}
-        {field.type === 'select' ? <select id={`field-${field.id}`} name={field.id} required={field.required} aria-describedby={field.hint ? `hint-${field.id}` : undefined}>
-          <option value="" selected={!field.defaultValue}>{field.required ? 'Choose an answer' : 'Not specified'}</option>
-          {field.options?.map(option => <option value={option.value} selected={field.defaultValue === option.value}>{option.label}</option>)}
-        </select> : field.type === 'textarea' ? <textarea id={`field-${field.id}`} name={field.id} required={field.required} rows="4" maxlength={field.maxLength ?? 16000} placeholder={field.placeholder} aria-describedby={field.hint ? `hint-${field.id}` : undefined}>{field.defaultValue ?? ''}</textarea> : <input id={`field-${field.id}`} name={field.id} type={field.type} required={field.required} min={field.min} max={field.max} step={field.type === 'number' ? (field.step ?? 'any') : undefined} maxlength={field.type !== 'number' ? (field.maxLength ?? 1000) : undefined} value={field.defaultValue} placeholder={field.placeholder} aria-describedby={field.hint ? `hint-${field.id}` : undefined} />}
-      </div>)}
-    </div>
-    <p class="tool-error" data-tool-error role="alert" tabindex="-1" hidden></p>
-    <div class="tool-actions"><button class="tool-primary" type="submit">{tool.submitLabel}</button><button class="tool-secondary" type="reset">Clear answers</button></div>
-    <noscript><p>Enable JavaScript to use this tool. The method and guidance below remain available, and you can contact us directly.</p></noscript>
-  </form>
-  <aside class="tool-result" aria-label="Tool result">
-    <div data-tool-empty><h2>A useful next step.</h2><p>Complete the questions, then select “{tool.submitLabel}” to see your result here.</p><p>No account or email address needed.</p></div>
-    <section data-tool-output aria-label="Your result" hidden>
-      <h2 data-result-title tabindex="-1"></h2>
-      <p data-result-summary></p>
-      <dl class="tool-metrics" data-result-metrics></dl>
-      <div data-result-sections></div>
-      <div class="tool-actions tool-result-actions"><button type="button" class="tool-secondary" data-tool-copy>Copy result</button><button type="button" class="tool-secondary" data-tool-download>Download text</button><button type="button" class="tool-secondary" data-tool-file hidden>Download CSV</button><button type="button" class="tool-secondary" data-tool-print>Print result</button></div>
-      <p class="tool-status" data-tool-status role="status" aria-live="polite"></p>
-      <label class="tool-copy-fallback" data-copy-fallback hidden>Copy your result from this box<textarea readonly rows="7" data-copy-text></textarea></label>
-      <div class="tool-next-step"><h3>Want help with the next step?</h3><p>You can copy your result and include it when you contact us. Nothing is sent automatically.</p><a class="tool-primary" href={tool.ctaHref} data-tool-cta>{tool.ctaLabel}</a></div>
-    </section>
-  </aside>
-</div>
+<section class="business-band tool-workspace-band" aria-labelledby="tool-details">
+  <div class="business-shell tool-workspace" data-tool-root data-tool-id={tool.id} data-consent-key={consentKey}>
+    <form class="tool-form" data-tool-form autocomplete="off">
+      <SectionHeading id="tool-details" number="01" title="Your details" />
+      <p class="tool-privacy">This tool does not send your answers to our servers. They stay on this page unless you choose to copy, download, print, or send them. Exports include your entered details.</p>
+      <div class="tool-fields">
+        {tool.fields.map(field => <div class:list={['tool-field', { 'tool-field--wide': field.type !== 'select' }]}>
+          <label for={`field-${field.id}`}>{field.label}{!field.required && <span> (optional)</span>}</label>
+          {field.type === 'select' ? <select id={`field-${field.id}`} name={field.id} required={field.required} aria-describedby={field.hint ? `hint-${field.id}` : undefined}>
+            <option value="" selected={!field.defaultValue}>{field.required ? 'Choose an answer' : 'Not specified'}</option>
+            {field.options?.map(option => <option value={option.value} selected={field.defaultValue === option.value}>{option.label}</option>)}
+          </select> : field.type === 'textarea' ? <textarea id={`field-${field.id}`} name={field.id} required={field.required} rows="4" maxlength={field.maxLength ?? 16000} placeholder={field.placeholder} aria-describedby={field.hint ? `hint-${field.id}` : undefined}>{field.defaultValue ?? ''}</textarea> : <input id={`field-${field.id}`} name={field.id} type={field.type} required={field.required} min={field.min} max={field.max} step={field.type === 'number' ? (field.step ?? 'any') : undefined} maxlength={field.type !== 'number' ? (field.maxLength ?? 1000) : undefined} value={field.defaultValue} placeholder={field.placeholder} aria-describedby={field.hint ? `hint-${field.id}` : undefined} />}
+          {field.hint && <p class="tool-hint" id={`hint-${field.id}`}>{field.hint}</p>}
+        </div>)}
+      </div>
+      <p class="tool-error" data-tool-error role="alert" tabindex="-1" hidden></p>
+      <div class="tool-actions"><button class="business-button" type="submit">{tool.submitLabel}</button><button class="business-button business-button--secondary" type="reset">Clear answers</button></div>
+      <noscript><p>Enable JavaScript to use this tool. The method and guidance below remain available, and you can contact us directly.</p></noscript>
+    </form>
+    <aside class="tool-result" aria-label="Tool result">
+      <div data-tool-empty><h2>Your result</h2><p>Complete the questions, then select “{tool.submitLabel}” to see your result here.</p><p>No account or email address needed.</p></div>
+      <section data-tool-output aria-label="Your result" hidden>
+        <h2 data-result-title tabindex="-1"></h2>
+        <p data-result-summary></p>
+        <dl class="tool-metrics" data-result-metrics></dl>
+        <div data-result-sections></div>
+        <div class="tool-actions tool-result-actions"><button type="button" class="business-button business-button--secondary" data-tool-copy>Copy result</button><button type="button" class="business-button business-button--secondary" data-tool-download>Download text</button><button type="button" class="business-button business-button--secondary" data-tool-file hidden>Download CSV</button><button type="button" class="business-button business-button--secondary" data-tool-print>Print result</button></div>
+        <p class="tool-status" data-tool-status role="status" aria-live="polite"></p>
+        <label class="tool-copy-fallback" data-copy-fallback hidden>Copy your result from this box<textarea readonly rows="7" data-copy-text></textarea></label>
+        <div class="tool-next-step"><h3>Want help with the next step?</h3><p>You can copy your result and include it when you contact us. Nothing is sent automatically.</p><a class="business-button" href={tool.ctaHref} data-tool-cta>{tool.ctaLabel}</a></div>
+      </section>
+    </aside>
+  </div>
+</section>
 <script>
   import { businessTools } from '../../lib/business-tools';
   import type { ToolInput, ToolResult } from '../../lib/tool-contract';

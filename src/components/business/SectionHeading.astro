@@ -1,0 +1,13 @@
+---
+interface Props {
+  id: string;
+  number: string;
+  title: string;
+}
+
+const { id, number, title } = Astro.props;
+---
+<h2 class="business-band-title" id={id}>
+  <span class="business-section-number" aria-hidden="true">{number}</span>
+  <span>{title}</span>
+</h2>
